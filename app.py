@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from utils import filter_user_by_id
+from utils import get_users, filter_user_by_id
 
 app = FastAPI()
 
@@ -34,18 +34,20 @@ data = [
 @app.get('/')
 def index():
     return {
-        "detail": "Welcome to API",
-        "routes": ["/users"]
+        "detail": "Welcome to my API build with Python FastApi",
+        "apis": ["/users"],
+        "docs": ["/docs", "/redoc"],
+
     }
 
 
 @app.get('/users')
-def index():
-    return data
+def users(limit: int = 1, offset: int = 1):
+    return get_users(data, limit, offset)
 
 
 @app.get('/users/{id}')
-def index(id: int):
+def users_by_id(id: int):
     return filter_user_by_id(
         data, id, {"detail": "Not Found"}
     )
