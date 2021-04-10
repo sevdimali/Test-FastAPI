@@ -1,9 +1,12 @@
 import itertools
+from functools import cache
+from models import PartialUser, User
 import data
 
 users = getattr(data, "users", [])
 
 
+@cache
 def get_users(limit=100, offset=1, sort="id:asc", default=[]):
     """Get users from data(DB)\n
 
@@ -39,6 +42,7 @@ def get_users(limit=100, offset=1, sort="id:asc", default=[]):
     return data
 
 
+@cache
 def filter_user_by_id(id, default={}):
     """Get user api\n
 
@@ -55,3 +59,40 @@ def filter_user_by_id(id, default={}):
         )
     )
     return found[0] if len(found) > 0 else default
+
+
+@cache
+def post_user(user: tuple):
+    global users
+    user = dict(user)
+    user = {**user, "id": next_id()}
+    users = [*users, user]
+    setattr(data, "users", users)
+    return user
+
+
+def patch_user(id: int, user: PartialUser):
+    global users
+    users = list(map(
+        lambda u: u if u['id'] != id else {**u, **user.__dict__},
+        users
+    ))
+    setattr(data, "users", users)
+    return users
+
+
+def put_user(id: int, user: User):
+    global users
+    users = list(map(
+        lambda u: u if u['id'] != id else user,
+        users
+    ))
+    setattr(data, "users", users)
+    return users
+
+
+@cache
+def next_id():
+    last_user = max(users, key=lambda u: u['id'])
+    id = last_user['id'] + 1
+    return id
