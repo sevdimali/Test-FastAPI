@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from typing import Optional
 from utils import get_users, filter_user_by_id
 app = FastAPI()
 
@@ -13,7 +14,7 @@ def index():
 
 
 @app.get('/users')
-def users(limit: int = 100, offset: int = 1, sort: str = "id:asc"):
+def users(limit: Optional[int] = 100, offset: Optional[int] = 1, sort: Optional[str] = "id:asc"):
     return get_users(limit, offset, sort)
 
 
@@ -22,9 +23,3 @@ def users_by_id(id: int):
     return filter_user_by_id(
         id, {"detail": "Not Found"}
     )
-
-
-@app.get('/about')
-def about():
-    data = {'name': "About page"}
-    return data
