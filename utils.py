@@ -14,7 +14,7 @@ def get_users(limit=100, offset=1, sort="id:asc", default=[]):
             attribute:(asc {ascending} or desc {descending}). Defaults to "id:asc".\n
         default (list, optional): default value if not found. Defaults to [].\n
     Returns:\n
-        List[dict]: list of users found\n
+        List[User]: list of users found\n
     """
     key, order, *_ = sort.lower().split(':')
     reverse = order == "desc"
@@ -46,7 +46,7 @@ def filter_user_by_id(id, default={}):
         id (int): user ID\n
         default (dict, optional): default value if not found. Defaults to {}.\n
     Returns:\n
-        dict: user found\n
+        User: user found\n
     """
     found = tuple(
         filter(
