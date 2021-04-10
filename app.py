@@ -37,12 +37,11 @@ def index():
         "detail": "Welcome to my API build with Python FastApi",
         "apis": ["/users"],
         "docs": ["/docs", "/redoc"],
-
     }
 
 
 @app.get('/users')
-def users(limit: int = 1, offset: int = 1):
+def users(limit: int = 100, offset: int = 1):
     return get_users(data, limit, offset)
 
 

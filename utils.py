@@ -3,11 +3,19 @@ import itertools
 
 def get_users(users, limit=100, offset=1, default=[]):
     if offset < 1 or limit < 1:
-        print(offset, limit, "Hmm")
         return default
-    limit += 1
-    limit = len(users) if limit > len(users) else limit
-    return [users[i] for i in range(offset-1, limit)]
+    limit += offset
+    limit = len(users)+1 if limit > len(users) else limit
+    data = {
+        "next": None,
+        "users": [users[i-1] for i in range(offset, limit)],
+    }
+    # manage next data
+    if offset < len(users) and limit <= len(users):
+        limit -= offset
+        offset = limit + 1
+        data['next'] = f'/users/?limit={limit}&offset={offset}'
+    return data
 
 
 def filter_user_by_id(users, id, default={}):
