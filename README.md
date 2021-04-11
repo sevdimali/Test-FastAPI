@@ -19,10 +19,10 @@ Go to http://127.0.0.1:8000/
 
 ## Docker installation
 
-Pull image from hub.docker.com
+Run container from docker hub
 
 ```bash
-docker pull meschac38000/fast-api:latest
+docker run --rm -d --name {my-api} -p 8000:80 meschac38000/fast-api
 ```
 
 OR create it manually
