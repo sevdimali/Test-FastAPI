@@ -19,6 +19,14 @@ Go to http://127.0.0.1:8000/
 
 ## Docker installation
 
+Pull image from hub.docker.com
+
+```bash
+docker pull meschac38000/fast-api:latest
+```
+
+OR create it manually
+
 Move to ```app``` folder
 ```bash
 cd app
