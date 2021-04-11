@@ -1,8 +1,8 @@
 import itertools
 from functools import cache
-from models import PartialUser, User
+from models import PartialUser, User, UserModel, Gender
 import data
-
+import json
 users = getattr(data, "users", [])
 
 
@@ -71,14 +71,24 @@ def post_user(user: tuple):
     return user
 
 
-def patch_user(id: int, user: PartialUser):
-    global users
-    users = list(map(
-        lambda u: u if u['id'] != id else {**u, **user.__dict__},
-        users
-    ))
-    setattr(data, "users", users)
-    return users
+def patch_user(id: int, new_data: PartialUser):
+    users = []
+    updated_user = None
+    with open('db.json', 'r') as js_f:
+        for user in json.load(js_f):
+            users.append(user)
+            if user['id'] == id:
+                del users[-1]
+                updated_user = {
+                    **user,
+                    **new_data.__dict__,
+                    "gender": new_data.gender.value,
+                    "date_of_birth": new_data.date_of_birth.__str__(),
+                }
+                users.append(updated_user)
+    with open('db.json', 'w') as js_f:
+        json.dump(users, js_f, sort_keys=True, indent=2)
+        return updated_user
 
 
 def put_user(id: int, user: User):
@@ -89,6 +99,10 @@ def put_user(id: int, user: User):
     ))
     setattr(data, "users", users)
     return users
+
+
+def delete_user(id: int):
+    pass
 
 
 @cache
