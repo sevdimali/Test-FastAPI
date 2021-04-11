@@ -13,9 +13,3 @@ class PartialUser(BaseModel):
 
 class User(PartialUser):
     id: int
-    first_name: str
-    last_name: str
-    email: str
-    is_admin: Optional[bool] = False
-    is_staff: Optional[bool] = False
-    is_active: Optional[bool] = False

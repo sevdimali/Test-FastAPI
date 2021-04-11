@@ -23,6 +23,10 @@ Install requirements
 pip install -r requirements.txt
 ```
 
+Move to ```app``` folder
+```bash
+cd app
+```
 ## Run the app
 
 ```bash

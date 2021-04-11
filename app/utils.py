@@ -43,7 +43,7 @@ def get_users(limit=100, offset=1, sort="id:asc", default=[]):
 
 
 @cache
-def filter_user_by_id(id, default={}):
+def filter_user_by_id(id, default=()):
     """Get user api\n
 
     Args:\n
@@ -58,7 +58,7 @@ def filter_user_by_id(id, default={}):
             users
         )
     )
-    return found[0] if len(found) > 0 else default
+    return found[0] if len(found) > 0 else dict(default)
 
 
 @cache

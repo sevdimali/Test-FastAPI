@@ -15,7 +15,7 @@ def index():
     }
 
 
-@app.get('/users')
+@app.get('/users/')
 def users(limit: Optional[int] = 100, offset: Optional[int] = 1, sort: Optional[str] = "id:asc"):
     return get_users(limit, offset, sort)
 
@@ -23,7 +23,7 @@ def users(limit: Optional[int] = 100, offset: Optional[int] = 1, sort: Optional[
 @app.get('/users/{id}')
 def users_by_id(id: int):
     return filter_user_by_id(
-        id, {"detail": "Not Found"}
+        id, default=(("detail", "Not Found"),)
     )
 
 
