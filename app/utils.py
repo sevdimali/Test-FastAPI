@@ -2,7 +2,7 @@ import itertools
 from functools import cache
 from models import PartialUser, User
 import data
-
+import json
 users = getattr(data, "users", [])
 
 
@@ -37,7 +37,7 @@ def get_users(limit=100, offset=1, sort="id:asc", default=[]):
     # manage next data
     if offset < len(users) and limit <= len(users):
         limit -= offset
-        offset = limit + 1
+        offset += limit
         data['next'] = f'/users/?limit={limit}&offset={offset}'
     return data
 
@@ -61,38 +61,73 @@ def filter_user_by_id(id, default=()):
     return found[0] if len(found) > 0 else dict(default)
 
 
-@cache
-def post_user(user: tuple):
-    global users
-    user = dict(user)
-    user = {**user, "id": next_id()}
-    users = [*users, user]
-    setattr(data, "users", users)
-    return user
+def post_user(user: PartialUser):
+    users = []
+    with open("db.json", "r") as js_f:
+        users = json.load(js_f)
+    with open('db.json', 'w') as js_f:
+        users.append({
+            **user.__dict__,
+            "gender": user.gender.value,
+            "date_of_birth": user.date_of_birth.__str__(),
+        })
+        json.dump(users, js_f, sort_keys=True, indent=2)
+        return user
 
 
-def patch_user(id: int, user: PartialUser):
-    global users
-    users = list(map(
-        lambda u: u if u['id'] != id else {**u, **user.__dict__},
-        users
-    ))
-    setattr(data, "users", users)
-    return users
+def patch_user(id: int, new_data: PartialUser):
+    users = []
+    updated_user = None
+    with open('db.json', 'r') as js_f:
+        for user in json.load(js_f):
+            users.append(user)
+            if user['id'] == id:
+                del users[-1]
+                updated_user = {
+                    **user,
+                    **new_data.__dict__,
+                    "gender": new_data.gender.value,
+                    "date_of_birth": new_data.date_of_birth.__str__(),
+                }
+                users.append(updated_user)
+    override_db(users)
+    return updated_user
 
 
-def put_user(id: int, user: User):
-    global users
-    users = list(map(
-        lambda u: u if u['id'] != id else user,
-        users
-    ))
-    setattr(data, "users", users)
-    return users
+def put_user(id: int, new_user: User):
+    users = []
+    with open('db.json', 'r') as js_f:
+        for user in json.load(js_f):
+            users.append(user)
+            if user['id'] == id:
+                del users[-1]
+                user = {
+                    **new_user.__dict__,
+                    "gender": new_user.gender.value,
+                    "date_of_birth": new_user.date_of_birth.__str__(),
+                }
+                users.append(user)
+    override_db(users)
+    return new_user
+
+
+def delete_user(id: int):
+    users = []
+    with open("db.json", "r") as js_f:
+        users = list(filter(lambda u: u["id"] != id, json.load(js_f)))
+    with open('db.json', 'w') as js_f:
+        json.dump(users, js_f, sort_keys=True, indent=2)
+        return {"id": id, "deleted": True}
+
+
+def override_db(users):
+    with open('db.json', 'w') as js_f:
+        json.dump(users, js_f, sort_keys=True, indent=2)
 
 
 @cache
 def next_id():
-    last_user = max(users, key=lambda u: u['id'])
-    id = last_user['id'] + 1
-    return id
+    with open('db.json', 'r') as js_f:
+        users = json.load(js_f)
+        last_user = max(users, key=lambda u: u['id'])
+        return last_user['id'] + 1
