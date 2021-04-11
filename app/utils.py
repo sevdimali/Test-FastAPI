@@ -37,7 +37,7 @@ def get_users(limit=100, offset=1, sort="id:asc", default=[]):
     # manage next data
     if offset < len(users) and limit <= len(users):
         limit -= offset
-        offset = limit + 1
+        offset += limit
         data['next'] = f'/users/?limit={limit}&offset={offset}'
     return data
 
@@ -127,6 +127,7 @@ def override_db(users):
 
 @cache
 def next_id():
-    last_user = max(users, key=lambda u: u['id'])
-    id = last_user['id'] + 1
-    return id
+    with open('db.json', 'r') as js_f:
+        users = json.load(js_f)
+        last_user = max(users, key=lambda u: u['id'])
+        return last_user['id'] + 1
