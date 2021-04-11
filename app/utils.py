@@ -86,23 +86,34 @@ def patch_user(id: int, new_data: PartialUser):
                     "date_of_birth": new_data.date_of_birth.__str__(),
                 }
                 users.append(updated_user)
-    with open('db.json', 'w') as js_f:
-        json.dump(users, js_f, sort_keys=True, indent=2)
-        return updated_user
+    update_db(users)
+    return updated_user
 
 
-def put_user(id: int, user: User):
-    global users
-    users = list(map(
-        lambda u: u if u['id'] != id else user,
-        users
-    ))
-    setattr(data, "users", users)
-    return users
+def put_user(id: int, new_user: User):
+    users = []
+    with open('db.json', 'r') as js_f:
+        for user in json.load(js_f):
+            users.append(user)
+            if user['id'] == id:
+                del users[-1]
+                user = {
+                    **new_user.__dict__,
+                    "gender": new_user.gender.value,
+                    "date_of_birth": new_user.date_of_birth.__str__(),
+                }
+                users.append(user)
+    update_db(users)
+    return new_user
 
 
 def delete_user(id: int):
     pass
+
+
+def update_db(users):
+    with open('db.json', 'w') as js_f:
+        json.dump(users, js_f, sort_keys=True, indent=2)
 
 
 @cache
