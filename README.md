@@ -31,7 +31,7 @@ docker build --tag {my-api}
 
 run docker container
 ```bash
-docker run -d --name {myApi} -p 8000:80 {my-api}
+docker run --rm -d --name {myApi} -p 8000:80 {my-api}
 ```
 
 Go to http://127.0.0.1:8000/
