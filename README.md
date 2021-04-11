@@ -3,7 +3,20 @@
 ## Dependencies
 python >= 3.9
 
-## Installation
+
+## Docker installation
+
+create docker image
+```bash
+docker build --tag {my-api}
+```
+
+run docker container
+```bash
+docker run -d --name {myApi} -p 8000:80 {my-api}
+```
+
+## Manual installation
 
 Install requirements
 ```bash
