@@ -3,6 +3,7 @@ from typing import Optional
 from models import User, PartialUser
 from utils import get_users, filter_user_by_id
 from utils import post_user, put_user, patch_user
+from utils import delete_user
 app = FastAPI()
 
 
@@ -40,3 +41,8 @@ def fix_user(id: int, user: PartialUser):
 @app.put('/users/{id}')
 def update_user(id: int, new_user: User):
     return put_user(id, new_user)
+
+
+@app.delete('/users/{id}')
+def update_user(id: int):
+    return delete_user(id)

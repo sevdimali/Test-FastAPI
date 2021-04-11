@@ -62,6 +62,7 @@ def filter_user_by_id(id, default=()):
 
 
 def post_user(user: PartialUser):
+    users = []
     with open("db.json", "r") as js_f:
         users = json.load(js_f)
     with open('db.json', 'w') as js_f:
@@ -111,7 +112,12 @@ def put_user(id: int, new_user: User):
 
 
 def delete_user(id: int):
-    pass
+    users = []
+    with open("db.json", "r") as js_f:
+        users = list(filter(lambda u: u["id"] != id, json.load(js_f)))
+    with open('db.json', 'w') as js_f:
+        json.dump(users, js_f, sort_keys=True, indent=2)
+        return {"id": id, "deleted": True}
 
 
 def override_db(users):
