@@ -29,7 +29,7 @@ def users_by_id(id: int):
 
 @app.post('/users/')
 def create_user(user: PartialUser):
-    return post_user(tuple({**user.__dict__}.items()))
+    return post_user(user)
 
 
 @app.patch('/users/{id}')

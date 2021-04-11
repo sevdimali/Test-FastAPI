@@ -61,14 +61,17 @@ def filter_user_by_id(id, default=()):
     return found[0] if len(found) > 0 else dict(default)
 
 
-@cache
-def post_user(user: tuple):
-    global users
-    user = dict(user)
-    user = {**user, "id": next_id()}
-    users = [*users, user]
-    setattr(data, "users", users)
-    return user
+def post_user(user: PartialUser):
+    with open("db.json", "r") as js_f:
+        users = json.load(js_f)
+    with open('db.json', 'w') as js_f:
+        users.append({
+            **user.__dict__,
+            "gender": user.gender.value,
+            "date_of_birth": user.date_of_birth.__str__(),
+        })
+        json.dump(users, js_f, sort_keys=True, indent=2)
+        return user
 
 
 def patch_user(id: int, new_data: PartialUser):
@@ -86,7 +89,7 @@ def patch_user(id: int, new_data: PartialUser):
                     "date_of_birth": new_data.date_of_birth.__str__(),
                 }
                 users.append(updated_user)
-    update_db(users)
+    override_db(users)
     return updated_user
 
 
@@ -103,7 +106,7 @@ def put_user(id: int, new_user: User):
                     "date_of_birth": new_user.date_of_birth.__str__(),
                 }
                 users.append(user)
-    update_db(users)
+    override_db(users)
     return new_user
 
 
@@ -111,7 +114,7 @@ def delete_user(id: int):
     pass
 
 
-def update_db(users):
+def override_db(users):
     with open('db.json', 'w') as js_f:
         json.dump(users, js_f, sort_keys=True, indent=2)
 
