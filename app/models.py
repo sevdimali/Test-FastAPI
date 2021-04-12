@@ -22,4 +22,3 @@ class PartialUser(BaseModel):
 
 class User(PartialUser):
     id: int
-    is_admin: Optional[bool] = False
