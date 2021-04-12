@@ -20,7 +20,7 @@ def index():
 
 @cache
 @app.get('/users/')
-def users(limit: Optional[int] = 50, offset: Optional[int] = 1, sort: Optional[str] = "id:asc"):
+def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Optional[str] = "id:asc"):
     """Get users from data(DB)\n
 
     Args:\n
