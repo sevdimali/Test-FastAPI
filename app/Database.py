@@ -31,7 +31,7 @@ class Database:
 
 class UserTable():
 
-    def get_users(self, limit=10, offset=1, sort="id:asc"):
+    def get_users(self, limit=10, offset=0, sort="id:asc"):
         attr, order = sort.split(':')
         query = f"""SELECT *
         FROM person
