@@ -30,26 +30,6 @@ class Database:
 
 
 class UserTable():
-    def __init__(self):
-        Database.query(
-            """DO $$ BEGIN
-                    CREATE TYPE GENDER AS ENUM('Male', 'Female');
-                EXCEPTION
-                    WHEN duplicate_object THEN null;
-                END $$;
-            """
-        )
-        Database.query(
-            """CREATE TABLE IF NOT EXISTS person(
-                    id BIGSERIAL NOT NULL PRIMARY KEY,
-                    first_name VARCHAR(50) NOT NULL,
-                    last_name VARCHAR(50) NOT NULL,
-                    gender GENDER NOT NULL,
-                    email VARCHAR(150),
-                    date_of_birth date NOT NULL,
-                    country_of_birth varchar(50));
-            """
-        )
 
     def get_users(self, limit=10, offset=1, sort="id:asc"):
         attr, order = sort.split(':')

@@ -5,7 +5,7 @@ DATABASES_CONFIG = namedtuple(
 
 DB_CONFIG = DATABASES_CONFIG(
     host="127.0.0.1",
-    database="api_db",
+    database="fastapi-db",
     user="postgres",
     password="postgres",
     port=5432)

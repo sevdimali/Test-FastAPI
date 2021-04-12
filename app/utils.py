@@ -1,8 +1,8 @@
 import itertools
 from functools import cache
-from models import PartialUser, User
-import data
 import json
+import data
+from models import PartialUser, User
 users = getattr(data, "users", [])
 
 
