@@ -87,7 +87,8 @@ class UserTable():
                 country_of_birth=%s
             WHERE id=%s;"""
         with Database.query(query, prepare_data) as cur:
-            return cur.rowcount
+            if cur.rowcount >= 1:
+                return {"success": True}
 
     def put_user(self, user_id: int, new_user: User):
         # check if user with chosen id already exists
