@@ -1,7 +1,7 @@
 import psycopg2
 import psycopg2.extras
 from typing import Optional, Tuple
-from settings import DB_CONFIG
+from settings import DB_CONFIG, DOCKER_DB_HOST
 from models import User, PartialUser
 
 
@@ -12,7 +12,7 @@ class Database:
     def getDB(cls):
         if cls.__DB is None:
             cls.__DB = psycopg2.connect(
-                host=DB_CONFIG.host,
+                host=DOCKER_DB_HOST,
                 database=DB_CONFIG.database,
                 user=DB_CONFIG.user,
                 password=DB_CONFIG.password,
@@ -53,7 +53,9 @@ class UserTable():
             WHERE id=%s;"""
         with Database.query(query, (user_id,)) as cur:
             user = cur.fetchone()
-            return dict(user) if user is not None else None
+            return dict(user) if user is not None else {
+                "detail": "Not Found"
+            }
 
     def post_user(self, user_data: PartialUser):
         prepare_data = (

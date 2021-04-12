@@ -3,7 +3,7 @@ services:
     db:
         image: postgres:13-alpine
         ports:
-            - "5432:5432"
+            - 5432:5432
         environment:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=postgres
@@ -12,14 +12,15 @@ services:
             - fastapi-data:/var/lib/postgres/data
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     api:
-        build: .
-        command: sh -c "uvicorn app:app --host 0.0.0.0 --port 80 --reload"
+        image: meschac38000/fast-api:latest
         volumes:
             - .:/src
         ports:
-            - "8000:80"
-        depends_on:
+            - 8000:80
+        links:
             - db
+        environment:
+            DATABASE_HOST: db
 volumes:
     fastapi-data:
         driver: local

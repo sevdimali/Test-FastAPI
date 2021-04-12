@@ -3,7 +3,21 @@
 ## Dependencies
 python >= 3.9
 
-## Manual installation
+
+## Use Docker
+
+### Install with docker-compose
+Move to app folder then run:
+```bash
+docker-compose -f docker-compose.yml up
+```
+
+Go to http://127.0.0.1:8000/
+
+## Manual installation without docker
+
+### make sure the postgresql server is up and edit DB_CONFIG in the settings.py file correctly
+### use DB_CONFIG.host instead of DOCKER_DB_HOST, in Database.py file line 15
 
 Install requirements
 ```bash
@@ -14,32 +28,4 @@ execute this command
 ```bash
 uvicorn app:app --reload
 ```
-Go to http://127.0.0.1:8000/
-
-
-## Docker installation
-
-Run container from docker hub
-
-```bash
-docker run --rm -d --name {my-api} -p 8000:80 meschac38000/fast-api
-```
-
-OR create it manually
-
-Move to ```app``` folder
-```bash
-cd app
-```
-
-create docker image
-```bash
-docker build --tag {my-api}
-```
-
-run docker container
-```bash
-docker run --rm -d --name {myApi} -p 8000:80 {my-api}
-```
-
 Go to http://127.0.0.1:8000/
