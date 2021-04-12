@@ -2,7 +2,7 @@ import psycopg2
 import psycopg2.extras
 from typing import Optional, Tuple
 from settings import DB_CONFIG
-from models import User
+from models import User, PartialUser
 
 
 class Database:
@@ -22,6 +22,8 @@ class Database:
 
     @classmethod
     def query(cls, query: str, args: Optional[Tuple] = tuple()):
+        print("args ===>", args)
+        print("length args ===>", len(args))
         with cls.getDB() as conn:
             cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             cur.execute(query, args)
@@ -43,31 +45,46 @@ class UserTable():
             return users
 
     def get_user_by_id(self, user_id):
-        query = f"""PREPARE getperson (int) AS
-            SELECT *
+        query = f"""SELECT *
             FROM person
-            WHERE id=$1;
-        EXECUTE getperson({user_id});"""
+            WHERE id=%s;"""
         with Database.query(query, (user_id,)) as cur:
             user = cur.fetchone()
             return dict(user) if user is not None else None
 
-    def create_user(self, user_data):
-        query = """PREPARE newperson (text, text, text, text, text, text) AS
-            INSERT INTO person(
+    def post_user(self, user_data: PartialUser):
+        prepare_data = (
+            user_data.first_name, user_data.last_name,
+            user_data.gender.value, user_data.email,
+            user_data.date_of_birth.isoformat(),
+            user_data.country_of_birth)
+        query = """INSERT INTO person(
                 first_name,
                 last_name,
                 gender,
                 email,
                 date_of_birth,
                 country_of_birth
-            ) VALUES($1,$2,$3,$4,$5,$6);
-        EXECUTE newperson({0}{1}{2}{3}{4}{5});""".format(*user_data)
-        print("--------- QUERY --------------")
-        print(query)
-        print("--------- QUERY --------------")
-        with Database.query(query, user_data) as cur:
-            return cur.lastrowid
+            ) VALUES(%s,%s,%s,%s,%s,%s);"""
+        with Database.query(query, args=prepare_data) as cur:
+            return {"success": True}
+
+    def patch_user(self, user_id: int, user_data: PartialUser):
+        prepare_data = (
+            user_data.first_name, user_data.last_name,
+            user_data.gender.value, user_data.email,
+            user_data.date_of_birth.isoformat(),
+            user_data.country_of_birth, str(user_id))
+        query = """UPDATE person set 
+                first_name=%s,
+                last_name=%s,
+                gender=%s,
+                email=%s,
+                date_of_birth=%s,
+                country_of_birth=%s
+            WHERE id=%s;"""
+        with Database.query(query, prepare_data) as cur:
+            return cur.rowcount
 
     # def update_user(self, new_data):
     #     query = """UPDATE TABLE person set
