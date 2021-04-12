@@ -22,7 +22,29 @@ def index():
 
 @app.get('/users/')
 def users(limit: Optional[int] = 50, offset: Optional[int] = 1, sort: Optional[str] = "id:asc"):
-    return user_table.get_users(limit, offset, sort)
+    """Get users from data(DB)\n
+
+    Args:\n
+        limit (int, optional): max number of returned users. Defaults to 100.\n
+        offset (int, optional): first user to return (use with limit). Defaults to 1.\n
+        sort (str, optional): the order of the result. \
+            attribute:(asc {ascending} or desc {descending}). Defaults to "id:asc".\n
+        default (list, optional): default value if not found. Defaults to [].\n
+    Returns:\n
+        List[User]: list of users found\n
+    """
+    nb_users = UserTable.number_user()
+    if offset < 0 or limit < 1:
+        return default
+    data = {
+        "next": None,
+        "users": user_table.get_users(limit, offset, sort)
+    }
+    # manage next data
+    if offset < nb_users-1 and limit <= nb_users:
+        offset += limit
+        data['next'] = f'/users/?limit={limit}&offset={offset}'
+    return data
 
 
 @ app.get('/users/{id}')

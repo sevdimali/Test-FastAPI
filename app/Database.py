@@ -42,6 +42,11 @@ class UserTable():
             users = [dict(u) for u in cur.fetchall()]
             return users
 
+    @classmethod
+    def number_user(cls):
+        with Database.query("SELECT COUNT(*) AS number_user FROM person") as cur:
+            return dict(cur.fetchone()).get("number_user", 0)
+
     def get_user_by_id(self, user_id):
         query = f"""SELECT *
             FROM person
