@@ -46,9 +46,9 @@ def fix_user(id: int, user: PartialUser):
 
 @ app.put('/users/{id}')
 def update_user(id: int, new_user: User):
-    return put_user(id, new_user)
+    return user_table.put_user(id, new_user)
 
 
 @ app.delete('/users/{id}')
-def update_user(id: int):
-    return delete_user(id)
+def delete_user(id: int):
+    return user_table.delete_user(id)

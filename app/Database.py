@@ -22,8 +22,6 @@ class Database:
 
     @classmethod
     def query(cls, query: str, args: Optional[Tuple] = tuple()):
-        print("args ===>", args)
-        print("length args ===>", len(args))
         with cls.getDB() as conn:
             cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             cur.execute(query, args)
@@ -75,7 +73,7 @@ class UserTable():
             user_data.gender.value, user_data.email,
             user_data.date_of_birth.isoformat(),
             user_data.country_of_birth, str(user_id))
-        query = """UPDATE person set 
+        query = """UPDATE person set
                 first_name=%s,
                 last_name=%s,
                 gender=%s,
@@ -86,10 +84,31 @@ class UserTable():
         with Database.query(query, prepare_data) as cur:
             return cur.rowcount
 
-    # def update_user(self, new_data):
-    #     query = """UPDATE TABLE person set
-    #     pass
+    def put_user(self, user_id: int, new_user: User):
+        # check if user with chosen id already exists
+        if self.get_user_by_id(new_user.id) is None:
+            prepare_data = (
+                str(new_user.id),
+                new_user.first_name, new_user.last_name,
+                new_user.gender.value, new_user.email,
+                new_user.date_of_birth.isoformat(),
+                new_user.country_of_birth, str(user_id))
+            query = """UPDATE person set
+                    id=%s,
+                    first_name=%s,
+                    last_name=%s,
+                    gender=%s,
+                    email=%s,
+                    date_of_birth=%s,
+                    country_of_birth=%s
+                WHERE id=%s;"""
+            with Database.query(query, prepare_data) as cur:
+                return {"success": True}
+        return {
+            "Error": f"the user with the ID={new_user.id} already exists."
+        }
 
-    # def delete_user(self, id):
-    #     query = "DELETE FROM person WHERE id=$1"
-    #     Database.query(query, (id,))
+    def delete_user(self, user_id: int):
+        query = "DELETE FROM person WHERE id=%s"
+        with Database.query(query, (user_id,)) as cur:
+            return {"success": True}
