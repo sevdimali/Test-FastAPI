@@ -12,7 +12,8 @@ class Database:
     def getDB(cls):
         if cls.__DB is None:
             cls.__DB = psycopg2.connect(
-                host=DOCKER_DB_HOST,
+                host=DOCKER_DB_HOST,  # comment if run locally
+                # host=DB_CONFIG.host, #uncomment if not run with docker
                 database=DB_CONFIG.database,
                 user=DB_CONFIG.user,
                 password=DB_CONFIG.password,
@@ -176,6 +177,8 @@ class UserTable():
         """
         user_exists = self.get_user_by_id(user_id)
         if user_exists:
+            if user_exists['is_admin']:
+                return {"Details": "Cannot delete admin user."}
             query = "DELETE FROM person WHERE id=%s"
             with Database.query(query, (user_id,)) as cur:
                 return {"success": True}
