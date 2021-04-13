@@ -6,8 +6,9 @@ CREATE TABLE IF NOT EXISTS person(
     gender GENDER NOT NULL,
     email VARCHAR(150),
     date_of_birth date NOT NULL,
-    country_of_birth varchar(50));
-insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Eliam Meschac', 'LOTONGA', 'contact@eliam-lotonga.fr', 'Male', '1484-04-08', 'Republic of Wakanda');
+    country_of_birth varchar(50),
+    is_admin BOOLEAN DEFAULT FALSE);
+insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth, is_admin) values ('Eliam Meschac', 'LOTONGA', 'contact@eliam-lotonga.fr', 'Male', '1484-04-08', 'Republic of Wakanda', 'true');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Caprice', 'Clemmens', 'cclemmens1@redcross.org', 'Female', '2000-03-07', 'Czech Republic');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Gayla', 'Natt', null, 'Male', '2005-06-17', 'China');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Maximilien', 'Donohue', null, 'Female', '1998-11-05', 'Indonesia');
