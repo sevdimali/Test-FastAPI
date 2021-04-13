@@ -1,14 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
-from enum import Enum
 from datetime import date
-from functools import cache
-import json
-
-
-class Gender(Enum):
-    MALE = "Male"
-    FEMALE = "Female"
+from models.types import Gender
 
 
 class PartialUser(BaseModel):

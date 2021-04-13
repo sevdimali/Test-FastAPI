@@ -1,33 +1,7 @@
-import psycopg2
-import psycopg2.extras
+
 from typing import Optional, Tuple
-from settings import DB_CONFIG, DOCKER_DB_HOST
-from models import User, PartialUser
-
-
-class Database:
-    __DB = None
-
-    @classmethod
-    def getDB(cls):
-        if cls.__DB is None:
-            cls.__DB = psycopg2.connect(
-                host=DOCKER_DB_HOST,  # comment if run locally
-                # host=DB_CONFIG.host, #uncomment if not run with docker
-                database=DB_CONFIG.database,
-                user=DB_CONFIG.user,
-                password=DB_CONFIG.password,
-                port=DB_CONFIG.port,
-            )
-        return cls.__DB
-
-    @classmethod
-    def query(cls, query: str, args: Optional[Tuple] = tuple()):
-        with cls.getDB() as conn:
-            cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            cur.execute(query, args)
-            conn.commit()
-            return cur
+from models.classes import User, PartialUser
+from .databases import FastAPI_DB
 
 
 class UserTable():
@@ -49,7 +23,7 @@ class UserTable():
         ORDER BY {attr} {order}
         LIMIT {limit}
         offset {offset}"""
-        with Database.query(query) as cur:
+        with FastAPI_DB.query(query) as cur:
             users = [dict(u) for u in cur.fetchall()]
             return users
 
@@ -60,7 +34,7 @@ class UserTable():
         Returns:
             int: Number of users
         """
-        with Database.query("SELECT COUNT(*) AS number_user FROM person") as cur:
+        with FastAPI_DB.query("SELECT COUNT(*) AS number_user FROM person") as cur:
             return dict(cur.fetchone()).get("number_user", 0)
 
     def get_user_by_id(self, user_id):
@@ -75,7 +49,7 @@ class UserTable():
         query = f"""SELECT *
             FROM person
             WHERE id=%s;"""
-        with Database.query(query, (user_id,)) as cur:
+        with FastAPI_DB.query(query, (user_id,)) as cur:
             user = cur.fetchone()
             return dict(user) if user is not None else {
                 "detail": "Not Found"
@@ -103,7 +77,7 @@ class UserTable():
                 date_of_birth,
                 country_of_birth
             ) VALUES(%s,%s,%s,%s,%s,%s);"""
-        with Database.query(query, args=prepare_data) as cur:
+        with FastAPI_DB.query(query, args=prepare_data) as cur:
             return {"success": True}
 
     def patch_user(self, user_id: int, user_data: PartialUser):
@@ -129,7 +103,7 @@ class UserTable():
                 date_of_birth=%s,
                 country_of_birth=%s
             WHERE id=%s;"""
-        with Database.query(query, prepare_data) as cur:
+        with FastAPI_DB.query(query, prepare_data) as cur:
             if cur.rowcount >= 1:
                 return {"success": True}
 
@@ -144,7 +118,7 @@ class UserTable():
             dict: Success operation
         """
         # check if user with chosen id already exists
-        if self.get_user_by_id(new_user.id) is None:
+        if "detail" in self.get_user_by_id(new_user.id).keys():
             prepare_data = (
                 str(new_user.id),
                 new_user.first_name, new_user.last_name,
@@ -160,7 +134,7 @@ class UserTable():
                     date_of_birth=%s,
                     country_of_birth=%s
                 WHERE id=%s;"""
-            with Database.query(query, prepare_data) as cur:
+            with FastAPI_DB.query(query, prepare_data) as cur:
                 return {"success": True}
         return {
             "Error": f"the user with the ID={new_user.id} already exists."
@@ -180,6 +154,6 @@ class UserTable():
             if user_exists['is_admin']:
                 return {"Details": "Cannot delete admin user."}
             query = "DELETE FROM person WHERE id=%s"
-            with Database.query(query, (user_id,)) as cur:
+            with FastAPI_DB.query(query, (user_id,)) as cur:
                 return {"success": True}
         return {"detail": "Invalid user ID: {user_id}"}

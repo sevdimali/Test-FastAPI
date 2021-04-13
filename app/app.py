@@ -2,10 +2,12 @@ import uvicorn
 from fastapi import FastAPI
 from typing import Optional
 from functools import cache
-from models import User, PartialUser
-from Database import UserTable
+from models.classes import User, PartialUser
+from models.storage.tables import UserTable
 
-app = FastAPI()
+app = FastAPI(title="My Super Project",
+              description="This is a very fancy project, with auto docs for the API and everything",
+              version="1.0.0")
 user_table = UserTable()
 
 
@@ -34,7 +36,7 @@ def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Optional[s
     """
     nb_users = UserTable.number_user()
     if offset < 0 or limit < 1:
-        return default
+        return {"detail": "Invalid values: offset(>=0) or limit(>0)", "users": []}
     data = {
         "next": None,
         "users": user_table.get_users(limit, offset, sort)
