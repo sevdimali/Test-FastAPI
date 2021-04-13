@@ -17,7 +17,7 @@ Go to http://127.0.0.1:8000/
 ## Manual installation without docker
 
 ### make sure the postgresql server is up and edit DB_CONFIG in the settings.py file correctly
-### use DB_CONFIG.host instead of DOCKER_DB_HOST, in Database.py file line 15
+### use DB_CONFIG.host instead of DOCKER_DB_HOST, in app/models//storage/database.py file line 15
 
 Install requirements
 ```bash

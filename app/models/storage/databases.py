@@ -11,8 +11,8 @@ class FastAPI_DB:
     def getDB(cls):
         if cls.__DB is None:
             cls.__DB = psycopg2.connect(
-                # host=DOCKER_DB_HOST,  # comment if run locally
-                host=DB_CONFIG.host,  # uncomment if not run with docker
+                host=DOCKER_DB_HOST,  # comment if run locally
+                # host=DB_CONFIG.host,  # uncomment if not run with docker
                 database=DB_CONFIG.database,
                 user=DB_CONFIG.user,
                 password=DB_CONFIG.password,
