@@ -61,19 +61,53 @@ def users_by_id(id: int):
 
 @app.post('/users/')
 def create_user(user: PartialUser):
+    """Create new users\n
+
+    Args:\n
+        user_data (PartialUser): User to create\n
+
+    Returns:\n
+        dict: Success operation\n
+    """
     return user_table.post_user(user)
 
 
 @app.patch('/users/{id}')
 def fix_user(id: int, user: PartialUser):
+    """Fix some users attributes except his ID\n
+
+    Args:\n
+        user_id (int): user ID\n
+        user_data (PartialUser): new data\n
+
+    Returns:\n
+        dict: Success operation\n
+    """
     return user_table.patch_user(id, user)
 
 
 @app.put('/users/{id}')
 def update_user(id: int, new_user: User):
+    """Replace user by another\n
+
+    Args:\n
+        user_id (int): user to replace, his ID\n
+        new_user (User): new user\n
+
+    Returns:\n
+        dict: Success operation\n
+    """
     return user_table.put_user(id, new_user)
 
 
 @app.delete('/users/{id}')
 def delete_user(id: int):
+    """Delete a user\n
+
+    Args:\n
+        user_id (int): user to delete, his ID\n
+
+    Returns:\n
+        dict: Success operation\n
+    """
     return user_table.delete_user(id)
