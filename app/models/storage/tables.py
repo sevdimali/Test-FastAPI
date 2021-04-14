@@ -52,6 +52,7 @@ class UserTable():
         with FastAPI_DB.query(query, (user_id,)) as cur:
             user = cur.fetchone()
             return dict(user) if user is not None else {
+                "success": False,
                 "detail": "Not Found"
             }
 
@@ -121,8 +122,16 @@ class UserTable():
         Returns:
             dict: Success operation
         """
+        if user_id == new_user.id:
+            return {
+                "success": False,
+                "Detail": "Please use PATCH method instead of PUT."
+            }
         if user_id == 1:
-            return {"Details": "Cannot update admin user."}
+            return {
+                "success": False,
+                "Details": "Cannot update admin user."
+            }
         # check if user with chosen id already exists
         if "detail" in self.get_user_by_id(new_user.id).keys() and not new_user.id == 0:
             prepare_data = (
@@ -144,6 +153,7 @@ class UserTable():
             with FastAPI_DB.query(query, prepare_data) as cur:
                 return {"success": True, "user": dict(cur.fetchone())}
         return {
+            "success": False,
             "Error": f"Invalid user ID={new_user.id} or already exists."
         }
 
@@ -163,4 +173,7 @@ class UserTable():
             query = "DELETE FROM person WHERE id=%s RETURNING *"
             with FastAPI_DB.query(query, (user_id,)) as cur:
                 return {"success": True, "user": dict(cur.fetchone())}
-        return {"detail": "Invalid user ID: {user_id}"}
+        return {
+            "success": False,
+            "detail": "Invalid user ID: {user_id}"
+        }
