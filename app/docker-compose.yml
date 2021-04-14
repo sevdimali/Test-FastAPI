@@ -10,7 +10,7 @@ services:
             - POSTGRES_DB=fastapidb
         volumes:
             - fastapi-data:/var/lib/postgres/data
-            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./models/storage/init.sql:/docker-entrypoint-initdb.d/init.sql
     api:
         image: meschac38000/fast-api:latest
         volumes:
