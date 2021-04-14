@@ -17,6 +17,7 @@ def index():
         "detail": "Welcome to my API build with Python FastApi",
         "apis": ["/users"],
         "docs": ["/docs", "/redoc"],
+        "openapi": "/openapi.json"
     }
 
 

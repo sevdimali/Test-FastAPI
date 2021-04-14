@@ -1,13 +1,13 @@
 CREATE TYPE GENDER AS ENUM('Male', 'Female');
 CREATE TABLE IF NOT EXISTS person(
     id BIGSERIAL NOT NULL PRIMARY KEY,
+    is_admin BOOLEAN DEFAULT FALSE,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    gender GENDER NOT NULL,
     email VARCHAR(150),
+    gender GENDER NOT NULL,
     date_of_birth date NOT NULL,
-    country_of_birth varchar(50),
-    is_admin BOOLEAN DEFAULT FALSE);
+    country_of_birth varchar(50));
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth, is_admin) values ('Eliam Meschac', 'LOTONGA', 'contact@eliam-lotonga.fr', 'Male', '1970-01-01', 'Republic of Wakanda', 'true');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Caprice', 'Clemmens', 'cclemmens1@redcross.org', 'Female', '2000-03-07', 'Czech Republic');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Gayla', 'Natt', null, 'Male', '2005-06-17', 'China');
