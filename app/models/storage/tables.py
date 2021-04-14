@@ -76,9 +76,10 @@ class UserTable():
                 email,
                 date_of_birth,
                 country_of_birth
-            ) VALUES(%s,%s,%s,%s,%s,%s);"""
+            ) VALUES(%s,%s,%s,%s,%s,%s)
+            RETURNING *;"""
         with FastAPI_DB.query(query, args=prepare_data) as cur:
-            return {"success": True}
+            return {"success": True, "user": dict(cur.fetchone())}
 
     def patch_user(self, user_id: int, user_data: PartialUser):
         """Fix some users attributes except his ID
@@ -91,7 +92,7 @@ class UserTable():
             dict: Success operation
         """
         if user_id == 1:
-             return {"Details": "Cannot patch admin user."}
+            return {"Details": "Cannot patch admin user."}
         prepare_data = (
             user_data.first_name, user_data.last_name,
             user_data.gender.value, user_data.email,
@@ -104,10 +105,11 @@ class UserTable():
                 email=%s,
                 date_of_birth=%s,
                 country_of_birth=%s
-            WHERE id=%s;"""
+            WHERE id=%s
+            RETURNING *;"""
         with FastAPI_DB.query(query, prepare_data) as cur:
             if cur.rowcount >= 1:
-                return {"success": True}
+                return {"success": True, "user": dict(cur.fetchone())}
 
     def put_user(self, user_id: int, new_user: User):
         """Replace user by another
@@ -120,9 +122,9 @@ class UserTable():
             dict: Success operation
         """
         if user_id == 1:
-             return {"Details": "Cannot update admin user."}
+            return {"Details": "Cannot update admin user."}
         # check if user with chosen id already exists
-        if "detail" in self.get_user_by_id(new_user.id).keys():
+        if "detail" in self.get_user_by_id(new_user.id).keys() or new_user.id == 0:
             prepare_data = (
                 str(new_user.id),
                 new_user.first_name, new_user.last_name,
@@ -137,11 +139,12 @@ class UserTable():
                     email=%s,
                     date_of_birth=%s,
                     country_of_birth=%s
-                WHERE id=%s;"""
+                WHERE id=%s
+                RETURNING *;"""
             with FastAPI_DB.query(query, prepare_data) as cur:
-                return {"success": True}
+                return {"success": True, "user": dict(cur.fetchone())}
         return {
-            "Error": f"the user with the ID={new_user.id} already exists."
+            "Error": f"Invalid user ID={new_user.id} or already exists."
         }
 
     def delete_user(self, user_id: int):
@@ -157,7 +160,7 @@ class UserTable():
         if "detail" not in user_exists.keys():
             if user_exists['is_admin']:
                 return {"Details": "Cannot delete admin user."}
-            query = "DELETE FROM person WHERE id=%s"
+            query = "DELETE FROM person WHERE id=%s RETURNING *"
             with FastAPI_DB.query(query, (user_id,)) as cur:
-                return {"success": True}
+                return {"success": True, "user": dict(cur.fetchone())}
         return {"detail": "Invalid user ID: {user_id}"}
