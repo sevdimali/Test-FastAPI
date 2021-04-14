@@ -6,6 +6,13 @@ from .databases import FastAPI_DB
 
 class UserTable():
 
+    __VALID_FIELDS: Tuple[str] = (
+        'id', 'is_admin',
+        'first_name', 'last_name'
+        'email', 'gender'
+        'date_of_birth', 'country_of_birth'
+    )
+
     def get_users(self, limit=10, offset=0, sort="id:asc"):
         """Get all users
 
@@ -18,6 +25,11 @@ class UserTable():
             list: list of users found
         """
         attr, order = sort.split(':')
+        if not attr in self.__VALID_FIELDS:
+            return {
+                "success": False,
+                "detail": f"Invalid attribute order by '{attr}'"
+            }
         query = f"""SELECT *
         FROM person
         ORDER BY {attr} {order}
@@ -25,7 +37,7 @@ class UserTable():
         offset {offset}"""
         with FastAPI_DB.query(query) as cur:
             users = [dict(u) for u in cur.fetchall()]
-            return users
+            return {"success": True, "users": users}
 
     @classmethod
     def number_user(cls):
