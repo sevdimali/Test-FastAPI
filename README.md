@@ -17,20 +17,23 @@ Go to http://127.0.0.1:8000/
 
 ### Database
 
-#### Connect to your postgres BD using ```psql```
+Connect to your postgres BD using ```psql```
 ```bash
 psql -U {postgres_user} -p {port_5432} -h {host}
 ```
-#### then create DB ```fastapidb```
+
+Then create DB ```fastapidb```
 ```bash
 CREATE DATABASE fastapidb;
 ```
-#### Then create table ```person``` and insert data from ```app/models/storage/init.sql by copy/paste```
 
-#### Edit DB_CONFIG in the settings.py file correctly
-#### Uncomment DB_CONFIG.host instead of DOCKER_DB_HOST line from ```app/models//storage/database.py file line 15```
+Then create table ```person``` and insert data use init.sql file from ```app/models/storage/init.sql```
 
-#### Install requirements
+Edit ```DB_CONFIG``` in the ```settings.py``` file correctly
+
+Then uncomment ```DB_CONFIG.host``` instead of ```DOCKER_DB_HOST``` line from ```app/models/storage/database.py file line 15```
+
+### Install requirements
 ```bash
 pip install -r requirements.txt
 ```
