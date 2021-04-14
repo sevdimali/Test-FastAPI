@@ -124,7 +124,7 @@ class UserTable():
         if user_id == 1:
             return {"Details": "Cannot update admin user."}
         # check if user with chosen id already exists
-        if "detail" in self.get_user_by_id(new_user.id).keys() or new_user.id == 0:
+        if "detail" in self.get_user_by_id(new_user.id).keys() and not new_user.id == 0:
             prepare_data = (
                 str(new_user.id),
                 new_user.first_name, new_user.last_name,
