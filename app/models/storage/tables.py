@@ -149,7 +149,7 @@ class UserTable():
                 "detail": "Cannot update admin user."
             }
         # update if id > 0 and user with chosen id doesn't exist
-        if "detail" in self.get_user_by_id(new_user.id).keys() and not new_user.id == 0:
+        if not self.get_user_by_id(new_user.id)['success'] and not new_user.id == 0:
             prepare_data = (
                 str(new_user.id),
                 new_user.first_name, new_user.last_name,
@@ -184,9 +184,9 @@ class UserTable():
             dict: user deleted, success state
         """
         user_exists = self.get_user_by_id(user_id)
-        if "detail" not in user_exists.keys():
+        if user_exists['success']:
 
-            if user_exists['is_admin']:
+            if user_exists['user']['is_admin']:
                 return {"detail": "Cannot delete admin user."}
 
             query = "DELETE FROM person WHERE id=%s RETURNING *"
