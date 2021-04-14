@@ -90,6 +90,8 @@ class UserTable():
         Returns:
             dict: Success operation
         """
+        if user_id == 1:
+             return {"Details": "Cannot patch admin user."}
         prepare_data = (
             user_data.first_name, user_data.last_name,
             user_data.gender.value, user_data.email,
@@ -117,6 +119,8 @@ class UserTable():
         Returns:
             dict: Success operation
         """
+        if user_id == 1:
+             return {"Details": "Cannot update admin user."}
         # check if user with chosen id already exists
         if "detail" in self.get_user_by_id(new_user.id).keys():
             prepare_data = (
@@ -150,7 +154,7 @@ class UserTable():
             dict: Success operation
         """
         user_exists = self.get_user_by_id(user_id)
-        if user_exists:
+        if "detail" not in user_exists.keys():
             if user_exists['is_admin']:
                 return {"Details": "Cannot delete admin user."}
             query = "DELETE FROM person WHERE id=%s"
