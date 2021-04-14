@@ -36,11 +36,19 @@ def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Optional[s
     """
     nb_users = UserTable.number_user()
     if offset < 0 or limit < 1:
-        return {"detail": "Invalid values: offset(>=0) or limit(>0)", "users": []}
+        return {
+            "success": False,
+            "users": [],
+            "detail": "Invalid values: offset(>=0) or limit(>0)",
+        }
     data = {
         "next": None,
-        "users": user_table.get_users(limit, offset, sort)
+        **user_table.get_users(limit, offset, sort)
     }
+
+    if not data['success']:
+        return data
+
     # manage next data
     if offset < nb_users-1 and limit <= nb_users:
         offset += limit

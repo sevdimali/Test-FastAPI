@@ -22,7 +22,7 @@ class UserTable():
             sort (str, optional): order the list of users with the combination attribute: order. Defaults to "id:asc".
 
         Returns:
-            list: list of users found
+            dict: list of users found, success state
         """
         attr, order = sort.split(':')
         if not attr in self.__VALID_FIELDS:
@@ -44,7 +44,7 @@ class UserTable():
         """Get number of users
 
         Returns:
-            int: Number of users
+            int: number of users
         """
         with FastAPI_DB.query("SELECT COUNT(*) AS number_user FROM person") as cur:
             return dict(cur.fetchone()).get("number_user", 0)
@@ -56,15 +56,19 @@ class UserTable():
             user_id (int): User ID
 
         Returns:
-            dict: User found
+            dict: user found, success state, Optional[detail]
         """
         query = f"""SELECT *
             FROM person
             WHERE id=%s;"""
         with FastAPI_DB.query(query, (user_id,)) as cur:
             user = cur.fetchone()
-            return dict(user) if user is not None else {
+            return {
+                "success": True,
+                "user": dict(user)
+            }if user is not None else {
                 "success": False,
+                "user": {},
                 "detail": "Not Found"
             }
 
@@ -75,7 +79,7 @@ class UserTable():
             user_data (PartialUser): User to create
 
         Returns:
-            dict: Success operation
+            dict: user created, success state
         """
         prepare_data = (
             user_data.first_name, user_data.last_name,
@@ -102,10 +106,10 @@ class UserTable():
             user_data (PartialUser): new data
 
         Returns:
-            dict: Success operation
+            dict: user fixed, success state
         """
         if user_id == 1:
-            return {"Details": "Cannot patch admin user."}
+            return {"detail": "Cannot patch admin user."}
         prepare_data = (
             user_data.first_name, user_data.last_name,
             user_data.gender.value, user_data.email,
@@ -132,19 +136,19 @@ class UserTable():
             new_user (User): new user
 
         Returns:
-            dict: Success operation
+            dict: user updated, success state
         """
         if user_id == new_user.id:
             return {
                 "success": False,
-                "Detail": "Please use PATCH method instead of PUT."
+                "detail": "Please use PATCH method instead of PUT."
             }
         if user_id == 1:
             return {
                 "success": False,
-                "Details": "Cannot update admin user."
+                "detail": "Cannot update admin user."
             }
-        # check if user with chosen id already exists
+        # update if id > 0 and user with chosen id doesn't exist
         if "detail" in self.get_user_by_id(new_user.id).keys() and not new_user.id == 0:
             prepare_data = (
                 str(new_user.id),
@@ -164,9 +168,10 @@ class UserTable():
                 RETURNING *;"""
             with FastAPI_DB.query(query, prepare_data) as cur:
                 return {"success": True, "user": dict(cur.fetchone())}
+
         return {
             "success": False,
-            "Error": f"Invalid user ID={new_user.id} or already exists."
+            "detail": f"Invalid user ID={new_user.id} or already exists."
         }
 
     def delete_user(self, user_id: int):
@@ -176,15 +181,18 @@ class UserTable():
             user_id (int): user to delete, his ID
 
         Returns:
-            dict: Success operation
+            dict: user deleted, success state
         """
         user_exists = self.get_user_by_id(user_id)
         if "detail" not in user_exists.keys():
+
             if user_exists['is_admin']:
-                return {"Details": "Cannot delete admin user."}
+                return {"detail": "Cannot delete admin user."}
+
             query = "DELETE FROM person WHERE id=%s RETURNING *"
             with FastAPI_DB.query(query, (user_id,)) as cur:
                 return {"success": True, "user": dict(cur.fetchone())}
+
         return {
             "success": False,
             "detail": "Invalid user ID: {user_id}"
