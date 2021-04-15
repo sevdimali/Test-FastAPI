@@ -195,5 +195,5 @@ class UserTable():
 
         return {
             "success": False,
-            "detail": "Invalid user ID: {user_id}"
+            "detail": f"Invalid user ID: {user_id}"
         }
