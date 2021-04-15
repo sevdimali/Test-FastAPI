@@ -11,8 +11,3 @@ class PartialUser(BaseModel):
     gender: Gender
     date_of_birth: date
     country_of_birth: str
-
-
-class User(PartialUser):
-    id: int
-    is_admin: Optional[bool] = False
