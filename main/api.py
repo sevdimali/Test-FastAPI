@@ -1,18 +1,31 @@
+from settings import DATABASE_CONFIG
+from tortoise import Tortoise, run_async
 import uvicorn
 from fastapi import FastAPI
 from typing import Optional
 from functools import cache
-from models.classes import User, PartialUser
-from models.storage.tables import UserTable
+from app.entities import PartialUser, User
+from app.models import Person
+# from app.storage.tables import UserTable
+from app.storage.database import Database
 
 app = FastAPI(title="My Super Project",
               description="This is a very fancy project, with auto docs for the API and everything",
               version="1.0.0")
-user_table = UserTable()
+
+# user_table = UserTable()
+Database.connect(app)
 
 
 @app.get('/')
-def index():
+async def index():
+    p = Person(
+        is_admin=True,
+        first_name="John", last_name="DOE",
+        email="john.doe@gmail.com", gender="Female",
+        date_of_birth="1970-01-01", country_of_birth="No where"
+    )
+    # re = await p.save()
     return {
         "detail": "Welcome to my API build with Python FastApi",
         "apis": ["/users"],
@@ -35,7 +48,7 @@ def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Optional[s
     Returns:\n
         List[User]: list of users found\n
     """
-    nb_users = UserTable.number_user()
+    nb_users = []  # UserTable.number_user()
     if offset < 0 or limit < 1:
         return {
             "success": False,
@@ -44,7 +57,7 @@ def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Optional[s
         }
     data = {
         "next": None,
-        **user_table.get_users(limit, offset, sort)
+        # **user_table.get_users(limit, offset, sort)
     }
 
     if not data['success']:
@@ -67,7 +80,7 @@ def users_by_id(id: int):
     Returns:\n
         User: user found\n
     """
-    return user_table.get_user_by_id(id)
+    return []  # user_table.get_user_by_id(id)
 
 
 @app.post('/users/')
@@ -80,7 +93,7 @@ def create_user(user: PartialUser):
     Returns:\n
         dict: Success operation\n
     """
-    return user_table.post_user(user)
+    return []  # user_table.post_user(user)
 
 
 @app.patch('/users/{id}')
@@ -94,7 +107,7 @@ def fix_user(id: int, user: PartialUser):
     Returns:\n
         dict: Success operation\n
     """
-    return user_table.patch_user(id, user)
+    return []  # user_table.patch_user(id, user)
 
 
 @app.put('/users/{id}')
@@ -108,7 +121,7 @@ def update_user(id: int, new_user: User):
     Returns:\n
         dict: Success operation\n
     """
-    return user_table.put_user(id, new_user)
+    return []  # user_table.put_user(id, new_user)
 
 
 @app.delete('/users/{id}')
@@ -121,4 +134,4 @@ def delete_user(id: int):
     Returns:\n
         dict: Success operation\n
     """
-    return user_table.delete_user(id)
+    return []  # user_table.delete_user(id)

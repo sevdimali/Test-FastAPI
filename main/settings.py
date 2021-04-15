@@ -1,10 +1,10 @@
 DATABASE_CONFIG = {
     'connections': {
-        # Dict format for connection
         'default': {
             'engine': 'tortoise.backends.asyncpg',
             'credentials': {
-                'host': 'db',
+                # 'host': 'db', # uncomment if running with docker
+                'host': 'localhost',  # comment if running with docker
                 'port': '5432',
                 'user': 'postgres',
                 'password': 'postgres',
@@ -14,9 +14,9 @@ DATABASE_CONFIG = {
     },
     'apps': {
         'app': {
-            'models': ['Person'],
+            'models': ['app.models'],
             # If no default_connection specified, defaults to 'default'
             'default_connection': 'default',
         }
-    }
+    },
 }

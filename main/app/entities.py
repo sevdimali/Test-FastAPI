@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import date
-from models.types import Gender
+from app.types import Gender
 
 
 class PartialUser(BaseModel):
@@ -11,3 +11,7 @@ class PartialUser(BaseModel):
     gender: Gender
     date_of_birth: date
     country_of_birth: str
+
+
+class User(PartialUser):
+    id: int
