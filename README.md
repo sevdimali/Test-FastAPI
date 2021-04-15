@@ -3,10 +3,10 @@
 ## Python version
 python >= 3.9
 
-
 ## Use Docker
 
 ### Install with docker-compose
+
 Move to app folder then run:
 ```bash
 docker-compose -f docker-compose.yml up
@@ -37,6 +37,13 @@ Then uncomment ```DB_CONFIG.host``` instead of ```DOCKER_DB_HOST``` line from ``
 ```bash
 pip install -r requirements.txt
 ```
+
+## Run tests
+
+```bash
+pytest tests.py
+```
+
 ## Run the app
 ```bash
 uvicorn app:app --reload
