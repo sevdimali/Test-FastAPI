@@ -16,5 +16,6 @@ async def test_root():
         "docs": [
             "/docs",
             "/redoc"
-        ]
+        ],
+        "openapi": "/openapi.json"
     }
