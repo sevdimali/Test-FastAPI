@@ -5,11 +5,11 @@ from fastapi import FastAPI
 from tortoise import Tortoise, run_async
 from typing import Optional
 
+from utils import API_functools
 from settings import DATABASE_CONFIG
 from baseModels import PartialUser, User
 from models import Person, Person_Pydantic_List
 from database import Database
-import json
 app = FastAPI(title="My Super Project",
               description="This is a very fancy project, with auto docs for the API and everything",
               version="1.0.0")
@@ -75,7 +75,7 @@ async def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Opti
 
 @cache
 @app.get('/users/{id}')
-def users_by_id(id: int):
+async def users_by_id(id: int):
     """Get user api\n
 
     Args:\n
@@ -83,7 +83,16 @@ def users_by_id(id: int):
     Returns:\n
         User: user found\n
     """
-    return []  # user_table.get_user_by_id(id)
+    user = await Person_Pydantic_List.from_queryset(
+        Person.filter(pk=id))
+    data = {
+        "success": True,
+        "user": API_functools.get_or_default(
+            user.dict()['__root__'], 0, {}),
+    }
+    if len(data['user'].keys()) == 0:
+        data["detail"] = "Not found"
+    return data
 
 
 @app.post('/users/')
