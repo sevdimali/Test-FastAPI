@@ -20,12 +20,6 @@ Database.connect(app)
 
 @app.get('/')
 async def index():
-    p = Person(
-        is_admin=True,
-        first_name="John", last_name="DOE",
-        email="john.doe@gmail.com", gender="Female",
-        date_of_birth="1970-01-01", country_of_birth="No where"
-    )
     # re = await p.save()
     return {
         "detail": "Welcome to my API build with Python FastApi",
@@ -37,7 +31,11 @@ async def index():
 
 @cache
 @app.get('/users/')
-async def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Optional[str] = "id:asc"):
+async def users(
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
+    sort: Optional[str] = "id:asc"
+):
     """Get users from data(DB)\n
 
     Args:\n
@@ -96,8 +94,8 @@ async def users_by_id(id: int):
     return data
 
 
-@ app.post('/users/')
-def create_user(user: PartialUser):
+@app.post('/users/', response_model=Person_Pydantic)
+async def create_user(user: PartialUser):
     """Create new users\n
 
     Args:\n
@@ -106,11 +104,18 @@ def create_user(user: PartialUser):
     Returns:\n
         dict: Success operation\n
     """
-    # user = Person.
-    return []  # user_table.post_user(user)
+    user = await Person.create(
+        first_name=user.first_name,
+        last_name=user.last_name,
+        gender=user.gender,
+        email=user.email,
+        date_of_birth=user.date_of_birth,
+        country_of_birth=user.country_of_birth
+    )
+    return user
 
 
-@ app.patch('/users/{id}')
+@app.patch('/users/{id}')
 def fix_user(id: int, user: PartialUser):
     """Fix some users attributes except his ID\n
 
