@@ -3,12 +3,13 @@ from functools import cache
 import uvicorn
 from fastapi import FastAPI
 from tortoise import Tortoise, run_async
-from typing import Optional
+from typing import Optional, List
 
 from utils import API_functools
 from settings import DATABASE_CONFIG
 from baseModels import PartialUser, User
-from models import Person, Person_Pydantic_List
+from models import Person
+from models import Person_Pydantic, PersonIn_Pydantic
 from database import Database
 app = FastAPI(title="My Super Project",
               description="This is a very fancy project, with auto docs for the API and everything",
@@ -56,14 +57,14 @@ async def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Opti
         }
     nb_users = await Person.all().count()  # UserTable.number_user()
 
-    users = await Person_Pydantic_List.from_queryset(
+    users = await Person_Pydantic.from_queryset(
         Person.all().limit(limit).offset(offset))
-    users = users.dict()['__root__']
     data = {
         "next": None,
         "users": users
     }
     if len(users) == 0:
+        data['detail'] = "Not Found"
         return data
 
     # manage next data
@@ -83,19 +84,19 @@ async def users_by_id(id: int):
     Returns:\n
         User: user found\n
     """
-    user = await Person_Pydantic_List.from_queryset(
+    user = await Person_Pydantic.from_queryset(
         Person.filter(pk=id))
     data = {
         "success": True,
         "user": API_functools.get_or_default(
-            user.dict()['__root__'], 0, {}),
+            user, 0, {}),
     }
-    if len(data['user'].keys()) == 0:
-        data["detail"] = "Not found"
+    if not API_functools.instance_of(data['user'], Person):
+        data["detail"] = "Not Found"
     return data
 
 
-@app.post('/users/')
+@ app.post('/users/')
 def create_user(user: PartialUser):
     """Create new users\n
 
@@ -105,10 +106,11 @@ def create_user(user: PartialUser):
     Returns:\n
         dict: Success operation\n
     """
+    # user = Person.
     return []  # user_table.post_user(user)
 
 
-@app.patch('/users/{id}')
+@ app.patch('/users/{id}')
 def fix_user(id: int, user: PartialUser):
     """Fix some users attributes except his ID\n
 
@@ -122,7 +124,7 @@ def fix_user(id: int, user: PartialUser):
     return []  # user_table.patch_user(id, user)
 
 
-@app.put('/users/{id}')
+@ app.put('/users/{id}')
 def update_user(id: int, new_user: User):
     """Replace user by another\n
 
@@ -136,7 +138,7 @@ def update_user(id: int, new_user: User):
     return []  # user_table.put_user(id, new_user)
 
 
-@app.delete('/users/{id}')
+@ app.delete('/users/{id}')
 def delete_user(id: int):
     """Delete a user\n
 

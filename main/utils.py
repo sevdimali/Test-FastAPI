@@ -6,3 +6,7 @@ class API_functools:
             return default
 
         return list_el[index]
+
+    @classmethod
+    def instance_of(cls, el, class_expected):
+        return el.__class__.__name__.lower() == class_expected.__name__.lower()
