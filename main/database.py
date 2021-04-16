@@ -1,7 +1,7 @@
-from tortoise import Tortoise, run_async
-from settings import DATABASE_CONFIG
-from app.models import Person
 from tortoise.contrib.fastapi import register_tortoise
+
+from settings import DATABASE_CONFIG
+from models import Person
 
 
 class Database:

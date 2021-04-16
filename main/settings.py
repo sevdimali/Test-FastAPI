@@ -14,7 +14,7 @@ DATABASE_CONFIG = {
     },
     'apps': {
         'app': {
-            'models': ['app.models'],
+            'models': ['models'],
             # If no default_connection specified, defaults to 'default'
             'default_connection': 'default',
         }

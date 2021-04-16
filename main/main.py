@@ -1,19 +1,19 @@
-from settings import DATABASE_CONFIG
-from tortoise import Tortoise, run_async
+from functools import cache
+
 import uvicorn
 from fastapi import FastAPI
+from tortoise import Tortoise, run_async
 from typing import Optional
-from functools import cache
-from app.entities import PartialUser, User
-from app.models import Person
-# from app.storage.tables import UserTable
-from app.storage.database import Database
+
+from settings import DATABASE_CONFIG
+from baseModels import PartialUser, User
+from models import Person
+from database import Database
 
 app = FastAPI(title="My Super Project",
               description="This is a very fancy project, with auto docs for the API and everything",
               version="1.0.0")
 
-# user_table = UserTable()
 Database.connect(app)
 
 

@@ -1,6 +1,6 @@
 from tortoise import models, fields
-from .types import Gender
 from tortoise.contrib.pydantic import pydantic_model_creator
+from customTypes import Gender
 
 
 class Person(models.Model):
