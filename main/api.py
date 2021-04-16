@@ -7,9 +7,9 @@ from typing import Optional
 
 from settings import DATABASE_CONFIG
 from baseModels import PartialUser, User
-from models import Person
+from models import Person, Person_Pydantic_List
 from database import Database
-
+import json
 app = FastAPI(title="My Super Project",
               description="This is a very fancy project, with auto docs for the API and everything",
               version="1.0.0")
@@ -36,7 +36,7 @@ async def index():
 
 @cache
 @app.get('/users/')
-def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Optional[str] = "id:asc"):
+async def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Optional[str] = "id:asc"):
     """Get users from data(DB)\n
 
     Args:\n
@@ -48,19 +48,22 @@ def users(limit: Optional[int] = 50, offset: Optional[int] = 0, sort: Optional[s
     Returns:\n
         List[User]: list of users found\n
     """
-    nb_users = []  # UserTable.number_user()
     if offset < 0 or limit < 1:
         return {
             "success": False,
             "users": [],
             "detail": "Invalid values: offset(>=0) or limit(>0)",
         }
+    nb_users = await Person.all().count()  # UserTable.number_user()
+
+    users = await Person_Pydantic_List.from_queryset(
+        Person.all().limit(limit).offset(offset))
+    users = users.dict()['__root__']
     data = {
         "next": None,
-        # **user_table.get_users(limit, offset, sort)
+        "users": users
     }
-
-    if not data['success']:
+    if len(users) == 0:
         return data
 
     # manage next data

@@ -1,5 +1,6 @@
 from tortoise import models, fields
 from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise.contrib.pydantic import pydantic_queryset_creator
 from customTypes import Gender
 
 
@@ -19,6 +20,7 @@ class Person(models.Model):
         return self.__str__()
 
 
+Person_Pydantic_List = pydantic_queryset_creator(Person)
 Person_Pydantic = pydantic_model_creator(Person, name="Person")
 PersonIn_Pydantic = pydantic_model_creator(
     Person, name="PersonIn", exclude_readonly=True)
