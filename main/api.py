@@ -2,6 +2,7 @@ from functools import cache
 
 import uvicorn
 from fastapi import FastAPI
+from tortoise.contrib.fastapi import HTTPNotFoundError
 from tortoise import Tortoise, run_async
 from typing import Optional, List
 
@@ -74,7 +75,7 @@ async def users(
 
 @cache
 @app.get('/users/{id}')
-async def users_by_id(id: int):
+async def users_by_id(user_id: int):
     """Get user api\n
 
     Args:\n
@@ -83,7 +84,7 @@ async def users_by_id(id: int):
         User: user found\n
     """
     user = await Person_Pydantic.from_queryset(
-        Person.filter(pk=id))
+        Person.filter(pk=user_id))
     data = {
         "success": True,
         "user": API_functools.get_or_default(
@@ -115,8 +116,8 @@ async def create_user(user: PartialUser):
     return user
 
 
-@app.patch('/users/{id}')
-def fix_user(id: int, user: PartialUser):
+@app.patch('/users/{id}', response_model=Person_Pydantic, responses={404: {"model": HTTPNotFoundError}})
+async def fix_user(user_id: int, user: PersonIn_Pydantic):
     """Fix some users attributes except his ID\n
 
     Args:\n
@@ -126,7 +127,9 @@ def fix_user(id: int, user: PartialUser):
     Returns:\n
         dict: Success operation\n
     """
-    return []  # user_table.patch_user(id, user)
+    # TODO with pydantic or tortoise validator
+    await Person.filter(id=user_id).update(**user.dict(exclude_unset=True))
+    return await Person_Pydantic.from_queryset_single(Person.get(id=user_id))
 
 
 @ app.put('/users/{id}')
