@@ -33,7 +33,33 @@ class PartialUser(BaseModel):
                 f"{kwargs['field'].name} is not a valid email address.")
         return value.lower()
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "first_name": "John",
+                "last_name": "DOE",
+                "email": "john.doe@eliam-lotonga.fr",
+                "gender": "Male",
+                "date_of_birth": "1970-01-01",
+                "country_of_birth": "No where",
+            }
+        }
+
 
 class User(PartialUser):
     id: int
     is_admin: Optional[bool] = False
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": 0,
+                "is_admin": False,
+                "first_name": "John",
+                "last_name": "DOE",
+                "email": "john.doe@eliam-lotonga.fr",
+                "gender": "Male",
+                "date_of_birth": "1970-01-01",
+                "country_of_birth": "No where",
+            }
+        }
