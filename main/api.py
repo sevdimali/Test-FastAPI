@@ -171,7 +171,7 @@ async def update_user(user_id: int, new_user: User):
         response['detail'] = "Cannot update user with ID {user_id}. 🥺"
 
     if user_id == new_user.id:
-        response['detail'] = "Please use Patch route instead."
+        response['detail'] = "ID doesn't changed. Please use Patch route instead."
         return response
 
     old_user_found = await Person.get_or_none(id=user_id)

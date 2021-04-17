@@ -31,7 +31,7 @@ class PartialUser(BaseModel):
         except EmailNotValidError:
             raise ValueError(
                 f"{kwargs['field'].name} is not a valid email address.")
-        return value
+        return value.lower()
 
 
 class User(PartialUser):
