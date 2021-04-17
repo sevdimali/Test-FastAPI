@@ -4,7 +4,7 @@ from pydantic import BaseModel, ValidationError, validator
 from typing import Optional
 from email_validator import validate_email, EmailNotValidError
 
-from customTypes import Gender
+from api.api_v1.models.types import Gender
 
 
 class PartialUser(BaseModel):

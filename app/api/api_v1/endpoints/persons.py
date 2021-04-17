@@ -1,34 +1,18 @@
 from functools import cache
-
-import uvicorn
-from fastapi import FastAPI
+from fastapi import APIRouter, Request
 from typing import Optional
 
-from utils import API_functools
-from baseModels import PartialUser, User
-from models import Person
-from models import Person_Pydantic
-from database import Database
-app = FastAPI(title="My Super Project",
-              description="This is a very fancy project, with auto docs for the API and everything",
-              version="1.0.0")
+from api.utils import API_functools
+from api.api_v1.models.pydantic import PartialUser, User
+from api.api_v1.models.tortoise import Person, Person_Pydantic
 
-Database.connect(app)
-
-
-@app.get('/')
-async def index():
-    return {
-        "detail": "Welcome to my API build with Python FastApi",
-        "apis": ["/users"],
-        "docs": ["/docs", "/redoc"],
-        "openapi": "/openapi.json"
-    }
+router = APIRouter()
 
 
 @cache
-@app.get('/users/')
+@router.get('/')
 async def users(
+    request: Request,
     limit: Optional[int] = 50,
     offset: Optional[int] = 0,
     sort: Optional[str] = "id:asc"
@@ -65,12 +49,13 @@ async def users(
     # manage next data
     if offset < nb_users-1 and limit <= nb_users:
         offset += limit
-        data['next'] = f'/users/?limit={limit}&offset={offset}'
+        base = request.scope.get("path")
+        data['next'] = f'{base}?limit={limit}&offset={offset}'
     return data
 
 
 @cache
-@app.get('/users/{user_id}')
+@router.get('/{user_id}')
 async def users_by_id(user_id: int):
     """Get user api\n
 
@@ -91,7 +76,7 @@ async def users_by_id(user_id: int):
     return data
 
 
-@app.post('/users/', response_model=Person_Pydantic)
+@router.post('/', response_model=Person_Pydantic)
 async def create_user(user: PartialUser):
     """Create new users\n
 
@@ -112,7 +97,7 @@ async def create_user(user: PartialUser):
     return user
 
 
-@app.patch('/users/{user_id}')
+@router.patch('/{user_id}')
 async def fix_user(user_id: int, user: PartialUser):
     """Fix some users attributes except his ID\n
 
@@ -152,7 +137,7 @@ async def fix_user(user_id: int, user: PartialUser):
     return await Person_Pydantic.from_tortoise_orm(user_updated)
 
 
-@app.put('/users/{user_id}')
+@router.put('/{user_id}')
 async def update_user(user_id: int, new_user: User):
     """Replace user by another\n
 
@@ -198,7 +183,7 @@ async def update_user(user_id: int, new_user: User):
     return await Person_Pydantic.from_tortoise_orm(new_user)
 
 
-@app.delete('/users/{user_id}')
+@router.delete('/{user_id}')
 async def delete_user(user_id: int):
     """Delete a user\n
 
