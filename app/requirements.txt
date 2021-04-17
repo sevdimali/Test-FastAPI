@@ -1,5 +1,0 @@
-fastapi==0.63.0
-httpx==0.17.1
-psycopg2-binary==2.8.6
-uvicorn==0.13.4
-pytest==6.2.3
