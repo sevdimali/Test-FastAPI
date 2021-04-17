@@ -1,6 +1,6 @@
 import pytest
 from httpx import AsyncClient
-from app.main import app
+from main import app
 
 
 @pytest.mark.asyncio
@@ -11,7 +11,7 @@ async def test_root():
     assert response.json() == {
         "detail": "Welcome to my API build with Python FastApi",
         "apis": [
-            "/users"
+            "/api/v1/users"
         ],
         "docs": [
             "/docs",
