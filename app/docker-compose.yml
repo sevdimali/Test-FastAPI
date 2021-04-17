@@ -20,7 +20,7 @@ services:
         links:
             - api_db
         environment:
-            DATABASE_HOST: db
+            DATABASE_HOST: api_db
 volumes:
     fastapi-data:
         driver: local
