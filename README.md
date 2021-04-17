@@ -15,6 +15,11 @@ Go to http://127.0.0.1:8000/
 
 ## Manual installation without docker
 
+Move to app folder
+```bash
+cd app/
+```
+
 ### Database
 
 Connect to your postgres BD using ```psql```
@@ -27,25 +32,25 @@ Then create DB ```fastapidb```
 CREATE DATABASE fastapidb;
 ```
 
-Then create table ```person``` and insert data use init.sql file from ```app/models/storage/init.sql```
+Then create table ```person``` and insert data.
+Use for that init.sql file from ```app/api/api_v1/storage/init.sql```
 
-Edit ```DB_CONFIG``` in the ```settings.py``` file correctly
-
-Then uncomment ```DB_CONFIG.host``` instead of ```DOCKER_DB_HOST``` line from ```app/models/storage/database.py file line 15```
+Then Edit ```DB_CONFIG``` in the ```settings.py``` file correctly
+You will find settings file in ```api_v1``` folder
 
 ### Install requirements
 ```bash
 pip install -r requirements.txt
 ```
 
+## Run the app
+```bash
+uvicorn main:app --reload
+```
+Go to http://127.0.0.1:8000/
+
 ## Run tests
 
 ```bash
 pytest tests.py
 ```
-
-## Run the app
-```bash
-uvicorn app:app --reload
-```
-Go to http://127.0.0.1:8000/
