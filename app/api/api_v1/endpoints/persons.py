@@ -138,7 +138,7 @@ async def fix_user(user_id: int, user: PartialUser):
 
 
 @router.put('/{user_id}')
-async def update_user(user_id: int, new_user: User):
+async def update_user(user_id: int, new_user: int):
     """Replace user by another\n
 
     Args:\n
@@ -152,35 +152,28 @@ async def update_user(user_id: int, new_user: User):
         "success": False,
         "user": {}
     }
-    if user_id == 1:
+    if user_id == 1 or new_user == 1:
         response['detail'] = "Cannot update user with ID {user_id}. 🥺"
 
-    if user_id == new_user.id:
-        response['detail'] = "ID doesn't changed. Please use Patch route instead."
+    if user_id == new_user:
+        response['detail'] = "Action not allowed."
         return response
 
-    old_user_found = await Person.get_or_none(id=user_id)
-    if old_user_found is None:
-        response["detail"] = f"User with ID {user_id} doesn't exist."
+    # check if user exists
+    user_to_delete = await Person.get_or_none(id=user_id)
+    user_to_update = await Person.get_or_none(id=new_user)
+    cur_id = user_id if not user_to_delete else new_user
+    if user_to_update is None or user_to_delete is None:
+        response["detail"] = f"User with ID {cur_id} doesn't exist."
         return response
-
-    # check if new id is already in use
-    new_user_found = await Person.get_or_none(id=new_user.id)
-    if not new_user_found is None:
-        response['detail'] = f"This ID {new_user.id} is already in use"
-        return response
-    """
-    clone the old user
-    update the clone's attributes and save it
-    delete the old user
-    """
-    # del data['id']
-    # new_user = old_user_found.clone(pk=new_user.id)
-    # await new_user.update_from_dict(data).save()
-    # await new_user.save(force_create=True, update_fields=True)
-    await old_user_found.delete()
-    new_user = await Person.create(**new_user.__dict__)
-    return await Person_Pydantic.from_tortoise_orm(new_user)
+    data = {**user_to_delete.__dict__}
+    data.pop('_partial', None)
+    data.pop('_saved_in_db', None)
+    data.pop('id', None)
+    user_updated = await user_to_update.update_from_dict(data)
+    await user_updated.save()
+    await user_to_delete.delete()
+    return await Person_Pydantic.from_tortoise_orm(user_updated)
 
 
 @router.delete('/{user_id}')
@@ -210,16 +203,14 @@ async def delete_user(user_id: int):
         return response
 
     await user_found.delete()
-    print("ID", user_found.id)
     user_still_there = await Person.exists(id=user_id)
-    print("user still there", user_still_there)
     if user_still_there:
         response['detail'] = f"Error while deleting user {user_id}"
         return response
 
     response['success'] = True
     response['user'] = user_found.__dict__
-    del response['user']['_partial']
-    del response['user']['_saved_in_db']
+    response['user'].pop('_partial', None)
+    response['user'].pop('_saved_in_db', None)
     response['detail'] = f"User {user_id} delete successfully ⭐"
     return response
