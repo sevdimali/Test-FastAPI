@@ -136,7 +136,7 @@ async def fix_user(user_id: int, user: PartialUser):
     see: https://pydantic-docs.helpmanual.io/usage/validators/
     """
     if user_id == 1:
-        return {"detail": "Cannot patch user with ID {user_id}."}
+        return {"detail": "Cannot patch user with ID {user_id}. 🥺"}
 
     user_found = await Person.get_or_none(id=user_id)
     if user_found is None:
@@ -154,7 +154,7 @@ async def fix_user(user_id: int, user: PartialUser):
 
 
 @app.put('/users/{user_id}')
-def update_user(id: int, new_user: User):
+async def update_user(user_id: int, new_user: User):
     """Replace user by another\n
 
     Args:\n
@@ -164,7 +164,39 @@ def update_user(id: int, new_user: User):
     Returns:\n
         dict: Success operation\n
     """
-    return []  # user_table.put_user(id, new_user)
+    response = {
+        "success": False,
+        "user": {}
+    }
+    if user_id == 1:
+        response['detail'] = "Cannot update user with ID {user_id}. 🥺"
+
+    if user_id == new_user.id:
+        response['detail'] = "Please use Patch route instead."
+        return response
+
+    old_user_found = await Person.get_or_none(id=user_id)
+    if old_user_found is None:
+        response["detail"] = f"User with ID {user_id} doesn't exist."
+        return response
+
+    # check if new id is already in use
+    new_user_found = await Person.get_or_none(id=new_user.id)
+    if not new_user_found is None:
+        response['detail'] = f"This ID {new_user.id} is already in use"
+        return response
+    """
+    clone the old user
+    update the clone's attributes and save it
+    delete the old user
+    """
+    # del data['id']
+    # new_user = old_user_found.clone(pk=new_user.id)
+    # await new_user.update_from_dict(data).save()
+    # await new_user.save(force_create=True, update_fields=True)
+    await old_user_found.delete()
+    new_user = await Person.create(**new_user.__dict__)
+    return await Person_Pydantic.from_tortoise_orm(new_user)
 
 
 @ app.delete('/users/{id}')
