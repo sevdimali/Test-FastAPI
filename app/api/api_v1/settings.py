@@ -3,8 +3,8 @@ DATABASE_CONFIG = {
         'default': {
             'engine': 'tortoise.backends.asyncpg',
             'credentials': {
-                # 'host': 'db', # uncomment if running with docker
-                'host': 'localhost',  # comment if running with docker
+                'host': 'db',  # comment if postgres is in localhost
+                # 'host': 'localhost',  # uncomment if running postgres in localhost
                 'port': '5432',
                 'user': 'postgres',
                 'password': 'postgres',
