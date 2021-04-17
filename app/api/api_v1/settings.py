@@ -14,7 +14,7 @@ DATABASE_CONFIG = {
     },
     'apps': {
         'app': {
-            'models': ['models'],
+            'models': ['api.api_v1.models.tortoise'],
             # If no default_connection specified, defaults to 'default'
             'default_connection': 'default',
         }

@@ -1,34 +1,18 @@
 from functools import cache
-
-import uvicorn
-from fastapi import FastAPI
+from fastapi import APIRouter, Request
 from typing import Optional
 
-from utils import API_functools
-from baseModels import PartialUser, User
-from models import Person
-from models import Person_Pydantic
-from database import Database
-app = FastAPI(title="My Super Project",
-              description="This is a very fancy project, with auto docs for the API and everything",
-              version="1.0.0")
+from api.utils import API_functools
+from api.api_v1.models.pydantic import PartialUser, User
+from api.api_v1.models.tortoise import Person, Person_Pydantic
 
-Database.connect(app)
-
-
-@app.get('/')
-async def index():
-    return {
-        "detail": "Welcome to my API build with Python FastApi",
-        "apis": ["/users"],
-        "docs": ["/docs", "/redoc"],
-        "openapi": "/openapi.json"
-    }
+router = APIRouter()
 
 
 @cache
-@app.get('/users/')
+@router.get('/')
 async def users(
+    request: Request,
     limit: Optional[int] = 50,
     offset: Optional[int] = 0,
     sort: Optional[str] = "id:asc"
@@ -65,12 +49,13 @@ async def users(
     # manage next data
     if offset < nb_users-1 and limit <= nb_users:
         offset += limit
-        data['next'] = f'/users/?limit={limit}&offset={offset}'
+        base = request.scope.get("path")
+        data['next'] = f'{base}?limit={limit}&offset={offset}'
     return data
 
 
 @cache
-@app.get('/users/{user_id}')
+@router.get('/{user_id}')
 async def users_by_id(user_id: int):
     """Get user api\n
 
@@ -91,7 +76,7 @@ async def users_by_id(user_id: int):
     return data
 
 
-@app.post('/users/', response_model=Person_Pydantic)
+@router.post('/', response_model=Person_Pydantic)
 async def create_user(user: PartialUser):
     """Create new users\n
 
@@ -112,7 +97,7 @@ async def create_user(user: PartialUser):
     return user
 
 
-@app.patch('/users/{user_id}')
+@router.patch('/{user_id}')
 async def fix_user(user_id: int, user: PartialUser):
     """Fix some users attributes except his ID\n
 
@@ -152,8 +137,8 @@ async def fix_user(user_id: int, user: PartialUser):
     return await Person_Pydantic.from_tortoise_orm(user_updated)
 
 
-@app.put('/users/{user_id}')
-async def update_user(user_id: int, new_user: User):
+@router.put('/{user_id}')
+async def update_user(user_id: int, new_user: int):
     """Replace user by another\n
 
     Args:\n
@@ -167,38 +152,31 @@ async def update_user(user_id: int, new_user: User):
         "success": False,
         "user": {}
     }
-    if user_id == 1:
+    if user_id == 1 or new_user == 1:
         response['detail'] = "Cannot update user with ID {user_id}. 🥺"
 
-    if user_id == new_user.id:
-        response['detail'] = "ID doesn't changed. Please use Patch route instead."
+    if user_id == new_user:
+        response['detail'] = "Action not allowed."
         return response
 
-    old_user_found = await Person.get_or_none(id=user_id)
-    if old_user_found is None:
-        response["detail"] = f"User with ID {user_id} doesn't exist."
+    # check if user exists
+    user_to_delete = await Person.get_or_none(id=user_id)
+    user_to_update = await Person.get_or_none(id=new_user)
+    cur_id = user_id if not user_to_delete else new_user
+    if user_to_update is None or user_to_delete is None:
+        response["detail"] = f"User with ID {cur_id} doesn't exist."
         return response
-
-    # check if new id is already in use
-    new_user_found = await Person.get_or_none(id=new_user.id)
-    if not new_user_found is None:
-        response['detail'] = f"This ID {new_user.id} is already in use"
-        return response
-    """
-    clone the old user
-    update the clone's attributes and save it
-    delete the old user
-    """
-    # del data['id']
-    # new_user = old_user_found.clone(pk=new_user.id)
-    # await new_user.update_from_dict(data).save()
-    # await new_user.save(force_create=True, update_fields=True)
-    await old_user_found.delete()
-    new_user = await Person.create(**new_user.__dict__)
-    return await Person_Pydantic.from_tortoise_orm(new_user)
+    data = {**user_to_delete.__dict__}
+    data.pop('_partial', None)
+    data.pop('_saved_in_db', None)
+    data.pop('id', None)
+    user_updated = await user_to_update.update_from_dict(data)
+    await user_updated.save()
+    await user_to_delete.delete()
+    return await Person_Pydantic.from_tortoise_orm(user_updated)
 
 
-@app.delete('/users/{user_id}')
+@router.delete('/{user_id}')
 async def delete_user(user_id: int):
     """Delete a user\n
 
@@ -225,16 +203,14 @@ async def delete_user(user_id: int):
         return response
 
     await user_found.delete()
-    print("ID", user_found.id)
     user_still_there = await Person.exists(id=user_id)
-    print("user still there", user_still_there)
     if user_still_there:
         response['detail'] = f"Error while deleting user {user_id}"
         return response
 
     response['success'] = True
     response['user'] = user_found.__dict__
-    del response['user']['_partial']
-    del response['user']['_saved_in_db']
+    response['user'].pop('_partial', None)
+    response['user'].pop('_saved_in_db', None)
     response['detail'] = f"User {user_id} delete successfully ⭐"
     return response

@@ -1,7 +1,7 @@
 from tortoise.contrib.fastapi import register_tortoise
 
-from settings import DATABASE_CONFIG
-from models import Person
+from api.api_v1.settings import DATABASE_CONFIG
+from api.api_v1.models.tortoise import Person
 
 
 class Database:

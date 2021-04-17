@@ -1,7 +1,8 @@
 from tortoise import models, fields
 from tortoise.contrib.pydantic import pydantic_model_creator
-from customTypes import Gender
-from baseModels import PartialUser
+
+from api.api_v1.models.types import Gender
+from api.api_v1.models.pydantic import PartialUser
 
 
 class Person(models.Model):
@@ -30,5 +31,5 @@ class Person(models.Model):
 
 
 Person_Pydantic = pydantic_model_creator(Person, name="Person")
-PersonIn_Pydantic = pydantic_model_creator(
-    Person, name="PersonIn", exclude_readonly=True)
+# PersonIn_Pydantic = pydantic_model_creator(
+#     Person, name="PersonIn", exclude_readonly=True)
