@@ -28,6 +28,15 @@ async def users(
     Returns:\n
         List[User]: list of users found\n
     """
+    order_by = API_functools.valid_order(User, sort)
+
+    if order_by is None:
+        return {
+            "success": False,
+            "users": [],
+            "detail": "Invalid sort parameters. it must match attribute:order. ex: id:asc or id:desc"
+        }
+
     if offset < 0 or limit < 1:
         return {
             "success": False,
@@ -37,7 +46,7 @@ async def users(
     nb_users = await Person.all().count()  # UserTable.number_user()
 
     users = await Person_Pydantic.from_queryset(
-        Person.all().limit(limit).offset(offset))
+        Person.all().limit(limit).offset(offset).order_by(order_by))
     data = {
         "next": None,
         "users": users
