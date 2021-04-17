@@ -74,7 +74,7 @@ async def users(
 
 
 @cache
-@app.get('/users/{id}')
+@app.get('/users/{user_id}')
 async def users_by_id(user_id: int):
     """Get user api\n
 
@@ -116,8 +116,8 @@ async def create_user(user: PartialUser):
     return user
 
 
-@app.patch('/users/{id}', response_model=Person_Pydantic, responses={404: {"model": HTTPNotFoundError}})
-async def fix_user(user_id: int, user: PersonIn_Pydantic):
+@app.patch('/users/{user_id}')
+async def fix_user(user_id: int, user: PartialUser):
     """Fix some users attributes except his ID\n
 
     Args:\n
@@ -127,12 +127,33 @@ async def fix_user(user_id: int, user: PersonIn_Pydantic):
     Returns:\n
         dict: Success operation\n
     """
-    # TODO with pydantic or tortoise validator
-    await Person.filter(id=user_id).update(**user.dict(exclude_unset=True))
-    return await Person_Pydantic.from_queryset_single(Person.get(id=user_id))
+    # await Person.filter(id=user_id).update(**user.dict(exclude_unset=True))
+    # return await Person_Pydantic.from_queryset_single(Person.get(id=user_id))
+
+    """
+    Prefer this method to use the Pydantic validator which is more maintainable
+    than the tortoiseORM validator.py in my opinion
+    see: https://pydantic-docs.helpmanual.io/usage/validators/
+    """
+    if user_id == 1:
+        return {"detail": "Cannot patch user with ID {user_id}."}
+
+    user_found = await Person.get_or_none(id=user_id)
+    if user_found is None:
+        return {
+            "success": False,
+            "user": {},
+            "detail": "User with ID {user_id} doesn't exist."
+        }
+    user_updated = user_found.update_from_dict(
+        {**user.__dict__, "id": user_found.id,
+         "is_admin": user_found.is_admin}
+    )
+    await user_updated.save()
+    return await Person_Pydantic.from_tortoise_orm(user_updated)
 
 
-@ app.put('/users/{id}')
+@app.put('/users/{user_id}')
 def update_user(id: int, new_user: User):
     """Replace user by another\n
 
