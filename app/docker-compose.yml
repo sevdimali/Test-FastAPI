@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-    db:
+    api_db:
         image: postgres:13-alpine
         ports:
             - 5432:5432
@@ -18,7 +18,7 @@ services:
         ports:
             - 8000:80
         links:
-            - db
+            - api_db
         environment:
             DATABASE_HOST: db
 volumes:
