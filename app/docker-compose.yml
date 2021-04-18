@@ -3,6 +3,7 @@ services:
   api_db:
     image: postgres:13-alpine
     container_name: api_db
+    restart: always
     ports:
       - 5432:5432
     environment:
@@ -14,6 +15,7 @@ services:
       - ./api/api_v1/storage/init.sql:/docker-entrypoint-initdb.d/init.sql
   api:
     image: meschac38000/fast-api:latest
+    restart: unless-stopped
     container_name: api
     volumes:
       - .:/src/app
