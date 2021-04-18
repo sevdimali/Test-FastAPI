@@ -19,7 +19,7 @@ services:
       - .:/src/app
     ports:
       - 8000:80
-    links:
+    depends_on:
       - api_db
     environment:
       DATABASE_HOST: api_db
