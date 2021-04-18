@@ -16,7 +16,19 @@ class PartialUser(BaseModel):
     country_of_birth: str
 
     @validator('last_name', 'first_name', 'country_of_birth')
-    def between_3_and_50_characters(cls, value, **kwargs):
+    def between_3_and_50_characters(cls, value: str, **kwargs) -> str:
+        """Validate str attributes that must contains minimum 3 characters\
+            and maximum 50 characters\n
+
+        Args:\n
+            value (str): attribute to validate
+
+        Raises:
+            ValueError: if constraint not respected
+
+        Returns:
+            str: validate attribute
+        """
         value = value.title().strip()
         if not (3 <= len(value) <= 50):
             raise ValueError(
@@ -24,7 +36,18 @@ class PartialUser(BaseModel):
         return value
 
     @validator('email')
-    def valid_email(cls, value, **kwargs):
+    def valid_email(cls, value: str, **kwargs) -> str:
+        """Validate email attribute using validate_email package
+
+        Args:
+            value (str): current email to validate
+
+        Raises:
+            ValueError: if email invalid
+
+        Returns:
+            [str]: email
+        """
         value = value.title().strip()
         try:
             valid = validate_email(value)

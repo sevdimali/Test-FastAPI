@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from api.api_v1.storage.database import Database
 from api.api_v1.api import router as api_router
-
+from typing import Dict, Any
 
 app = FastAPI(
     title="My Super Project",
@@ -22,7 +22,12 @@ Database.connect(app)
 
 
 @app.get('/')
-async def index():
+async def index() -> Dict[str, Any]:
+    """root path, returns some API paths
+
+    Returns:
+        Dict[str, Any]: Api routes 
+    """
     return {
         "detail": "Welcome to my API build with Python FastApi",
         "apis": ["/api/v1/users"],

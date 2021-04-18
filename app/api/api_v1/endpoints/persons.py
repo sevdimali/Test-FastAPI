@@ -1,6 +1,6 @@
 from functools import cache
 from fastapi import APIRouter, Request
-from typing import Optional
+from typing import Optional, Dict, List, Any
 
 from api.utils import API_functools
 from api.api_v1.models.pydantic import PartialUser, User
@@ -16,7 +16,7 @@ async def users(
     limit: Optional[int] = 50,
     offset: Optional[int] = 0,
     sort: Optional[str] = "id:asc"
-):
+) -> Optional[List[Dict[str, Any]]]:
     """Get users from data(DB)\n
 
     Args:\n
@@ -26,21 +26,22 @@ async def users(
             attribute:(asc {ascending} or desc {descending}). Defaults to "id:asc".\n
         default (list, optional): default value if not found. Defaults to [].\n
     Returns:\n
-        List[User]: list of users found\n
+        Optional[List[Dict[str, Any]]]: list of users found or Dict with error\n
     """
+    response = {
+        "success": False,
+        "users": [],
+    }
     order_by = API_functools.valid_order(User, sort)
-
     if order_by is None:
         return {
-            "success": False,
-            "users": [],
+            **response,
             "detail": "Invalid sort parameters. it must match attribute:order. ex: id:asc or id:desc"
         }
 
     if offset < 0 or limit < 1:
         return {
-            "success": False,
-            "users": [],
+            **response,
             "detail": "Invalid values: offset(>=0) or limit(>0)",
         }
     nb_users = await Person.all().count()  # UserTable.number_user()
@@ -52,8 +53,10 @@ async def users(
         "users": users
     }
     if len(users) == 0:
-        data['detail'] = "Not Found"
-        return data
+        return {
+            **data,
+            "detail": "Not Found"
+        }
 
     # manage next data
     if offset < nb_users-1 and limit <= nb_users:
@@ -65,13 +68,13 @@ async def users(
 
 @cache
 @router.get('/{user_id}')
-async def users_by_id(user_id: int):
+async def users_by_id(user_id: int) -> Dict[str, Any]:
     """Get user api\n
 
     Args:\n
-        id (int): user ID\n
+        user_id (int): user ID\n
     Returns:\n
-        User: user found\n
+        Dict[str, Any]: contain user found\n
     """
     user = await Person_Pydantic.from_queryset(
         Person.filter(pk=user_id))
@@ -86,14 +89,14 @@ async def users_by_id(user_id: int):
 
 
 @router.post('/', response_model=Person_Pydantic)
-async def create_user(user: PartialUser):
+async def create_user(user: PartialUser) -> Dict[str, Any]:
     """Create new users\n
 
     Args:\n
-        user_data (PartialUser): User to create\n
+        user (PartialUser): User to create\n
 
     Returns:\n
-        dict: Success operation\n
+        Dict[str, Any]: User created\n
     """
     user = await Person.create(
         first_name=user.first_name,
@@ -107,7 +110,7 @@ async def create_user(user: PartialUser):
 
 
 @router.patch('/{user_id}')
-async def fix_user(user_id: int, user: PartialUser):
+async def fix_user(user_id: int, user: PartialUser) -> Dict[str, Any]:
     """Fix some users attributes except his ID\n
 
     Args:\n
@@ -115,7 +118,7 @@ async def fix_user(user_id: int, user: PartialUser):
         user_data (PartialUser): new data\n
 
     Returns:\n
-        dict: Success operation\n
+        Dict[str, Any]: contains User new data or error\n
     """
     response = {
         "success": False,
@@ -124,9 +127,9 @@ async def fix_user(user_id: int, user: PartialUser):
     # await Person.filter(id=user_id).update(**user.dict(exclude_unset=True))
     # return await Person_Pydantic.from_queryset_single(Person.get(id=user_id))
 
-    """
+    """(More control to the validator)
     Prefer this method to use the Pydantic validator which is more maintainable
-    than the tortoiseORM validator.py in my opinion
+    than the tortoiseORM validator in my opinion
     see: https://pydantic-docs.helpmanual.io/usage/validators/
     """
     if user_id == 1:
@@ -147,7 +150,7 @@ async def fix_user(user_id: int, user: PartialUser):
 
 
 @router.put('/{user_id}')
-async def update_user(user_id: int, new_user: int):
+async def update_user(user_id: int, new_user: int) -> Dict[str, Any]:
     """Replace user by another\n
 
     Args:\n
@@ -155,7 +158,7 @@ async def update_user(user_id: int, new_user: int):
         new_user (User): new user\n
 
     Returns:\n
-        dict: Success operation\n
+        Dict[str, Any]: contains User new data or error\n
     """
     response = {
         "success": False,
@@ -186,14 +189,14 @@ async def update_user(user_id: int, new_user: int):
 
 
 @router.delete('/{user_id}')
-async def delete_user(user_id: int):
+async def delete_user(user_id: int) -> Dict[str, Any]:
     """Delete a user\n
 
     Args:\n
         user_id (int): user to delete, his ID\n
 
     Returns:\n
-        dict: Success operation\n
+        Dict[str, Any]: contains deleted User data or error\n
     """
     response = {
         "success": False,
