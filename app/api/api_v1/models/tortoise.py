@@ -20,15 +20,6 @@ class Person(models.Model):
     def __repr__(self):
         return self.__str__()
 
-    async def update(self, user: PartialUser):
-        self.first_name = user.first_name
-        self.last_name = user.last_name
-        self.email = user.email
-        self.gender = user.gender
-        self.date_of_birth = user.date_of_birth
-        self.country_of_birth = user.country_of_birth
-        return await self.save()
-
 
 Person_Pydantic = pydantic_model_creator(Person, name="Person")
 # PersonIn_Pydantic = pydantic_model_creator(

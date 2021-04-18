@@ -7,7 +7,7 @@ class Gender(str, Enum):
     FEMALE = "Female"
 
     def __repr__(self):
-        return "%s" % (self._value_)
+        return f"{self.__class__.__name__}(gender={self._value_}"
 
     def __str__(self):
         return self.__repr__()
