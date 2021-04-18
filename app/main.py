@@ -1,5 +1,7 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
+from api.api_v1.settings import CORS_MIDDLEWARE_CONFIG
 from api.api_v1.storage.database import Database
 from api.api_v1.api import router as api_router
 from typing import Dict, Any
@@ -14,6 +16,11 @@ app = FastAPI(
     # ],
     # root_path="/api/v1",
     # root_path_in_servers=False,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    **CORS_MIDDLEWARE_CONFIG
 )
 
 API_BASE_URL = "/api/v1"

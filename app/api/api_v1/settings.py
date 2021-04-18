@@ -20,3 +20,10 @@ DATABASE_CONFIG = {
         }
     },
 }
+
+CORS_MIDDLEWARE_CONFIG = {
+    "allow_origins": ["*"],
+    "allow_credentials": True,
+    "allow_methods": ["GET", "POST", "PATCH", "PUT", "DELETE"],
+    "allow_headers": ["*"],
+}
