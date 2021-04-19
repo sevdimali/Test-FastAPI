@@ -8,7 +8,8 @@ from email_validator import validate_email, EmailNotValidError
 from api.api_v1.models.types import Gender
 
 
-class PartialUser(BaseModel):
+class User(BaseModel):
+    is_admin: Optional[bool] = False
     first_name: str
     last_name: str
     email: str
@@ -52,7 +53,7 @@ class PartialUser(BaseModel):
         Returns:
             str: validate attribute
         """
-        value = value.title().strip()
+        value = value.title().strip().lower()
         result = re.match(
             '((https?:\/\/(www\.)?|(www\.))([\w\-\_]+)(\.[a-z]{2,10})(\/.+)?)',
             value)
@@ -85,28 +86,6 @@ class PartialUser(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "first_name": "John",
-                "last_name": "DOE",
-                "email": "john.doe@eliam-lotonga.fr",
-                "gender": "Male",
-                "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
-                "job": "Compensation Analyst",
-                "company": "Edgetag",
-                "date_of_birth": "1970-01-01",
-                "country_of_birth": "No where",
-            }
-        }
-
-
-class User(PartialUser):
-    id: int
-    is_admin: Optional[bool] = False
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "id": 0,
-                "is_admin": False,
                 "first_name": "John",
                 "last_name": "DOE",
                 "email": "john.doe@eliam-lotonga.fr",

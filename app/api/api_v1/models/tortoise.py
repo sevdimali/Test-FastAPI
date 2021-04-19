@@ -2,7 +2,6 @@ from tortoise import models, fields
 from tortoise.contrib.pydantic import pydantic_model_creator
 
 from api.api_v1.models.types import Gender
-from api.api_v1.models.pydantic import PartialUser
 
 
 class Person(models.Model):

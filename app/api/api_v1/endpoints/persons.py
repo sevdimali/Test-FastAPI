@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request
 from typing import Optional, Dict, List, Any
 
 from api.utils import API_functools
-from api.api_v1.models.pydantic import PartialUser, User
+from api.api_v1.models.pydantic import User
 from api.api_v1.models.tortoise import Person, Person_Pydantic
 
 router = APIRouter()
@@ -89,11 +89,11 @@ async def users_by_id(user_id: int) -> Dict[str, Any]:
 
 
 @router.post('/', response_model=Person_Pydantic)
-async def create_user(user: PartialUser) -> Dict[str, Any]:
+async def create_user(user: User) -> Dict[str, Any]:
     """Create new users\n
 
     Args:\n
-        user (PartialUser): User to create\n
+        user (User): User to create\n
 
     Returns:\n
         Dict[str, Any]: User created\n
@@ -103,12 +103,12 @@ async def create_user(user: PartialUser) -> Dict[str, Any]:
 
 
 @router.patch('/{user_id}')
-async def fix_user(user_id: int, user: PartialUser) -> Dict[str, Any]:
+async def fix_user(user_id: int, user: User) -> Dict[str, Any]:
     """Fix some users attributes except his ID\n
 
     Args:\n
         user_id (int): user ID\n
-        user_data (PartialUser): new data\n
+        user_data (User): new data\n
 
     Returns:\n
         Dict[str, Any]: contains User new data or error\n
@@ -125,10 +125,6 @@ async def fix_user(user_id: int, user: PartialUser) -> Dict[str, Any]:
     than the tortoiseORM validator in my opinion
     see: https://pydantic-docs.helpmanual.io/usage/validators/
     """
-    if user_id == 1:
-        response['detail'] = "Cannot patch user with ID {user_id}. 🥺"
-        return response
-
     user_found = await Person.get_or_none(id=user_id)
     if user_found is None:
         response['detail'] = "User with ID {user_id} doesn't exist."
@@ -144,11 +140,11 @@ async def fix_user(user_id: int, user: PartialUser) -> Dict[str, Any]:
 
 @router.put('/{user_id}')
 async def update_user(user_id: int, new_user: int) -> Dict[str, Any]:
-    """Replace user by another\n
+    """Transfer data from one user to another\n
 
     Args:\n
-        user_id (int): user to replace, his ID\n
-        new_user (User): new user\n
+        user_id (int): user who transfers the data and will be deleted\n
+        new_user (int): user receiving data\n
 
     Returns:\n
         Dict[str, Any]: contains User new data or error\n
@@ -157,9 +153,6 @@ async def update_user(user_id: int, new_user: int) -> Dict[str, Any]:
         "success": False,
         "user": {}
     }
-    if user_id == 1 or new_user == 1:
-        response['detail'] = "Cannot update user with ID {user_id}. 🥺"
-
     if user_id == new_user:
         response['detail'] = "Action not allowed."
         return response
@@ -195,14 +188,8 @@ async def delete_user(user_id: int) -> Dict[str, Any]:
         "success": False,
         "user": {}
     }
-    if user_id == 1:
-        response['detail'] = f"Cannot delete user with ID {user_id}. 🥺"
-        return response
 
     user_found = await Person.get_or_none(id=user_id)
-    return_data = {
-
-    }
     if not user_found:
         response['detail'] = f"User with ID {user_id} doesn't exist"
         return response

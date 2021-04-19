@@ -60,7 +60,7 @@ class API_functools:
             Optional[str]: valid sql string order by or None
         """
         attr, order = sort.split(":")
-        valid_attributes = tuple(
+        valid_attributes = ('id',) + tuple(
             target_cls.__dict__.get('__fields__', {}).keys())
         if attr.lower() in valid_attributes and order.lower() in ORDERS.keys():
             return f"{ORDERS.get(order.lower(), '')}{attr.lower()}"
@@ -88,13 +88,26 @@ class API_functools:
         }.get(env)
 
     @classmethod
-    async def insert_default_data(cls):
+    async def insert_default_data(cls) -> None:
+        """Init `person` table with some default users\n
+        Returns:\n
+            None: nothing
+        """
         with futures.ProcessPoolExecutor() as executor:
             for user in INIT_DATA:
                 executor.map(await cls.__create_default_person(user))
 
     @classmethod
     async def __create_default_person(cls, user: dict) -> Person:
+        """Insert person into `person` table
+            called by insert_default_data function\n
+
+        Args:\n
+            user (dict): user data to insert according to person model\n
+
+        Returns:\n
+            Person: inserted person
+        """
         person = await Person.create(
             is_admin=user["is_admin"],
             first_name=user['first_name'],
