@@ -44,7 +44,7 @@ async def users(
             **response,
             "detail": "Invalid values: offset(>=0) or limit(>0)",
         }
-    nb_users = await Person.all().count()  # UserTable.number_user()
+    nb_users = await Person.all().count()
 
     users = await Person_Pydantic.from_queryset(
         Person.all().limit(limit).offset(offset).order_by(order_by))
@@ -98,14 +98,7 @@ async def create_user(user: PartialUser) -> Dict[str, Any]:
     Returns:\n
         Dict[str, Any]: User created\n
     """
-    user = await Person.create(
-        first_name=user.first_name,
-        last_name=user.last_name,
-        gender=user.gender,
-        email=user.email,
-        date_of_birth=user.date_of_birth,
-        country_of_birth=user.country_of_birth
-    )
+    user = await Person.create(**user.__dict__)
     return user
 
 
