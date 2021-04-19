@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.api_v1.models.tortoise import Person
 from api.api_v1.api import router as api_router
 from api.api_v1.storage.database import Database
-from api.api_v1.settings import CORS_MIDDLEWARE_CONFIG
+from api.api_v1.settings import CORS_MIDDLEWARE_CONFIG, ENV
 from api.utils import API_functools
 
 app = FastAPI(
@@ -55,4 +55,7 @@ app.include_router(api_router, prefix=API_BASE_URL)
 
 if __name__ == '__main__':
     # Run app
-    uvicorn.run(app, host="0.0.0.0", port=80)
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=API_functools.get_config_env(ENV)['port'])

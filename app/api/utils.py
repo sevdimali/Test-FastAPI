@@ -67,6 +67,27 @@ class API_functools:
         return None
 
     @classmethod
+    def get_config_env(env: str = "docker") -> dict:
+        """set port and host depending on environment
+
+        Args:
+            env (str, optional): runing app environment('local' or 'docker'). Defaults to "docker".
+
+        Returns:
+            dict: contains host and port
+        """
+        return {
+            "docker": {
+                "port": 80,
+                "db_host": "api_db"
+            },
+            "local": {
+                "port": 8000,
+                "db_host": "127.0.0.1"
+            }
+        }.get(env)
+
+    @classmethod
     async def insert_default_data(cls):
         with futures.ProcessPoolExecutor() as executor:
             for user in INIT_DATA:

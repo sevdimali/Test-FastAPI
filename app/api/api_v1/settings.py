@@ -1,10 +1,16 @@
+from api.utils import API_functools
+
+
+# 'docker' or 'local'
+ENV = "docker"
+
+
 TORTOISE_ORM = {
     'connections': {
         'default': {
             'engine': 'tortoise.backends.asyncpg',
             'credentials': {
-                'host': 'api_db',  # comment if postgres is in localhost
-                # 'host': 'localhost',  # uncomment if running postgres in localhost
+                'host': API_functools.get_config_env(ENV)['db_host'],
                 'port': '5432',
                 'user': 'postgres',
                 'password': 'postgres',
