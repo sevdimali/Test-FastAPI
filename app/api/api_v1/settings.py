@@ -3,8 +3,6 @@ from api.utils import API_functools
 
 # 'docker' or 'local'
 ENV = "docker"
-
-
 TORTOISE_ORM = {
     'connections': {
         'default': {

@@ -25,7 +25,7 @@ Go to http://127.0.0.1:8000/
 Note that, you can create a virtual environment
 if you don't want to install requirements in your host machine
 
-For that run following commands
+For that run the following commands
 
 ```bash
 python -m venv {choose-name}
@@ -33,13 +33,13 @@ python -m venv {choose-name}
 
 activate this virtual environment
 
-On linux or mac
+Linux or Mac
 
 ```bash
 source {choose-name}/bin/activate
 ```
 
-On windows
+Windows
 
 ```bash
 bash ./{choose-name}/Scripts/activate
@@ -71,8 +71,8 @@ Then create DB `fastapidb`
 CREATE DATABASE fastapidb;
 ```
 
-Then Edit `TORTOISE_ORM` variable in the `settings.py` correctly.
-You will find settings file in `api_v1` folder
+Then Edit `ENV` and `TORTOISE_ORM` variable in the `settings.py` correctly.
+You will find settings file in `api/api_v1` folder
 
 Then create table `person`.
 For that run this following commands
