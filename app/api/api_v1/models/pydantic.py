@@ -12,6 +12,9 @@ class PartialUser(BaseModel):
     last_name: str
     email: str
     gender: Gender
+    avatar: Optional[str]
+    company: Optional[str]
+    job: Optional[str]
     date_of_birth: date
     country_of_birth: str
 
@@ -63,6 +66,9 @@ class PartialUser(BaseModel):
                 "last_name": "DOE",
                 "email": "john.doe@eliam-lotonga.fr",
                 "gender": "Male",
+                "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
+                "job": "Compensation Analyst",
+                "company": "Edgetag",
                 "date_of_birth": "1970-01-01",
                 "country_of_birth": "No where",
             }
@@ -82,6 +88,9 @@ class User(PartialUser):
                 "last_name": "DOE",
                 "email": "john.doe@eliam-lotonga.fr",
                 "gender": "Male",
+                "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
+                "job": "Compensation Analyst",
+                "company": "Edgetag",
                 "date_of_birth": "1970-01-01",
                 "country_of_birth": "No where",
             }

@@ -1,4 +1,4 @@
-DATABASE_CONFIG = {
+TORTOISE_ORM = {
     'connections': {
         'default': {
             'engine': 'tortoise.backends.asyncpg',
@@ -14,7 +14,7 @@ DATABASE_CONFIG = {
     },
     'apps': {
         'app': {
-            'models': ['api.api_v1.models.tortoise'],
+            'models': ['api.api_v1.models.tortoise', "aerich.models"],
             # If no default_connection specified, defaults to 'default'
             'default_connection': 'default',
         }

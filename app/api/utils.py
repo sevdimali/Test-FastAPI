@@ -1,5 +1,10 @@
+import concurrent.futures as futures
+
 from typing import Optional, Dict, Any, Type, TypeVar
 from pydantic import BaseModel
+
+from api.api_v1.models.tortoise import Person
+from api.api_v1.storage.initial_data import INIT_DATA
 
 ORDERS: Dict[str, str] = {
     "asc": "",
@@ -60,3 +65,26 @@ class API_functools:
         if attr.lower() in valid_attributes and order.lower() in ORDERS.keys():
             return f"{ORDERS.get(order.lower(), '')}{attr.lower()}"
         return None
+
+    @classmethod
+    async def insert_default_data(cls):
+        with futures.ProcessPoolExecutor() as executor:
+            for user in INIT_DATA:
+                executor.map(await cls.__create_default_person(user))
+
+    @classmethod
+    async def __create_default_person(cls, user: dict) -> Person:
+        person = await Person.create(
+            is_admin=user["is_admin"],
+            first_name=user['first_name'],
+            last_name=user['last_name'],
+            gender=user['gender'],
+            email=user['email'],
+            avatar=user['avatar'],
+            company=user['company'],
+            job=user['job'],
+            date_of_birth=user['date_of_birth'],
+            country_of_birth=user['country_of_birth']
+        )
+        print(f"==> Insert user {user}.")
+        return person
