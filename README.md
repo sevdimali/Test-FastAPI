@@ -22,6 +22,29 @@ Go to http://127.0.0.1:8000/
 
 ## Manual installation without docker
 
+Note that, you can create a virtual environment
+if you don't want to install requirements in your host machine
+
+For that run following commands
+
+```bash
+python -m venv {choose-name}
+```
+
+activate this virtual environment
+
+On linux or mac
+
+```bash
+source {choose-name}/bin/activate
+```
+
+On windows
+
+```bash
+bash ./{choose-name}/Scripts/activate
+```
+
 Move to app folder
 
 ```bash
