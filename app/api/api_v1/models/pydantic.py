@@ -1,3 +1,4 @@
+import re
 from datetime import date
 
 from pydantic import BaseModel, ValidationError, validator
@@ -18,7 +19,7 @@ class PartialUser(BaseModel):
     date_of_birth: date
     country_of_birth: str
 
-    @validator('last_name', 'first_name', 'country_of_birth')
+    @validator('last_name', 'first_name', 'country_of_birth', 'job', 'company')
     def between_3_and_50_characters(cls, value: str, **kwargs) -> str:
         """Validate str attributes that must contains minimum 3 characters\
             and maximum 50 characters\n
@@ -36,6 +37,28 @@ class PartialUser(BaseModel):
         if not (3 <= len(value) <= 50):
             raise ValueError(
                 f"{kwargs['field'].name} must contain between 3 and 50 characters.")
+        return value
+
+    @validator('avatar')
+    def valid_url(cls, value: str, **kwargs) -> str:
+        """Validate url\n
+
+        Args:\n
+            value (str): url avatar to validate
+
+        Raises:
+            ValueError: if constraint not respected
+
+        Returns:
+            str: validate attribute
+        """
+        value = value.title().strip()
+        result = re.match(
+            '((https?:\/\/(www\.)?|(www\.))([\w\-\_]+)(\.[a-z]{2,10})(\/.+)?)',
+            value)
+        if result is None:
+            raise ValueError(
+                f"{kwargs['field'].name} must be a valid url.")
         return value
 
     @validator('email')
