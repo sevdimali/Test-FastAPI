@@ -13,7 +13,7 @@ services:
     volumes:
       - fastapi-data:/var/lib/postgres/data
   api:
-    image: meschac38000/fast-api:dev
+    image: meschac38000/fast-api:latest
     container_name: api
     command: >
       bash -c "aerich init -t api.api_v1.settings.TORTOISE_ORM
