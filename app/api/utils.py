@@ -67,7 +67,7 @@ class API_functools:
         return None
 
     @classmethod
-    def get_config_env(env: str = "docker") -> dict:
+    def get_config_env(cls, env: str = "docker") -> dict:
         """set port and host depending on environment
 
         Args:
