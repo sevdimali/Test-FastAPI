@@ -11,6 +11,9 @@ class Person(models.Model):
     last_name = fields.CharField(max_length=50)
     email = fields.CharField(max_length=150, null=True, blank=True)
     gender = fields.CharEnumField(enum_type=Gender, max_length=6)
+    avatar = fields.CharField(max_length=255, null=True, blank=True)
+    job = fields.CharField(max_length=50, null=True, blank=True)
+    company = fields.CharField(null=True, blank=True, max_length=50)
     date_of_birth = fields.DateField()
     country_of_birth = fields.CharField(max_length=50)
 
