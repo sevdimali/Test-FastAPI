@@ -74,7 +74,7 @@ async def users_by_id(user_id: int) -> Dict[str, Any]:
     Args:\n
         user_id (int): user ID\n
     Returns:\n
-        Dict[str, Any]: contain user found\n
+        Dict[str, Any]: contains user found\n
     """
     user = await Person_Pydantic.from_queryset(
         Person.filter(pk=user_id))
@@ -144,7 +144,8 @@ async def update_user(user_id: int, new_user: int) -> Dict[str, Any]:
 
     Args:\n
         user_id (int): user who transfers the data and will be deleted\n
-        new_user (int): user receiving data\n
+        new_user (int): user receiving data, \
+            its data will be updated with the data of the first user\n
 
     Returns:\n
         Dict[str, Any]: contains User new data or error\n
@@ -179,7 +180,7 @@ async def delete_user(user_id: int) -> Dict[str, Any]:
     """Delete a user\n
 
     Args:\n
-        user_id (int): user to delete, his ID\n
+        user_id (int): user to delete\n
 
     Returns:\n
         Dict[str, Any]: contains deleted User data or error\n
