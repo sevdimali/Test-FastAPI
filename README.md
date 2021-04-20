@@ -2,7 +2,7 @@
 
 ## Python versions
 
-python 3.7, 3.8 3.9
+python >= 3.9
 
 ### Install with docker-compose
 
