@@ -55,7 +55,7 @@ class User(BaseModel):
         """
         value = value.title().strip().lower()
         result = re.match(
-            '((https?:\/\/(www\.)?|(www\.))([\w\-\_]+)(\.[a-z]{2,10})(\/.+)?)',
+            '((https?:\/\/(www\.)?|(www\.))([\w\-\_\.]+)(\.[a-z]{2,10})(\/.+)?)',
             value)
         if result is None:
             raise ValueError(
