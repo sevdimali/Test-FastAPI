@@ -1,7 +1,6 @@
 from api.utils import API_functools
 
-
-# 'docker' or 'local'
+# runing app environment('local' or 'docker'). Defaults to "docker".
 ENV = "docker"
 
 TORTOISE_ORM = {
@@ -9,7 +8,8 @@ TORTOISE_ORM = {
         'default': {
             'engine': 'tortoise.backends.asyncpg',
             'credentials': {
-                'host': API_functools.get_config_env(ENV)['db_host'],
+                # set ENV variable
+                'host': API_functools.get_config_env()['db_host'],
                 'port': '5432',
                 'user': 'postgres',
                 'password': 'postgres',

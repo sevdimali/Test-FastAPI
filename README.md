@@ -84,12 +84,6 @@ aerich init -t api.api_v1.settings.TORTOISE_ORM
 aerich init-db
 ```
 
-Note that the program will insert data by default
-when you run the app and navigate to the root path /
-if the `person` table is empty.
-To avoid this, go to the app doc http://127.0.0.1:8000/api/v1/docs
-and insert a first user using the post route
-
 ## Run the app
 
 ```bash
@@ -97,6 +91,11 @@ python main.py
 ```
 
 Go to http://127.0.0.1:8000/
+
+## Fake Data
+
+To load some fake data, go to http://127.0.0.1:8000/data
+which will load fake data and redirect you to /
 
 ## Run tests
 
