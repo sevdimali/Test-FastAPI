@@ -20,6 +20,7 @@ def get_config_env() -> dict:
     }.get(ENV)
 
 
+TORTOISE_TEST_DB = "sqlite://tests/test-{}.sqlite3"
 TORTOISE_ORM = {
     'connections': {
         'default': {
