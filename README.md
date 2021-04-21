@@ -71,11 +71,10 @@ Then create DB `fastapidb`
 CREATE DATABASE fastapidb;
 ```
 
-Then Edit `ENV` and `TORTOISE_ORM` variable in the `settings.py` correctly.
+Then Edit `ENV` and `TORTOISE_ORM` variables in the `settings.py` correctly.
 You will find settings file in `api/api_v1` folder
 
-Then create table `person`.
-For that run this following commands
+Then run migrations using aerich to db table(s).
 
 ```bash
 aerich init -t api.api_v1.settings.TORTOISE_ORM
