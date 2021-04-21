@@ -7,6 +7,7 @@ from tortoise.contrib import test
 
 from main import app
 from api.api_v1 import settings
+from api.api_v1.models.tortoise import Person
 
 
 TORTOISE_TEST_DB = getattr(
@@ -54,6 +55,55 @@ class TestPersonAPi(test.TestCase):
             "company": "Edgetag",
             "date_of_birth": "1970-01-01",
             "country_of_birth": "No where",
+        }
+        assert response.status_code == 200
+        assert response.json() == expected
+
+    async def test_get_users(self):
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT)
+        expected = {
+            "detail": 'Not Found',
+            'success': False,
+            'users': []
+        }
+        assert response.status_code == 200
+        assert response.json() == expected
+        # Create new User
+        person = await Person.create(
+            **{
+                "is_admin": False,
+                "first_name": "John",
+                "last_name": "DOE",
+                "email": "john.doe@eliam-lotonga.fr",
+                "gender": "Male",
+                "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
+                "job": "Compensation Analyst",
+                "company": "Edgetag",
+                "date_of_birth": "1970-01-01",
+                "country_of_birth": "No where",
+            }
+        )
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT)
+        expected = {
+            "next": None,
+            "previous": None,
+            "users": [
+                {
+                    "id": 1,
+                    "is_admin": False,
+                    "first_name": "John",
+                    "last_name": "DOE",
+                    "email": "john.doe@eliam-lotonga.fr",
+                    "gender": "Male",
+                    "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
+                    "job": "Compensation Analyst",
+                    "company": "Edgetag",
+                    "date_of_birth": "1970-01-01",
+                    "country_of_birth": "No where",
+                }
+            ]
         }
         assert response.status_code == 200
         assert response.json() == expected
