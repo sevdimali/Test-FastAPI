@@ -4,6 +4,7 @@ from starlette.responses import RedirectResponse
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.api_v1.settings import get_config_env
 from api.api_v1.models.tortoise import Person
 from api.api_v1.api import router as api_router
 from api.api_v1.storage.database import Database
@@ -65,4 +66,4 @@ if __name__ == '__main__':
     uvicorn.run(
         app,
         host="0.0.0.0",
-        port=API_functools.get_config_env()['port'])
+        port=get_config_env()['port'])
