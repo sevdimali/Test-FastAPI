@@ -25,7 +25,7 @@ USER_DATA = {
     "job": "Compensation Analyst",
     "company": "Edgetag",
     "date_of_birth": "1970-01-01",
-    "country_of_birth": "No where",
+    "country_of_birth": "No where"
 }
 
 
@@ -79,5 +79,28 @@ class TestPersonAPi(test.TestCase):
                 }
             ]
         }
+        assert response.status_code == 200
+        assert response.json() == expected
+
+    async def test_patch_user(self):
+        # Create new User
+        person = await Person.create(
+            **{
+                "is_admin": False,
+                "first_name": "John1",
+                "last_name": "DOE1",
+                "email": "john1.doe1@eliam-lotonga.fr",
+                "gender": "Female",
+                "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set11",
+                "job": "Compensation Analyst 1",
+                "company": "Edgetag 1",
+                "date_of_birth": "1971-02-02",
+                "country_of_birth": "No where 1"
+            }
+        )
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.patch(f"{API_ROOT}{person.id}", data=json.dumps(USER_DATA))
+        expected = {"id": person.id, **USER_DATA}
+
         assert response.status_code == 200
         assert response.json() == expected
