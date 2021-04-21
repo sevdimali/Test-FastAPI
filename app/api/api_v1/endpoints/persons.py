@@ -48,17 +48,14 @@ async def users(
 
     users = await Person_Pydantic.from_queryset(
         Person.all().limit(limit).offset(offset).order_by(order_by))
-    data = {
-        "next": None,
-        "previous": None,
-        "users": users
-    }
+
     if len(users) == 0:
         return {
-            **data,
+            **response,
             "detail": "Not Found"
         }
-    return API_functools.manage_next_previous_page(request, data, nb_users, limit, offset)
+
+    return API_functools.manage_next_previous_page(request, users, nb_users, limit, offset)
 
 
 @cache

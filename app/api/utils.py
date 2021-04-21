@@ -86,6 +86,12 @@ class API_functools:
         Returns:
             Dict[str, Any]: response
         """
+        data = {
+            "next": None,
+            "previous": None,
+            "users": data
+        }
+
         # manage next data
         base = request.scope.get("path")
         if offset+limit < nb_total_data and limit <= nb_total_data:
