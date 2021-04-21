@@ -13,7 +13,20 @@ from api.api_v1.models.tortoise import Person
 TORTOISE_TEST_DB = getattr(
     settings, "TORTOISE_TEST_DB", "sqlite://:memory:")
 BASE_URL = "http://127.0.0.1:8000"
-API_ROOT = "/api/v1/users"
+API_ROOT = "/api/v1/users/"
+
+USER_DATA = {
+    "is_admin": True,
+    "first_name": "John",
+    "last_name": "DOE",
+    "email": "john.doe@eliam-lotonga.fr",
+    "gender": "Male",
+    "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
+    "job": "Compensation Analyst",
+    "company": "Edgetag",
+    "date_of_birth": "1970-01-01",
+    "country_of_birth": "No where",
+}
 
 
 class TestPersonAPi(test.TestCase):
@@ -32,29 +45,10 @@ class TestPersonAPi(test.TestCase):
 
     async def test_create_user(self):
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.post(API_ROOT, data=json.dumps({
-                "first_name": "John",
-                "last_name": "DOE",
-                "email": "john.doe@eliam-lotonga.fr",
-                "gender": "Male",
-                "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
-                "job": "Compensation Analyst",
-                "company": "Edgetag",
-                "date_of_birth": "1970-01-01",
-                "country_of_birth": "No where",
-            }))
+            response = await ac.post(API_ROOT, data=json.dumps(USER_DATA))
         expected = {
             "id": 1,
-            "is_admin": False,
-            "first_name": "John",
-            "last_name": "DOE",
-            "email": "john.doe@eliam-lotonga.fr",
-            "gender": "Male",
-            "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
-            "job": "Compensation Analyst",
-            "company": "Edgetag",
-            "date_of_birth": "1970-01-01",
-            "country_of_birth": "No where",
+            **USER_DATA
         }
         assert response.status_code == 200
         assert response.json() == expected
@@ -71,18 +65,7 @@ class TestPersonAPi(test.TestCase):
         assert response.json() == expected
         # Create new User
         person = await Person.create(
-            **{
-                "is_admin": False,
-                "first_name": "John",
-                "last_name": "DOE",
-                "email": "john.doe@eliam-lotonga.fr",
-                "gender": "Male",
-                "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
-                "job": "Compensation Analyst",
-                "company": "Edgetag",
-                "date_of_birth": "1970-01-01",
-                "country_of_birth": "No where",
-            }
+            **USER_DATA
         )
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT)
@@ -92,16 +75,7 @@ class TestPersonAPi(test.TestCase):
             "users": [
                 {
                     "id": 1,
-                    "is_admin": False,
-                    "first_name": "John",
-                    "last_name": "DOE",
-                    "email": "john.doe@eliam-lotonga.fr",
-                    "gender": "Male",
-                    "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
-                    "job": "Compensation Analyst",
-                    "company": "Edgetag",
-                    "date_of_birth": "1970-01-01",
-                    "country_of_birth": "No where",
+                    **USER_DATA
                 }
             ]
         }
