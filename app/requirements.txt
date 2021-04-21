@@ -7,3 +7,5 @@ tortoise-orm==0.17.2
 asyncpg==0.22.0
 email-validator==1.1.2
 asynctest==0.13.0
+requests==2.25.1
+httpx
