@@ -13,7 +13,7 @@ router = APIRouter()
 @router.get('/')
 async def users(
     request: Request,
-    limit: Optional[int] = 50,
+    limit: Optional[int] = 20,
     offset: Optional[int] = 0,
     sort: Optional[str] = "id:asc"
 ) -> Optional[List[Dict[str, Any]]]:

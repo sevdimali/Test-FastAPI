@@ -5,11 +5,13 @@ from pydantic import BaseModel
 
 from api.api_v1.models.tortoise import Person
 from api.api_v1.storage.initial_data import INIT_DATA
+from api.api_v1 import settings
 
 ORDERS: Dict[str, str] = {
     "asc": "",
     "desc": "-"
 }
+ENV = getattr(settings, "ENV", "docker")
 MODEL = TypeVar("MODEL", bound="API_functools")
 
 
@@ -67,11 +69,8 @@ class API_functools:
         return None
 
     @classmethod
-    def get_config_env(cls, env: str = "docker") -> dict:
+    def get_config_env(cls) -> dict:
         """set port and host depending on environment
-
-        Args:
-            env (str, optional): runing app environment('local' or 'docker'). Defaults to "docker".
 
         Returns:
             dict: contains host and port
@@ -85,7 +84,7 @@ class API_functools:
                 "port": 8000,
                 "db_host": "127.0.0.1"
             }
-        }.get(env)
+        }.get(ENV)
 
     @classmethod
     async def insert_default_data(cls) -> None:
