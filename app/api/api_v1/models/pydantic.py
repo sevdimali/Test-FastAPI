@@ -34,8 +34,8 @@ class User(BaseModel):
         Returns:
             str: validate attribute
         """
-        value = value.title().strip()
-        if not (3 <= len(value) <= 50):
+        str_to_validate = value.title().strip()
+        if not (3 <= len(str_to_validate) <= 50):
             raise ValueError(
                 f"{kwargs['field'].name} must contain between 3 and 50 characters.")
         return value
