@@ -123,8 +123,7 @@ async def fix_user(user_id: int, user: User) -> Dict[str, Any]:
         return response
 
     user_updated = user_found.update_from_dict(
-        {**user.__dict__, "id": user_found.id,
-         "is_admin": user_found.is_admin}
+        {**user.__dict__, "id": user_found.id}
     )
     await user_updated.save()
     return await Person_Pydantic.from_tortoise_orm(user_updated)

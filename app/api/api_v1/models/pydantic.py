@@ -86,6 +86,7 @@ class User(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                "is_admin": False,
                 "first_name": "John",
                 "last_name": "DOE",
                 "email": "john.doe@eliam-lotonga.fr",
@@ -94,6 +95,6 @@ class User(BaseModel):
                 "job": "Compensation Analyst",
                 "company": "Edgetag",
                 "date_of_birth": "1970-01-01",
-                "country_of_birth": "No where",
+                "country_of_birth": "No where"
             }
         }
