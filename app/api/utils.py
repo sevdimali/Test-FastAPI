@@ -67,6 +67,38 @@ class API_functools:
         return None
 
     @classmethod
+    def manage_next_previous_page(
+        cls,
+        request,
+        data: Dict[str, Any],
+        nb_total_data: int,
+        limit: int, offset: int
+    ) -> Dict[str, Any]:
+        """Manage next/previous data link(url)
+
+        Args:
+            request (Request): current request
+            data (Dict[str, Any]): request response data
+            nb_total_data (int): total number of resources from DB
+            limit (int): limit quantity of returned data
+            offset (int): offset of returned data
+
+        Returns:
+            Dict[str, Any]: response
+        """
+        # manage next data
+        base = request.scope.get("path")
+        if offset+limit < nb_total_data and limit <= nb_total_data:
+            next_offset = offset + limit
+            data['next'] = f'{base}?limit={limit}&offset={next_offset}'
+
+        # manage previous data
+        if offset-limit >= 0 and limit <= nb_total_data:
+            previous_offset = offset - limit
+            data['previous'] = f'{base}?limit={limit}&offset={previous_offset}'
+        return data
+
+    @classmethod
     async def insert_default_data(cls) -> None:
         """Init `person` table with some default users\n
         Returns:\n

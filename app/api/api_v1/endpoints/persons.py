@@ -50,6 +50,7 @@ async def users(
         Person.all().limit(limit).offset(offset).order_by(order_by))
     data = {
         "next": None,
+        "previous": None,
         "users": users
     }
     if len(users) == 0:
@@ -57,13 +58,7 @@ async def users(
             **data,
             "detail": "Not Found"
         }
-
-    # manage next data
-    if offset < nb_users-1 and limit <= nb_users:
-        offset += limit
-        base = request.scope.get("path")
-        data['next'] = f'{base}?limit={limit}&offset={offset}'
-    return data
+    return API_functools.manage_next_previous_page(request, data, nb_users, limit, offset)
 
 
 @cache
