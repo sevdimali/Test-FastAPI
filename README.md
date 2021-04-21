@@ -100,5 +100,5 @@ which will load fake data and redirect you to /
 ## Run tests
 
 ```bash
-pytest tests.py
+pytest --cache-clear --disable-warnings -vv tests/tests.py
 ```
