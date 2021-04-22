@@ -1,10 +1,11 @@
+import os
 from typing import Dict, Any, Optional
+
 import uvicorn
 from starlette.responses import RedirectResponse
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.api_v1.settings import get_config_env
 from api.api_v1.api import router as api_router
 from api.api_v1.storage.database import Database
 from api.api_v1.settings import CORS_MIDDLEWARE_CONFIG
@@ -67,4 +68,4 @@ if __name__ == "__main__":
     Database.connect(app)
 
     # Run app
-    uvicorn.run(app, host="0.0.0.0", port=get_config_env()["port"])
+    uvicorn.run(app, host="0.0.0.0", port=os.getenv("APP_EXPOSED_PORT", 8000))
