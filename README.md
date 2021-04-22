@@ -71,10 +71,10 @@ Then create DB `fastapidb`
 CREATE DATABASE fastapidb;
 ```
 
-Then Edit `ENV` and `TORTOISE_ORM` variables in the `settings.py` correctly.
+Then Edit `TORTOISE_ORM` variables in the `settings.py` correctly.
 You will find settings file in `api/api_v1` folder
 
-Then run migrations using aerich to create db table(s).
+Then run migrations using aerich command to create table(s).
 
 ```bash
 aerich init -t api.api_v1.settings.TORTOISE_ORM
@@ -97,8 +97,10 @@ Go to http://127.0.0.1:8000/
 To load some fake data, go to http://127.0.0.1:8000/data
 which will load fake data and redirect you to /
 
-## Run tests
+## Run all the tests
+
+from app folder run this command
 
 ```bash
-pytest --cache-clear --disable-warnings -vv
+pytest
 ```
