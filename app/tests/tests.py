@@ -104,3 +104,36 @@ class TestPersonAPi(test.TestCase):
 
         assert response.status_code == 200
         assert response.json() == expected
+
+    async def test_put_user(self):
+        # Create new User
+        person1 = await Person.create(
+            **{
+                "is_admin": False,
+                "first_name": "John1",
+                "last_name": "DOE1",
+                "email": "john1.doe1@eliam-lotonga.fr",
+                "gender": "Female",
+                "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set11",
+                "job": "Compensation Analyst 1",
+                "company": "Edgetag 1",
+                "date_of_birth": "1971-02-02",
+                "country_of_birth": "No where 1"
+            }
+        )
+        person2 = await Person.create(
+            **USER_DATA
+        )
+        assert person1.id == 1
+        assert person2.id == 2
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.put(
+                f"{API_ROOT}{person2.id}",
+                data=json.dumps(USER_DATA),
+                params={"new_user": person1.id}
+            )
+        expected = {"id": person1.id, **USER_DATA}
+
+        assert response.status_code == 200
+        assert response.json() == expected
