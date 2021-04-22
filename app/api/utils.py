@@ -115,7 +115,7 @@ class API_functools:
                 executor.map(await cls.__create_default_person(user))
 
     @classmethod
-    async def __create_default_person(cls, user: dict) -> Person:
+    async def _create_default_person(cls, user: dict) -> Person:
         """Insert person into `person` table
             called by insert_default_data function\n
 
@@ -137,5 +137,4 @@ class API_functools:
             date_of_birth=user['date_of_birth'],
             country_of_birth=user['country_of_birth']
         )
-        print(f"==> Insert user {user}.")
         return person
