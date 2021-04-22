@@ -12,6 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN pytest --cache-clear --disable-warnings -vv tests/tests.py
+RUN pytest --cache-clear --disable-warnings -vv
 
 CMD [ "python", "main.py" ]
