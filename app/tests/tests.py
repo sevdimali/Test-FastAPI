@@ -1,5 +1,6 @@
 import json
 import asyncio
+import concurrent.futures as futures
 
 import pytest
 from httpx import AsyncClient
@@ -7,8 +8,9 @@ from tortoise.contrib import test
 
 from main import app
 from api.api_v1 import settings
+from api.utils import API_functools
 from api.api_v1.models.tortoise import Person
-
+from api.api_v1.storage.initial_data import INIT_DATA
 
 TORTOISE_TEST_DB = getattr(
     settings, "TORTOISE_TEST_DB", "sqlite://:memory:")
@@ -79,6 +81,36 @@ class TestPersonAPi(test.TestCase):
                 }
             ]
         }
+        assert response.status_code == 200
+        assert response.json() == expected
+
+    async def test_get_users_with_limit_and_offset(self):
+        limit = 5
+        offset = 0
+        users = INIT_DATA[:10]
+        with futures.ProcessPoolExecutor() as executor:
+            for user in users:
+                executor.map(await API_functools._create_default_person(user))
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT, params={"limit": 5, "offset": offset})
+
+        expected = {
+            "next": f"/api/v1/users/?limit={limit}&offset={limit}",
+            'previous': None,
+            'users': [{"id": n, **user} for n, user in enumerate(users[:5], start=1)]
+        }
+        assert response.status_code == 200
+        assert response.json() == expected
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT, params={"limit": 5, "offset": limit})
+        expected = {
+            "next": None,
+            'previous': f"/api/v1/users/?limit={limit}&offset={offset}",
+            'users': [{"id": n, **user} for n, user in enumerate(users[5:], start=6)]
+        }
+
         assert response.status_code == 200
         assert response.json() == expected
 
