@@ -141,3 +141,21 @@ class TestPersonAPi(test.TestCase):
 
         assert response.status_code == 200
         assert response.json() == expected
+
+    async def test_get_user_by_id(self):
+        # Create new User
+        person = await Person.create(
+            **USER_DATA
+        )
+        assert person.id == 1
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(
+                f"{API_ROOT}{person.id}")
+        expected = {
+            "success": True,
+            "user": {"id": person.id, **USER_DATA}
+        }
+
+        assert response.status_code == 200
+        assert response.json() == expected
