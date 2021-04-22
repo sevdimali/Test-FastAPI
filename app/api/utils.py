@@ -112,7 +112,7 @@ class API_functools:
         """
         with futures.ProcessPoolExecutor() as executor:
             for user in INIT_DATA:
-                executor.map(await cls.__create_default_person(user))
+                executor.map(await cls._create_default_person(user))
 
     @classmethod
     async def _create_default_person(cls, user: dict) -> Person:
