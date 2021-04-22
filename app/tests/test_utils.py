@@ -35,7 +35,6 @@ class TestUtils(test.TestCase):
             (1, 2, 3, 4): tuple,
         }
         for el, instance in elements.items():
-            print(el, instance)
             assert API_functools.instance_of(el, instance) == True
 
     def test_valid_order(self):
