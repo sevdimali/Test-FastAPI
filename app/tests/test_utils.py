@@ -37,3 +37,17 @@ class TestUtils(test.TestCase):
         for el, instance in elements.items():
             print(el, instance)
             assert API_functools.instance_of(el, instance) == True
+
+    def test_valid_order(self):
+        # valid order must consist of an attribute of the Person class
+        # and the word "asc" or "desc"
+        orders = [
+            ("first_name:asc", "first_name"),
+            ("first_name:desc", "-first_name"),
+
+            ("notattributte:asc", None),
+            ("id:notvalidkeyword", None)
+        ]
+        for order in orders:
+            assert API_functools.valid_order(User, order[0]) == order[1]
+            assert API_functools.valid_order(User, order[0]) == order[1]
