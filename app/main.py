@@ -27,8 +27,8 @@ app = FastAPI(
     #         "description": "Production environment"
     #     },
     # ],
-    root_path=API_BASE_URL,
-    root_path_in_servers=False,
+    # root_path=API_BASE_URL,
+    # root_path_in_servers=False,
 )
 
 app.add_middleware(CORSMiddleware, **CORS_MIDDLEWARE_CONFIG)
@@ -68,4 +68,6 @@ if __name__ == "__main__":
     Database.connect(app)
 
     # Run app
-    uvicorn.run(app, host="0.0.0.0", port=os.getenv("APP_EXPOSED_PORT", 8000))
+    uvicorn.run(
+        app, host="0.0.0.0", port=int(os.getenv("APP_EXPOSED_PORT", 8000))
+    )
