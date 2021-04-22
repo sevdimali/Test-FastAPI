@@ -34,8 +34,8 @@ class User(BaseModel):
         Returns:
             str: validate attribute
         """
-        value = value.title().strip()
-        if not (3 <= len(value) <= 50):
+        str_to_validate = value.title().strip()
+        if not (3 <= len(str_to_validate) <= 50):
             raise ValueError(
                 f"{kwargs['field'].name} must contain between 3 and 50 characters.")
         return value
@@ -86,6 +86,7 @@ class User(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                "is_admin": False,
                 "first_name": "John",
                 "last_name": "DOE",
                 "email": "john.doe@eliam-lotonga.fr",
@@ -94,6 +95,6 @@ class User(BaseModel):
                 "job": "Compensation Analyst",
                 "company": "Edgetag",
                 "date_of_birth": "1970-01-01",
-                "country_of_birth": "No where",
+                "country_of_birth": "No where"
             }
         }

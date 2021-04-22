@@ -48,22 +48,14 @@ async def users(
 
     users = await Person_Pydantic.from_queryset(
         Person.all().limit(limit).offset(offset).order_by(order_by))
-    data = {
-        "next": None,
-        "users": users
-    }
+
     if len(users) == 0:
         return {
-            **data,
+            **response,
             "detail": "Not Found"
         }
 
-    # manage next data
-    if offset < nb_users-1 and limit <= nb_users:
-        offset += limit
-        base = request.scope.get("path")
-        data['next'] = f'{base}?limit={limit}&offset={offset}'
-    return data
+    return API_functools.manage_next_previous_page(request, users, nb_users, limit, offset)
 
 
 @cache
@@ -131,8 +123,7 @@ async def fix_user(user_id: int, user: User) -> Dict[str, Any]:
         return response
 
     user_updated = user_found.update_from_dict(
-        {**user.__dict__, "id": user_found.id,
-         "is_admin": user_found.is_admin}
+        {**user.__dict__, "id": user_found.id}
     )
     await user_updated.save()
     return await Person_Pydantic.from_tortoise_orm(user_updated)

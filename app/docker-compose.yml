@@ -18,7 +18,8 @@ services:
     restart: unless-stopped
     command: >
       bash -c "aerich init -t api.api_v1.settings.TORTOISE_ORM
-      && aerich init-db && python main.py"
+      && aerich init-db 
+      && python main.py"
     ports:
       - 8000:80
     depends_on:

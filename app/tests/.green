@@ -1,0 +1,2 @@
+initializer = tortoise.contrib.test.env_initializer
+finalizer = tortoise.contrib.test.finalizer

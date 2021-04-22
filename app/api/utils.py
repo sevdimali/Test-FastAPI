@@ -67,6 +67,44 @@ class API_functools:
         return None
 
     @classmethod
+    def manage_next_previous_page(
+        cls,
+        request,
+        data: Dict[str, Any],
+        nb_total_data: int,
+        limit: int, offset: int
+    ) -> Dict[str, Any]:
+        """Manage next/previous data link(url)
+
+        Args:
+            request (Request): current request
+            data (Dict[str, Any]): request response data
+            nb_total_data (int): total number of resources from DB
+            limit (int): limit quantity of returned data
+            offset (int): offset of returned data
+
+        Returns:
+            Dict[str, Any]: response
+        """
+        data = {
+            "next": None,
+            "previous": None,
+            "users": data
+        }
+
+        # manage next data
+        base = request.scope.get("path")
+        if offset+limit < nb_total_data and limit <= nb_total_data:
+            next_offset = offset + limit
+            data['next'] = f'{base}?limit={limit}&offset={next_offset}'
+
+        # manage previous data
+        if offset-limit >= 0 and limit <= nb_total_data:
+            previous_offset = offset - limit
+            data['previous'] = f'{base}?limit={limit}&offset={previous_offset}'
+        return data
+
+    @classmethod
     async def insert_default_data(cls) -> None:
         """Init `person` table with some default users\n
         Returns:\n
@@ -77,7 +115,7 @@ class API_functools:
                 executor.map(await cls.__create_default_person(user))
 
     @classmethod
-    async def __create_default_person(cls, user: dict) -> Person:
+    async def _create_default_person(cls, user: dict) -> Person:
         """Insert person into `person` table
             called by insert_default_data function\n
 
@@ -99,5 +137,4 @@ class API_functools:
             date_of_birth=user['date_of_birth'],
             country_of_birth=user['country_of_birth']
         )
-        print(f"==> Insert user {user}.")
         return person
