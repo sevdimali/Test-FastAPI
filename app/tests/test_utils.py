@@ -113,3 +113,9 @@ class TestUtils(test.TestCase):
             "users": []
         }
         assert actual == expected
+
+    async def test_insert_default_data(self):
+        users_inserted = INIT_DATA[:4]
+        await API_functools.insert_default_data(data=users_inserted)
+        nb_users = await Person.all().count()
+        assert nb_users == len(users_inserted)
