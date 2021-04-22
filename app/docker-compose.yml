@@ -26,6 +26,7 @@ services:
       - api_db
     environment:
       DATABASE_HOST: api_db
+      APP_EXPOSED_PORT: 80
 volumes:
   fastapi-data:
     driver: local
