@@ -135,5 +135,9 @@ class TestPersonAPi(test.TestCase):
             )
         expected = {"id": person1.id, **USER_DATA}
 
+        user_deleted = await Person.filter(id=2).first()
+
+        assert user_deleted == None
+
         assert response.status_code == 200
         assert response.json() == expected
