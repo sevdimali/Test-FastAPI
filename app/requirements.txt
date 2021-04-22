@@ -9,3 +9,4 @@ email-validator==1.1.2
 asynctest==0.13.0
 requests==2.25.1
 httpx
+flake8==3.9.1
