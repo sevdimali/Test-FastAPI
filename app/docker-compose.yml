@@ -13,7 +13,7 @@ services:
     volumes:
       - fastapi-data:/var/lib/postgres/data
   api:
-    image: meschac38000/fast-api:latest
+    build: .
     container_name: api
     restart: unless-stopped
     command: >
