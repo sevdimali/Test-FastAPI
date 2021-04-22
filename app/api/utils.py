@@ -1,6 +1,6 @@
 import concurrent.futures as futures
 
-from typing import Optional, Dict, Any, Type, TypeVar
+from typing import Optional, Dict, Any, Type, TypeVar, List
 from pydantic import BaseModel
 
 from api.api_v1.models.tortoise import Person
@@ -70,7 +70,7 @@ class API_functools:
     def manage_next_previous_page(
         cls,
         request,
-        data: Dict[str, Any],
+        data: List[Dict],
         nb_total_data: int,
         limit: int, offset: int
     ) -> Dict[str, Any]:
@@ -105,13 +105,13 @@ class API_functools:
         return data
 
     @classmethod
-    async def insert_default_data(cls) -> None:
+    async def insert_default_data(cls, data=INIT_DATA) -> None:
         """Init `person` table with some default users\n
         Returns:\n
             None: nothing
         """
         with futures.ProcessPoolExecutor() as executor:
-            for user in INIT_DATA:
+            for user in data:
                 executor.map(await cls._create_default_person(user))
 
     @classmethod
