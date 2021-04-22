@@ -114,6 +114,49 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
+    async def test_get_users_sorted_by_attribute(self):
+        # sort by first_name ascending order
+        asc = "first_name:asc"
+        # sort by first_name descending order
+        desc = "first_name:desc"
+
+        users = INIT_DATA[:4]
+        with futures.ProcessPoolExecutor() as executor:
+            for user in users:
+                executor.map(await API_functools._create_default_person(user))
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT, params={"sort": asc})
+
+        expected = {
+            "next": None,
+            'previous': None,
+            'users': sorted(
+
+                [{"id": n, **user}
+                    for n, user in enumerate(users, start=1)],
+                key=lambda u: u[asc.split(":")[0]]
+            )
+        }
+        assert response.status_code == 200
+        assert response.json() == expected
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT, params={"sort": desc})
+        expected = {
+            "next": None,
+            'previous': None,
+            'users': sorted(
+
+                [{"id": n, **user}
+                    for n, user in enumerate(users, start=1)],
+                key=lambda u: u[desc.split(":")[0]], reverse=True
+            )
+        }
+
+        assert response.status_code == 200
+        assert response.json() == expected
+
     async def test_patch_user(self):
         # Create new User
         person = await Person.create(
