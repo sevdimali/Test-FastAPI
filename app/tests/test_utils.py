@@ -119,3 +119,17 @@ class TestUtils(test.TestCase):
         await API_functools.insert_default_data(data=users_inserted)
         nb_users = await Person.all().count()
         assert nb_users == len(users_inserted)
+
+    async def test_create_default_person(self):
+        user_to_create = INIT_DATA[0]
+        user_created = await API_functools._create_default_person(user_to_create)
+        actual = {
+            **user_created.__dict__,
+            "gender": user_created.gender.value,
+            "date_of_birth": user_created.date_of_birth.strftime("%Y-%m-%d")
+        }
+        actual.pop('_partial')
+        actual.pop('_saved_in_db')
+        actual.pop('_custom_generated_pk')
+        actual.pop('id')
+        assert user_to_create == actual
