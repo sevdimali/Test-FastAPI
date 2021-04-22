@@ -6,26 +6,25 @@ from pydantic import BaseModel
 from api.api_v1.models.tortoise import Person
 from api.api_v1.storage.initial_data import INIT_DATA
 
-ORDERS: Dict[str, str] = {
-    "asc": "",
-    "desc": "-"
-}
+ORDERS: Dict[str, str] = {"asc": "", "desc": "-"}
 MODEL = TypeVar("MODEL", bound="API_functools")
 
 
 class API_functools:
-
     @classmethod
-    def get_or_default(cls: MODEL, list_el: tuple, index: int, default: Any = None) -> Any:
+    def get_or_default(
+        cls: MODEL, list_el: tuple, index: int, default: Any = None
+    ) -> Any:
         """Search element from specific list\n
 
         Args:\n
             cls (API_functools): utility class that used to call this method\n
             list_el (tuple): list of elements
             index (int): position of searched element
-            default (Any): default value if element not found in list of elements
+            default (Any): default value if element not found in\
+                list of elements\n
 
-        Returns:
+        Returns:\n
             Any: element if found else default
         """
         if len(list_el) <= index:
@@ -48,8 +47,11 @@ class API_functools:
         return el.__class__.__name__.lower() == class_expected.__name__.lower()
 
     @classmethod
-    def valid_order(cls: MODEL, target_cls: BaseModel, sort: str) -> Optional[str]:
-        """Validator for sort db query result with attribute:direction(asc or desc)\n
+    def valid_order(
+        cls: MODEL, target_cls: BaseModel, sort: str
+    ) -> Optional[str]:
+        """Validator for sort db query result with \
+            attribute:direction(asc or desc)\n
 
         Args:\n
             cls (API_functools): utility class that used to call this method\n
@@ -60,8 +62,9 @@ class API_functools:
             Optional[str]: valid sql string order by or None
         """
         attr, order = sort.split(":")
-        valid_attributes = ('id',) + tuple(
-            target_cls.__dict__.get('__fields__', {}).keys())
+        valid_attributes = ("id",) + tuple(
+            target_cls.__dict__.get("__fields__", {}).keys()
+        )
         if attr.lower() in valid_attributes and order.lower() in ORDERS.keys():
             return f"{ORDERS.get(order.lower(), '')}{attr.lower()}"
         return None
@@ -72,7 +75,8 @@ class API_functools:
         request,
         data: List[Dict],
         nb_total_data: int,
-        limit: int, offset: int
+        limit: int,
+        offset: int,
     ) -> Dict[str, Any]:
         """Manage next/previous data link(url)
 
@@ -86,30 +90,37 @@ class API_functools:
         Returns:
             Dict[str, Any]: response
         """
-        data = {
-            "next": None,
-            "previous": None,
-            "users": data
-        }
+        data = {"next": None, "previous": None, "users": data}
 
         # manage next data
         base = request.scope.get("path")
-        if offset+limit < nb_total_data and limit <= nb_total_data:
+        if offset + limit < nb_total_data and limit <= nb_total_data:
             next_offset = offset + limit
-            data['next'] = f'{base}?limit={limit}&offset={next_offset}'
+            data["next"] = f"{base}?limit={limit}&offset={next_offset}"
 
         # manage previous data
-        if offset-limit >= 0 and limit <= nb_total_data:
+        if offset - limit >= 0 and limit <= nb_total_data:
             previous_offset = offset - limit
-            data['previous'] = f'{base}?limit={limit}&offset={previous_offset}'
+            data["previous"] = f"{base}?limit={limit}&offset={previous_offset}"
         return data
 
     @classmethod
-    async def insert_default_data(cls, data=INIT_DATA) -> None:
+    async def insert_default_data(
+        cls, data=INIT_DATA, quantity: int = -1
+    ) -> None:
         """Init `person` table with some default users\n
+
+        Args:
+            data ([type], optional): data to load. Defaults to INIT_DATA.
+            max_data (int, optional): quantity of data to load. \
+                Defaults to -1.
         Returns:\n
             None: nothing
         """
+        quantity = (
+            quantity if len(INIT_DATA) >= quantity >= 1 else len(INIT_DATA)
+        )
+        data = data[:quantity]
         with futures.ProcessPoolExecutor() as executor:
             for user in data:
                 executor.map(await cls._create_default_person(user))
@@ -127,14 +138,14 @@ class API_functools:
         """
         person = await Person.create(
             is_admin=user["is_admin"],
-            first_name=user['first_name'],
-            last_name=user['last_name'],
-            gender=user['gender'],
-            email=user['email'],
-            avatar=user['avatar'],
-            company=user['company'],
-            job=user['job'],
-            date_of_birth=user['date_of_birth'],
-            country_of_birth=user['country_of_birth']
+            first_name=user["first_name"],
+            last_name=user["last_name"],
+            gender=user["gender"],
+            email=user["email"],
+            avatar=user["avatar"],
+            company=user["company"],
+            job=user["job"],
+            date_of_birth=user["date_of_birth"],
+            country_of_birth=user["country_of_birth"],
         )
         return person
