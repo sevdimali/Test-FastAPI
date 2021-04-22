@@ -51,3 +51,65 @@ class TestUtils(test.TestCase):
         for order in orders:
             assert API_functools.valid_order(User, order[0]) == order[1]
             assert API_functools.valid_order(User, order[0]) == order[1]
+
+    def test_manage_next_previous_page(self):
+        scope = {
+            "type": "http",
+            "path": "/",
+            "method": "GET"
+        }
+        request = Request(scope)
+        # scene 1 next=None, previous=None
+        actual = API_functools.manage_next_previous_page(
+            request,
+            data=[],
+            nb_total_data=0,
+            limit=5,
+            offset=0)
+        expected = {
+            "next": None,
+            "previous": None,
+            "users": []
+        }
+        assert actual == expected
+        # scene 2 next=Link, previous=Link
+        actual = API_functools.manage_next_previous_page(
+            request,
+            data=[],
+            nb_total_data=15,
+            limit=5,
+            offset=5)
+        expected = {
+            "next": "/?limit=5&offset=10",
+            "previous": "/?limit=5&offset=0",
+            "users": []
+        }
+        assert actual == expected
+
+        # scene 3 next=Link, previous=None
+        actual = API_functools.manage_next_previous_page(
+            request,
+            data=[],
+            nb_total_data=10,
+            limit=5,
+            offset=0)
+        expected = {
+            "next": "/?limit=5&offset=5",
+            "previous": None,
+            "users": []
+        }
+        assert actual == expected
+
+        # scene 4 next=None, previous=Link
+        actual = API_functools.manage_next_previous_page(
+            request,
+            data=[],
+            nb_total_data=10,
+            limit=5,
+            offset=5)
+        expected = {
+            "next": None,
+            "previous": "/?limit=5&offset=0",
+            "users": []
+        }
+        assert actual == expected
