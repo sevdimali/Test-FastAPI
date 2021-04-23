@@ -30,4 +30,14 @@ jobs:
       - name: Running unit test
         working-directory: ./app
         run: |
-          pytest --cache-clear --disable-warnings -vv
+          pytest
+      - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        working-directory: ./app
+        files: ./coverage.xml
+        flags: unittests
+        env_vars: OS,PYTHON
+        name: codecov-umbrella
+        fail_ci_if_error: true
+        verbose: true
