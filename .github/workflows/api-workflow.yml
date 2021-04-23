@@ -32,8 +32,8 @@ jobs:
         run: |
           pytest
       - name: Upload coverage to Codecov
-        working-directory: ./app
         uses: codecov/codecov-action@v1
+        working-directory: ./app
         with:
           files: ./coverage.xml
           flags: unittests
