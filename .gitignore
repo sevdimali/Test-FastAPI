@@ -5,3 +5,4 @@ venv
 .vscode
 migrations
 aerich.ini
+*coverage*
