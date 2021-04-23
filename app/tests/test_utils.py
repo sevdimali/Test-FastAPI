@@ -14,16 +14,10 @@ class TestUtils(test.TestCase):
             {"name": "Bob Doe"},
             {"name": "Alice Doe"},
         )
-        assert API_functools.get_or_default(list_object, 0, None) == {
-            "name": "John Doe"
-        }
-        assert API_functools.get_or_default(list_object, 1, None) == {
-            "name": "Bob Doe"
-        }
-        assert API_functools.get_or_default(list_object, 2, None) == {
-            "name": "Alice Doe"
-        }
-        assert API_functools.get_or_default(list_object, 3, None) is None
+        for index, obj in enumerate(list_object):
+            assert (
+                API_functools.get_or_default(list_object, index, None) == obj
+            )
 
     async def test_instance_of(self):
         obj = await Person.create(**INIT_DATA[0])
@@ -52,50 +46,51 @@ class TestUtils(test.TestCase):
     def test_manage_next_previous_page(self):
         scope = {"type": "http", "path": "/", "method": "GET"}
         request = Request(scope)
-        # scene 1 next=None, previous=None
-        actual = API_functools.manage_next_previous_page(
-            request, data=[], nb_total_data=0, limit=5, offset=0
-        )
-        expected = {"next": None, "previous": None, "users": []}
-        assert actual == expected
-        # scene 2 next=Link, previous=Link
-        actual = API_functools.manage_next_previous_page(
-            request, data=[], nb_total_data=15, limit=5, offset=5
-        )
-        expected = {
-            "next": "/?limit=5&offset=10",
-            "previous": "/?limit=5&offset=0",
-            "users": [],
-        }
-        assert actual == expected
-
-        # scene 3 next=Link, previous=None
-        actual = API_functools.manage_next_previous_page(
-            request, data=[], nb_total_data=10, limit=5, offset=0
-        )
-        expected = {
-            "next": "/?limit=5&offset=5",
-            "previous": None,
-            "users": [],
-        }
-        assert actual == expected
-
-        # scene 4 next=None, previous=Link
-        actual = API_functools.manage_next_previous_page(
-            request, data=[], nb_total_data=10, limit=5, offset=5
-        )
-        expected = {
-            "next": None,
-            "previous": "/?limit=5&offset=0",
-            "users": [],
-        }
-        assert actual == expected
+        data = []
+        scenes = [
+            {
+                "data": (0, 5, 0),  # nb_total_data, limit, offset
+                "expected": {"next": None, "previous": None, "users": []},
+            },
+            {
+                "data": (15, 5, 5),
+                "expected": {
+                    "next": "/?limit=5&offset=10",
+                    "previous": "/?limit=5&offset=0",
+                    "users": [],
+                },
+            },
+            {
+                "data": (10, 5, 0),
+                "expected": {
+                    "next": "/?limit=5&offset=5",
+                    "previous": None,
+                    "users": [],
+                },
+            },
+            {
+                "data": (10, 5, 5),
+                "expected": {
+                    "next": None,
+                    "previous": "/?limit=5&offset=0",
+                    "users": [],
+                },
+            },
+        ]
+        for scene in scenes:
+            # scene 1 next=None, previous=None
+            actual = API_functools.manage_next_previous_page(
+                request, data, *scene["data"]
+            )
+            assert actual == scene["expected"]
 
     async def test_insert_default_data(self):
-        users_inserted = INIT_DATA[:4]
-        await API_functools.insert_default_data(data=users_inserted)
+        nb_users_inserted = 4
+        await API_functools.insert_default_data(
+            data=INIT_DATA[:nb_users_inserted]
+        )
         nb_users = await Person.all().count()
-        assert nb_users == len(users_inserted)
+        assert nb_users == nb_users_inserted
 
     async def test_create_default_person(self):
         user_to_create = INIT_DATA[0]

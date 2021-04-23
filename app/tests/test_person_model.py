@@ -26,6 +26,18 @@ USER_DATA = {
     "date_of_birth": "1970-01-01",
     "country_of_birth": "No where",
 }
+USER_DATA2 = {
+    "is_admin": False,
+    "first_name": "John1",
+    "last_name": "DOE1",
+    "email": "john1.doe1@eliam-lotonga.fr",
+    "gender": "Female",
+    "avatar": avatar + "1",
+    "job": "Compensation Analyst 1",
+    "company": "Edgetag 1",
+    "date_of_birth": "1971-02-02",
+    "country_of_birth": "No where 1",
+}
 
 
 class TestPersonAPi(test.TestCase):
@@ -44,7 +56,9 @@ class TestPersonAPi(test.TestCase):
     async def test_create_user(self):
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.post(API_ROOT, data=json.dumps(USER_DATA))
+
         expected = {"id": 1, **USER_DATA}
+
         assert response.status_code == 200
         assert response.json() == expected
 
@@ -72,11 +86,15 @@ class TestPersonAPi(test.TestCase):
     async def test_get_users(self):
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT)
+
         expected = {"detail": "Not Found", "success": False, "users": []}
+
         assert response.status_code == 200
         assert response.json() == expected
+
         # Create new User
         person = await Person.create(**USER_DATA)
+
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT)
         expected = {
@@ -84,6 +102,7 @@ class TestPersonAPi(test.TestCase):
             "previous": None,
             "users": [{"id": person.id, **USER_DATA}],
         }
+
         assert response.status_code == 200
         assert response.json() == expected
 
@@ -97,28 +116,31 @@ class TestPersonAPi(test.TestCase):
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(
-                API_ROOT, params={"limit": 5, "offset": offset}
+                API_ROOT, params={"limit": limit, "offset": offset}
             )
 
         expected = {
             "next": f"/api/v1/users/?limit={limit}&offset={limit}",
             "previous": None,
             "users": [
-                {"id": n, **user} for n, user in enumerate(users[:5], start=1)
+                {"id": n, **user}
+                for n, user in enumerate(users[:limit], start=1)
             ],
         }
+
         assert response.status_code == 200
         assert response.json() == expected
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(
-                API_ROOT, params={"limit": 5, "offset": limit}
+                API_ROOT, params={"limit": limit, "offset": limit}
             )
         expected = {
             "next": None,
             "previous": f"/api/v1/users/?limit={limit}&offset={offset}",
             "users": [
-                {"id": n, **user} for n, user in enumerate(users[5:], start=6)
+                {"id": n, **user}
+                for n, user in enumerate(users[limit:], start=limit + 1)
             ],
         }
 
@@ -147,6 +169,7 @@ class TestPersonAPi(test.TestCase):
                 key=lambda u: u[asc.split(":")[0]],
             ),
         }
+
         assert response.status_code == 200
         assert response.json() == expected
 
@@ -167,20 +190,7 @@ class TestPersonAPi(test.TestCase):
 
     async def test_patch_user(self):
         # Create new User
-        person = await Person.create(
-            **{
-                "is_admin": False,
-                "first_name": "John1",
-                "last_name": "DOE1",
-                "email": "john1.doe1@eliam-lotonga.fr",
-                "gender": "Female",
-                "avatar": avatar + "1",
-                "job": "Compensation Analyst 1",
-                "company": "Edgetag 1",
-                "date_of_birth": "1971-02-02",
-                "country_of_birth": "No where 1",
-            }
-        )
+        person = await Person.create(**USER_DATA2)
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.patch(
                 f"{API_ROOT}{person.id}", data=json.dumps(USER_DATA)
@@ -192,33 +202,20 @@ class TestPersonAPi(test.TestCase):
 
     async def test_put_user(self):
         # Create new User
-        person1 = await Person.create(
-            **{
-                "is_admin": False,
-                "first_name": "John1",
-                "last_name": "DOE1",
-                "email": "john1.doe1@eliam-lotonga.fr",
-                "gender": "Female",
-                "avatar": avatar + "1",
-                "job": "Compensation Analyst 1",
-                "company": "Edgetag 1",
-                "date_of_birth": "1971-02-02",
-                "country_of_birth": "No where 1",
-            }
-        )
-        person2 = await Person.create(**USER_DATA)
+        person1 = await Person.create(**USER_DATA)
+        person2 = await Person.create(**USER_DATA2)
         assert person1.id == 1
         assert person2.id == 2
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.put(
-                f"{API_ROOT}{person2.id}",
+                f"{API_ROOT}{person1.id}",
                 data=json.dumps(USER_DATA),
-                params={"new_user": person1.id},
+                params={"new_user": person2.id},
             )
-        expected = {"id": person1.id, **USER_DATA}
+        expected = {"id": person2.id, **USER_DATA}
 
-        user_deleted = await Person.filter(id=2).first()
+        user_deleted = await Person.filter(id=person1.id).first()
 
         assert user_deleted is None
 
@@ -246,10 +243,10 @@ class TestPersonAPi(test.TestCase):
             response = await ac.delete(f"{API_ROOT}{person.id}")
         expected = {
             "success": True,
-            "user": {**USER_DATA, "id": 1},
-            "detail": "User 1 delete successfully ⭐",
+            "user": {**USER_DATA, "id": person.id},
+            "detail": f"User {person.id} delete successfully ⭐",
         }
-        deleted_user = await Person.filter(id=1).first()
+        deleted_user = await Person.filter(id=person.id).first()
         assert response.status_code == 200
         assert response.json() == expected
         assert None is deleted_user

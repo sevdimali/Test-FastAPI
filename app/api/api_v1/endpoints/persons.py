@@ -21,17 +21,15 @@ async def users(
 
     Args:\n
         limit (int, optional): max number of returned users. \
-            Defaults to 100.\n
+        Defaults to 100.\n
         offset (int, optional): first user to return (use with limit). \
-            Defaults to 1.\n
+        Defaults to 1.\n
         sort (str, optional): the order of the result. \
-            attribute:(asc {ascending} or desc {descending}). \
-                Defaults to "id:asc".\n
-        default (list, optional): default value if not found. \
-            Defaults to [].\n
+        attribute:(asc {ascending} or desc {descending}). \
+        Defaults to "id:asc".\n
     Returns:\n
         Optional[List[Dict[str, Any]]]: list of users found or \
-            Dict with error\n
+        Dict with error\n
     """
     response = {
         "success": False,
@@ -42,7 +40,7 @@ async def users(
         return {
             **response,
             "detail": "Invalid sort parameters. it must match \
-                attribute:order. ex: id:asc or id:desc",
+            attribute:order. ex: id:asc or id:desc",
         }
 
     if offset < 0 or limit < 1:
@@ -113,7 +111,7 @@ async def fix_user(user_id: int, user: User) -> Dict[str, Any]:
 
     """(More control to the validator)
     Prefer this method to use the Pydantic validator \
-        which is more maintainable
+    which is more maintainable
     than the tortoiseORM validator in my opinion
     see: https://pydantic-docs.helpmanual.io/usage/validators/
     """
@@ -136,7 +134,7 @@ async def update_user(user_id: int, new_user: int) -> Dict[str, Any]:
     Args:\n
         user_id (int): user who transfers the data and will be deleted\n
         new_user (int): user receiving data, \
-            its data will be updated with the data of the first user\n
+        its data will be updated with the data of the first user\n
 
     Returns:\n
         Dict[str, Any]: contains User new data or error\n
