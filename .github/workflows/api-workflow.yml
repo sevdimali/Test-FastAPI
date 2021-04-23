@@ -36,7 +36,6 @@ jobs:
         with:
           files: ./app/coverage.xml
           flags: unittests
-          env_vars: OS,PYTHON
           name: Test-FastAPI
           fail_ci_if_error: true
           verbose: true
