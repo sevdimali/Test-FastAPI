@@ -1,5 +1,7 @@
 # Get started Python FastAPI
 
+[![codecov](https://codecov.io/gh/meschac38700/Test-FastAPI/branch/master/graph/badge.svg?token=iffvr8Fmg5)](https://codecov.io/gh/meschac38700/Test-FastAPI)
+
 ## Python versions
 
 python >= 3.9
