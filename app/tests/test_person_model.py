@@ -110,10 +110,15 @@ class TestPersonAPi(test.TestCase):
         limit = 5
         offset = 0
         users = INIT_DATA[:10]
+
+        # Insert data
         with futures.ProcessPoolExecutor() as executor:
             for user in users:
                 executor.map(await API_functools._create_default_person(user))
 
+        assert await Person.all().count() == len(users)
+
+        # Scene 1 get first data, previous=Null
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(
                 API_ROOT, params={"limit": limit, "offset": offset}
@@ -131,6 +136,7 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
+        # Scene 2 get last data, next=Null
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(
                 API_ROOT, params={"limit": limit, "offset": limit}
@@ -146,6 +152,19 @@ class TestPersonAPi(test.TestCase):
 
         assert response.status_code == 200
         assert response.json() == expected
+
+        limit = 0
+        offset = -1
+        # Test bad limit and offset values
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(
+                API_ROOT, params={"limit": limit, "offset": limit}
+            )
+        expected = {
+            "success": False,
+            "users": [],
+            "detail": "Invalid values: offset(>=0) or limit(>0)",
+        }
 
     async def test_get_users_sorted_by_attribute(self):
         # sort by first_name ascending order
