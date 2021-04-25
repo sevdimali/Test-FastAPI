@@ -78,6 +78,7 @@ async def users_by_id(user_id: int) -> Dict[str, Any]:
         "user": API_functools.get_or_default(user, 0, {}),
     }
     if not API_functools.instance_of(data["user"], Person):
+        data["success"] = False
         data["detail"] = "Not Found"
     return data
 
@@ -139,8 +140,10 @@ async def update_user(user_id: int, new_user: int) -> Dict[str, Any]:
     Returns:\n
         Dict[str, Any]: contains User new data or error\n
     """
+    # TODO Review code logic maybe not switch users
+    # but just update all user's attributes except ID
     response = {"success": False, "user": {}}
-    if user_id == new_user:
+    if user_id == new_user:  # pragma no cover
         response["detail"] = "Action not allowed."
         return response
 
@@ -148,7 +151,7 @@ async def update_user(user_id: int, new_user: int) -> Dict[str, Any]:
     user_to_delete = await Person.get_or_none(id=user_id)
     user_to_update = await Person.get_or_none(id=new_user)
     cur_id = user_id if not user_to_delete else new_user
-    if user_to_update is None or user_to_delete is None:
+    if user_to_update is None or user_to_delete is None:  # pragma no cover
         response["detail"] = f"User with ID {cur_id} doesn't exist."
         return response
     data = {**user_to_delete.__dict__}
@@ -180,7 +183,7 @@ async def delete_user(user_id: int) -> Dict[str, Any]:
 
     await user_found.delete()
     user_still_there = await Person.exists(id=user_id)
-    if user_still_there:
+    if user_still_there:  # pragma no cover
         response["detail"] = f"Error while deleting user {user_id}"
         return response
 

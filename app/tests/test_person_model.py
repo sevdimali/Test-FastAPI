@@ -110,10 +110,15 @@ class TestPersonAPi(test.TestCase):
         limit = 5
         offset = 0
         users = INIT_DATA[:10]
+
+        # Insert data
         with futures.ProcessPoolExecutor() as executor:
             for user in users:
                 executor.map(await API_functools._create_default_person(user))
 
+        assert await Person.all().count() == len(users)
+
+        # Scene 1 get first data, previous=Null
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(
                 API_ROOT, params={"limit": limit, "offset": offset}
@@ -131,6 +136,7 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
+        # Scene 2 get last data, next=Null
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(
                 API_ROOT, params={"limit": limit, "offset": limit}
@@ -147,6 +153,19 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
+        limit = 0
+        offset = -1
+        # Test bad limit and offset values
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(
+                API_ROOT, params={"limit": limit, "offset": limit}
+            )
+        expected = {
+            "success": False,
+            "users": [],
+            "detail": "Invalid values: offset(>=0) or limit(>0)",
+        }
+
     async def test_get_users_sorted_by_attribute(self):
         # sort by first_name ascending order
         asc = "first_name:asc"
@@ -158,6 +177,9 @@ class TestPersonAPi(test.TestCase):
             for user in users:
                 executor.map(await API_functools._create_default_person(user))
 
+        assert await Person.all().count() == len(users)
+
+        # Test order by first_name ASC
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT, params={"sort": asc})
 
@@ -173,6 +195,7 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
+        # Test order by first_name DESC
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT, params={"sort": desc})
         expected = {
@@ -188,7 +211,33 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
+        # Test bad order by input
+        order_by = "undefined:asc"
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT, params={"sort": order_by})
+        expected = {
+            "success": False,
+            "users": [],
+            "detail": "Invalid sort parameters. it must match \
+                attribute:order. ex: id:asc or id:desc",
+        }
+
     async def test_patch_user(self):
+
+        # User doesn't exist
+        user_id = 100
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.patch(
+                f"{API_ROOT}{user_id}", data=json.dumps(USER_DATA)
+            )
+        expected = {
+            "success": False,
+            "user": {},
+            "detail": "User with ID {user_id} doesn't exist.",
+        }
+
+        assert response.json() == expected
+
         # Create new User
         person = await Person.create(**USER_DATA2)
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
@@ -223,6 +272,14 @@ class TestPersonAPi(test.TestCase):
         assert response.json() == expected
 
     async def test_get_user_by_id(self):
+        # Not found
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}1")
+        expected = {"success": False, "user": {}, "detail": "Not Found"}
+
+        assert response.status_code == 200
+        assert response.json() == expected
+
         # Create new User
         person = await Person.create(**USER_DATA)
         assert person.id == 1
@@ -235,6 +292,18 @@ class TestPersonAPi(test.TestCase):
         assert response.json() == expected
 
     async def test_delete_user(self):
+
+        # User doesn't exist
+        user_id = 100
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.delete(f"{API_ROOT}{user_id}")
+        expected = {
+            "success": False,
+            "user": {},
+            "detail": f"User with ID {user_id} doesn't exist",
+        }
+        assert response.json() == expected
+
         # Create new User
         person = await Person.create(**USER_DATA)
         assert person.id == 1

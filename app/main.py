@@ -63,7 +63,7 @@ async def index() -> Dict[str, Any]:
 
 app.include_router(api_router, prefix=API_BASE_URL)
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma no cover
     # DB connection
     Database.connect(app)
 
