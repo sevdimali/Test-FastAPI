@@ -183,7 +183,7 @@ async def delete_user(user_id: int) -> Dict[str, Any]:
 
     await user_found.delete()
     user_still_there = await Person.exists(id=user_id)
-    if user_still_there:
+    if user_still_there:  # pragma no cover
         response["detail"] = f"Error while deleting user {user_id}"
         return response
 
