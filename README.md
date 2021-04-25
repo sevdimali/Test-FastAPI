@@ -4,7 +4,7 @@
 
 ## Python versions
 
-python >= 3.9
+### >= 3.9
 
 ### Install with docker-compose
 
@@ -20,7 +20,7 @@ Then run:
 docker-compose -f docker-compose.yml up
 ```
 
-Go to http://127.0.0.1:8000/
+The app running on http://127.0.0.1:8000/
 
 ## Manual installation without docker
 
@@ -73,10 +73,10 @@ Then create DB `fastapidb`
 CREATE DATABASE fastapidb;
 ```
 
-Then Edit `TORTOISE_ORM` variables in the `settings.py` correctly.
+Then Edit `TORTOISE_ORM` variable in the `settings.py` correctly.
 You will find settings file in `api/api_v1` folder
 
-Then run migrations using aerich command to create table(s).
+Then run migrations using `aerich` command to create table(s).
 
 ```bash
 aerich init -t api.api_v1.settings.TORTOISE_ORM
@@ -92,16 +92,16 @@ aerich init-db
 python main.py
 ```
 
-Go to http://127.0.0.1:8000/
+The app running on http://127.0.0.1:8000/
 
 ## Fake Data
 
 To load some fake data, go to http://127.0.0.1:8000/data
-which will load fake data and redirect you to /
+which will load fake data and redirect you to tha app root path `/`
 
 ## Run all the tests
 
-from app folder run this command
+from `app` folder run:
 
 ```bash
 pytest
