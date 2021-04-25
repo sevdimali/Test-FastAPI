@@ -223,6 +223,21 @@ class TestPersonAPi(test.TestCase):
         }
 
     async def test_patch_user(self):
+
+        # User doesn't exist
+        user_id = 100
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.patch(
+                f"{API_ROOT}{user_id}", data=json.dumps(USER_DATA)
+            )
+        expected = {
+            "success": False,
+            "user": {},
+            "detail": "User with ID {user_id} doesn't exist.",
+        }
+
+        assert response.json() == expected
+
         # Create new User
         person = await Person.create(**USER_DATA2)
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
