@@ -292,6 +292,18 @@ class TestPersonAPi(test.TestCase):
         assert response.json() == expected
 
     async def test_delete_user(self):
+
+        # User doesn't exist
+        user_id = 100
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.delete(f"{API_ROOT}{user_id}")
+        expected = {
+            "success": False,
+            "user": {},
+            "detail": f"User with ID {user_id} doesn't exist",
+        }
+        assert response.json() == expected
+
         # Create new User
         person = await Person.create(**USER_DATA)
         assert person.id == 1
