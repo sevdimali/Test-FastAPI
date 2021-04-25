@@ -78,6 +78,7 @@ async def users_by_id(user_id: int) -> Dict[str, Any]:
         "user": API_functools.get_or_default(user, 0, {}),
     }
     if not API_functools.instance_of(data["user"], Person):
+        data["success"] = False
         data["detail"] = "Not Found"
     return data
 
