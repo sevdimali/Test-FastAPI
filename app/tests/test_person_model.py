@@ -177,6 +177,9 @@ class TestPersonAPi(test.TestCase):
             for user in users:
                 executor.map(await API_functools._create_default_person(user))
 
+        assert await Person.all().count() == len(users)
+
+        # Test order by first_name ASC
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT, params={"sort": asc})
 
@@ -192,6 +195,7 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
+        # Test order by first_name DESC
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT, params={"sort": desc})
         expected = {
@@ -206,6 +210,17 @@ class TestPersonAPi(test.TestCase):
 
         assert response.status_code == 200
         assert response.json() == expected
+
+        # Test bad order by input
+        order_by = "undefined:asc"
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT, params={"sort": order_by})
+        expected = {
+            "success": False,
+            "users": [],
+            "detail": "Invalid sort parameters. it must match \
+                attribute:order. ex: id:asc or id:desc",
+        }
 
     async def test_patch_user(self):
         # Create new User
