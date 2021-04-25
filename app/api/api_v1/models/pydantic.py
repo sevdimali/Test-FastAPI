@@ -23,7 +23,9 @@ class User(BaseModel):
     country_of_birth: str
 
     @validator("last_name", "first_name", "country_of_birth", "job", "company")
-    def between_3_and_50_characters(cls, value: str, **kwargs) -> str:
+    def between_3_and_50_characters(
+        cls, value: str, **kwargs
+    ) -> str:  # pragma no cover
         """Validate str attributes that must contains minimum 3 characters\
             and maximum 50 characters\n
 
@@ -45,7 +47,7 @@ class User(BaseModel):
         return value
 
     @validator("avatar")
-    def valid_url(cls, value: str, **kwargs) -> str:
+    def valid_url(cls, value: str, **kwargs) -> str:  # pragma no cover
         """Validate url\n
 
         Args:\n
@@ -70,7 +72,7 @@ class User(BaseModel):
         return value
 
     @validator("email")
-    def valid_email(cls, value: str, **kwargs) -> str:
+    def valid_email(cls, value: str, **kwargs) -> str:  # pragma no cover
         """Validate email attribute using validate_email package
 
         Args:
