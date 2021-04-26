@@ -55,8 +55,22 @@ cd app/
 
 ### Install requirements
 
+Upgrade `pip`
+
 ```bash
-pip install -r requirements.txt
+pip install --upgrade pip
+```
+
+install application requirements
+
+```bash
+pip install -r  requirements/common.txt
+```
+
+install dev requirements (useful to run tests)
+
+```bash
+pip install -r requirements/dev.txt
 ```
 
 ### Database
