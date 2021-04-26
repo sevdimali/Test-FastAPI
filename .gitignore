@@ -6,3 +6,4 @@ venv
 migrations
 aerich.ini
 *coverage*
+!*.coveragerc

@@ -1,0 +1,2 @@
+[run]
+omit = */__init.py, */*/__init__.py, *settings.py
