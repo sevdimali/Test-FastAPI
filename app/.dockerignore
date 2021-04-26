@@ -8,4 +8,5 @@ docker-compose.*
 aerich.ini
 migrations
 *coverage*
-!*.coveragerc
+requirements
+!requirements/common.txt
