@@ -97,6 +97,7 @@ async def create_user(user: User) -> Dict[str, Any]:
     return user
 
 
+@cache
 @router.patch("/{user_id}")
 async def fix_user(user_id: int, user: User) -> Dict[str, Any]:
     """Fix some users attributes except his ID\n
@@ -128,6 +129,7 @@ async def fix_user(user_id: int, user: User) -> Dict[str, Any]:
     return await Person_Pydantic.from_tortoise_orm(user_updated)
 
 
+@cache
 @router.put("/{user_id}")
 async def update_user(user_id: int, new_user: int) -> Dict[str, Any]:
     """Transfer data from one user to another\n
