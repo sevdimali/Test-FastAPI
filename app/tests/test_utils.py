@@ -59,9 +59,8 @@ class TestUtils(test.TestCase):
             assert API_functools.valid_order(User, order[0]) == order[1]
 
     def test_valid_attribute(self):
-        attributes = Person.__dict__.get("__fields__", {}).keys()
-        for attr in attributes:
-            assert API_functools.valid_attribute(Person, attr) is True
+        for attr in API_functools.get_attributes(User):
+            assert API_functools.valid_attribute(User, attr) is True
         assert API_functools.valid_attribute(Person, "id") is False
         assert API_functools.valid_attribute(Person, "invalid") is False
 
