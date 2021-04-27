@@ -77,7 +77,11 @@ class API_functools:
         return None
 
     @classmethod
-    def valid_attribute(cls: MODEL, target_cls: BaseModel, attr: str) -> bool:
+    def is_attribute_of(
+        cls: MODEL,
+        attr: str,
+        target_cls: BaseModel,
+    ) -> bool:
         """Check if attr is a target_cls's attribute
            except the ID attribute\n
 

@@ -97,7 +97,7 @@ async def users_by_attribute(
         List[Dict[str, Any]]: List of users found
     """
     response = {"success": False, "users": []}
-    if not API_functools.valid_attribute(User, user_attribute):
+    if not API_functools.is_attribute_of(user_attribute, User):
         return {
             **response,
             "detail": f"""

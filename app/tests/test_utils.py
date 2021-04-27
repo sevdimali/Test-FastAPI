@@ -58,11 +58,11 @@ class TestUtils(test.TestCase):
             assert API_functools.valid_order(User, order[0]) == order[1]
             assert API_functools.valid_order(User, order[0]) == order[1]
 
-    def test_valid_attribute(self):
+    def test_is_attribute_of(self):
         for attr in API_functools.get_attributes(User):
-            assert API_functools.valid_attribute(User, attr) is True
-        assert API_functools.valid_attribute(Person, "id") is False
-        assert API_functools.valid_attribute(Person, "invalid") is False
+            assert API_functools.is_attribute_of(attr, User) is True
+        assert API_functools.is_attribute_of("id", User) is False
+        assert API_functools.is_attribute_of("invalid", User) is False
 
     def test_manage_next_previous_page(self):
         scope = {"type": "http", "path": "/", "method": "GET"}
