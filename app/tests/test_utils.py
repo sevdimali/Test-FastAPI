@@ -30,6 +30,21 @@ class TestUtils(test.TestCase):
         for el, instance in elements.items():
             assert API_functools.instance_of(el, instance) is True
 
+    def test_attributes(self):
+        expected = (
+            "is_admin",
+            "first_name",
+            "last_name",
+            "email",
+            "gender",
+            "avatar",
+            "company",
+            "job",
+            "date_of_birth",
+            "country_of_birth",
+        )
+        assert API_functools.get_attributes(User) == expected
+
     def test_valid_order(self):
         # valid order must consist of an attribute of the Person class
         # and the word "asc" or "desc"
