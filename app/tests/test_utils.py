@@ -30,7 +30,7 @@ class TestUtils(test.TestCase):
         for el, instance in elements.items():
             assert API_functools.instance_of(el, instance) is True
 
-    def test_attributes(self):
+    def test_get_attributes(self):
         expected = (
             "is_admin",
             "first_name",
