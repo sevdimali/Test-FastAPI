@@ -291,6 +291,43 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
+    async def test_get_user_by_attribute(self):
+        # Create new User
+        person = await Person.create(**USER_DATA)
+        assert person.id == 1
+
+        # Not found
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}filter/first_name/notfound")
+        expected = {"success": False, "user": {}, "detail": "Not Found"}
+
+        assert response.status_code == 200
+        assert response.json() == expected
+
+        # Invalid attribute
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}filter/id/{person.id}")
+        expected = {
+            "success": False,
+            "user": {},
+            "detail": f"""
+            Invalid attribute filter.
+            Try with: {tuple(
+            Person.__dict__.get("__fields__", {}).keys())}
+            """,
+        }
+        assert response.status_code == 200
+        assert response.json() == expected
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(
+                f"{API_ROOT}filter/first_name/{person.first_name}"
+            )
+        expected = {"success": True, "user": [{"id": person.id, **USER_DATA}]}
+
+        assert response.status_code == 200
+        assert response.json() == expected
+
     async def test_delete_user(self):
 
         # User doesn't exist
