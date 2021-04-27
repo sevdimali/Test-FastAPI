@@ -7,6 +7,7 @@ from tortoise.contrib import test
 from main import app
 from api.api_v1 import settings
 from api.utils import API_functools
+from api.api_v1.models.pydantic import User
 from api.api_v1.models.tortoise import Person
 from api.api_v1.storage.initial_data import INIT_DATA
 
@@ -299,7 +300,7 @@ class TestPersonAPi(test.TestCase):
         # Not found
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(f"{API_ROOT}filter/first_name/notfound")
-        expected = {"success": False, "user": {}, "detail": "Not Found"}
+        expected = {"success": False, "users": [], "detail": "Not Found"}
 
         assert response.status_code == 200
         assert response.json() == expected
@@ -309,11 +310,11 @@ class TestPersonAPi(test.TestCase):
             response = await ac.get(f"{API_ROOT}filter/id/{person.id}")
         expected = {
             "success": False,
-            "user": {},
+            "users": [],
             "detail": f"""
             Invalid attribute filter.
             Try with: {tuple(
-            Person.__dict__.get("__fields__", {}).keys())}
+            User.__dict__.get("__fields__", {}).keys())}
             """,
         }
         assert response.status_code == 200
@@ -323,7 +324,7 @@ class TestPersonAPi(test.TestCase):
             response = await ac.get(
                 f"{API_ROOT}filter/first_name/{person.first_name}"
             )
-        expected = {"success": True, "user": [{"id": person.id, **USER_DATA}]}
+        expected = {"success": True, "users": [{"id": person.id, **USER_DATA}]}
 
         assert response.status_code == 200
         assert response.json() == expected
