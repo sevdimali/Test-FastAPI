@@ -47,6 +47,15 @@ class API_functools:
         return el.__class__.__name__.lower() == class_expected.__name__.lower()
 
     @classmethod
+    def get_attributes(cls: MODEL, target_cls) -> tuple[str]:
+        """Return class object attributes except ID\n
+
+        Returns:
+            tuple[str]: attributes
+        """
+        return tuple(target_cls.__dict__.get("__fields__", {}).keys())
+
+    @classmethod
     def valid_order(
         cls: MODEL, target_cls: BaseModel, sort: str
     ) -> Optional[str]:
@@ -62,9 +71,7 @@ class API_functools:
             Optional[str]: valid sql string order by or None
         """
         attr, order = sort.split(":")
-        valid_attributes = ("id",) + tuple(
-            target_cls.__dict__.get("__fields__", {}).keys()
-        )
+        valid_attributes = ("id",) + cls.get_attributes(target_cls)
         if attr.lower() in valid_attributes and order.lower() in ORDERS.keys():
             return f"{ORDERS.get(order.lower(), '')}{attr.lower()}"
         return None
@@ -82,9 +89,7 @@ class API_functools:
         Returns:
             bool: is valid attribute
         """
-        return attr.lower() in tuple(
-            target_cls.__dict__.get("__fields__", {}).keys()
-        )
+        return attr.lower() in cls.get_attributes(target_cls)
 
     @classmethod
     def manage_next_previous_page(
