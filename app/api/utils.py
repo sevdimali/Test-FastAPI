@@ -70,6 +70,23 @@ class API_functools:
         return None
 
     @classmethod
+    def valid_attribute(cls: MODEL, target_cls: BaseModel, attr: str) -> bool:
+        """Check if attr is a target_cls's attribute
+           except the ID attribute\n
+
+        Args:
+            cls (MODEL): utility class that used to call this method\n
+            target_cls (BaseModel): model for db data\n
+            attr (str): attribute to check
+
+        Returns:
+            bool: is valid attribute
+        """
+        return attr.lower() in tuple(
+            target_cls.__dict__.get("__fields__", {}).keys()
+        )
+
+    @classmethod
     def manage_next_previous_page(
         cls,
         request,
