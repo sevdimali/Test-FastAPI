@@ -5,11 +5,11 @@ from api.api_v1.settings import TORTOISE_ORM as DATABASE_CONFIG
 
 class Database:
     @classmethod
-    def connect(cls, app):
+    def connect(cls, application=None):
         success = True
         try:
             register_tortoise(
-                app,
+                application,
                 config=DATABASE_CONFIG,
                 generate_schemas=True,
                 add_exception_handlers=True,
@@ -17,4 +17,5 @@ class Database:
         except Exception as e:
             print(e)
             success = False
+
         return success

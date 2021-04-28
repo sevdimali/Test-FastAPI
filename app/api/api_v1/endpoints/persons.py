@@ -83,6 +83,42 @@ async def users_by_id(user_id: int) -> Dict[str, Any]:
     return data
 
 
+@cache
+@router.get("/filter/{user_attribute}/{value}")
+async def users_by_attribute(
+    user_attribute: Any, value: Any
+) -> List[Dict[str, Any]]:
+    """Get user by attribute except ID attribute\n
+
+    Args:
+        user_attribute (Any): user's attribute\n
+
+    Returns:
+        List[Dict[str, Any]]: List of users found
+    """
+    response = {"success": False, "users": []}
+    if not API_functools.is_attribute_of(user_attribute, User):
+        return {
+            **response,
+            "detail": f"""
+            Invalid attribute filter.
+            Try with: {API_functools.get_attributes(User)}
+            """,
+        }
+    kwargs = {}
+    kwargs[user_attribute] = value
+    person = await Person.get_or_none(**kwargs)
+
+    if person is None:
+        return {**response, "detail": "Not Found"}
+
+    data = {**person.__dict__}
+    data.pop("_partial", None)
+    data.pop("_saved_in_db", None)
+
+    return {"success": True, "users": [data]}
+
+
 @router.post("/", response_model=Person_Pydantic)
 async def create_user(user: User) -> Dict[str, Any]:
     """Create new users\n

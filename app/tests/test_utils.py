@@ -30,6 +30,21 @@ class TestUtils(test.TestCase):
         for el, instance in elements.items():
             assert API_functools.instance_of(el, instance) is True
 
+    def test_get_attributes(self):
+        expected = (
+            "is_admin",
+            "first_name",
+            "last_name",
+            "email",
+            "gender",
+            "avatar",
+            "company",
+            "job",
+            "date_of_birth",
+            "country_of_birth",
+        )
+        assert API_functools.get_attributes(User) == expected
+
     def test_valid_order(self):
         # valid order must consist of an attribute of the Person class
         # and the word "asc" or "desc"
@@ -42,6 +57,12 @@ class TestUtils(test.TestCase):
         for order in orders:
             assert API_functools.valid_order(User, order[0]) == order[1]
             assert API_functools.valid_order(User, order[0]) == order[1]
+
+    def test_is_attribute_of(self):
+        for attr in API_functools.get_attributes(User):
+            assert API_functools.is_attribute_of(attr, User) is True
+        assert API_functools.is_attribute_of("id", User) is False
+        assert API_functools.is_attribute_of("invalid", User) is False
 
     def test_manage_next_previous_page(self):
         scope = {"type": "http", "path": "/", "method": "GET"}
