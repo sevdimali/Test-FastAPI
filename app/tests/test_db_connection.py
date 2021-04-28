@@ -10,6 +10,9 @@ class TestUtils(test.TestCase):
     def test_connection(self):
         with futures.ThreadPoolExecutor() as executor:
             # Connection OK
-            executor.submit(Database.connect, application=app).result() is True
+            assert (
+                executor.submit(Database.connect, application=app).result()
+                is True
+            )
             # Connection NOK
-            executor.submit(Database.connect).result() is False
+            assert executor.submit(Database.connect).result() is False
