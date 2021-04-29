@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request
 from typing import Optional, Dict, List, Any
 
 from api.utils import API_functools
-from api.api_v1.models.pydantic import User
+from api.api_v1.models.pydantic import User, PartialUser
 from api.api_v1.models.tortoise import Person, Person_Pydantic
 
 router = APIRouter()
@@ -135,7 +135,7 @@ async def create_user(user: User) -> Dict[str, Any]:
 
 @cache
 @router.patch("/{user_id}")
-async def fix_user(user_id: int, user: User) -> Dict[str, Any]:
+async def fix_user(user_id: int, user: PartialUser) -> Dict[str, Any]:
     """Fix some users attributes except his ID\n
 
     Args:\n
