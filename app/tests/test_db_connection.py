@@ -6,7 +6,7 @@ from main import app
 from api.api_v1.storage.database import Database
 
 
-class TestUtils(test.TestCase):
+class TestDatabase(test.TestCase):
     def test_connection(self):
         with futures.ThreadPoolExecutor() as executor:
             # Connection OK
