@@ -239,16 +239,26 @@ class TestPersonAPi(test.TestCase):
 
         assert response.json() == expected
 
+        data = {
+            "first_name": "John",
+            "last_name": "DOE",
+            "email": "john.doe@eliam-lotonga.fr",
+            "avatar": avatar,
+            "job": "Compensation Analyst",
+            "company": "Edgetag",
+        }
         # Create new User
         person = await Person.create(**USER_DATA2)
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.patch(
-                f"{API_ROOT}{person.id}", data=json.dumps(USER_DATA)
+                f"{API_ROOT}{person.id}", data=json.dumps(data)
             )
-        expected = {"id": person.id, **USER_DATA}
+        user_expected = {**person.__dict__, **data}
+        user_expected.pop("_partial", None)
+        user_expected.pop("_saved_in_db", None)
 
         assert response.status_code == 200
-        assert response.json() == expected
+        assert response.json() == user_expected
 
     async def test_put_user(self):
         # Create new User
@@ -317,6 +327,7 @@ class TestPersonAPi(test.TestCase):
             User.__dict__.get("__fields__", {}).keys())}
             """,
         }
+        print("")
         assert response.status_code == 200
         assert response.json() == expected
 
