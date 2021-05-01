@@ -3,7 +3,9 @@
 [![codecov](https://codecov.io/gh/meschac38700/Test-FastAPI/branch/master/graph/badge.svg?token=iffvr8Fmg5)](https://codecov.io/gh/meschac38700/Test-FastAPI)
 ![Api Workflow](https://github.com/meschac38700/Test-FastAPI/actions/workflows/api-workflow.yml/badge.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-
+[![Pypi](https://img.shields.io/pypi/v/pip.svg)](https://pypi.org/project/pip/)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+[![CC-0 license](https://img.shields.io/badge/License-CC--0-blue.svg)](https://creativecommons.org/licenses/by-nd/4.0)
 
 ## Python versions
 
