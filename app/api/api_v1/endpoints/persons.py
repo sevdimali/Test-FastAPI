@@ -1,4 +1,7 @@
+import re
 from functools import cache
+
+from tortoise.query_utils import Q
 from fastapi import APIRouter, Request
 from typing import Optional, Dict, List, Any
 
@@ -92,12 +95,18 @@ async def users_by_attribute(
 
     Args:
         user_attribute (Any): user's attribute\n
+        you can combine two or more attributes
+        with keywords "Or", "And"\n
+        ex: first_nameOrlast_name, genderAndemail
 
     Returns:
         List[Dict[str, Any]]: List of users found
     """
     response = {"success": False, "users": []}
-    if not API_functools.is_attribute_of(user_attribute, User):
+    lower_user_attribute = user_attribute.lower()
+    if (
+        "and" not in lower_user_attribute and "or" not in lower_user_attribute
+    ) and not API_functools.is_attribute_of(user_attribute, User):
         return {
             **response,
             "detail": f"""
@@ -105,10 +114,26 @@ async def users_by_attribute(
             Try with: {User.attributes()}
             """,
         }
-    kwargs = {}
-    kwargs[f"{user_attribute}__icontains"] = value
+    # kwargs = {}
+    attributes = re.compile(r"Or|And").split(user_attribute)
+    query_builder = []
+    i = 0
+    while i < len(attributes):
+        attr = attributes[i].strip().lower()
+        cond = {}
+        cond[f"{attr}__icontains"] = value
+        print("condition ==>", cond)
+        if user_attribute.split(attr)[0].lower().endswith("or"):
+            print("JOIN------------")
+            last_query = query_builder.pop()
+            query_builder.append(Q(last_query, Q(**cond), join_type="OR"))
+        elif attr != "":
+            query_builder = [*query_builder, Q(**cond)]
+        i += 1
+
+    # kwargs[f"{user_attribute}__icontains"] = value
     persons = await Person_Pydantic.from_queryset(
-        Person.filter(**kwargs).order_by(user_attribute)
+        Person.filter(*query_builder).order_by("id")
     )
     if len(persons) == 0:
         return {**response, "detail": "Not Found"}
