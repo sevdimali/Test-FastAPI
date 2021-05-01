@@ -329,13 +329,12 @@ class TestPersonAPi(test.TestCase):
             User.__dict__.get("__fields__", {}).keys())}
             """,
         }
-        print("")
         assert response.status_code == 200
         assert response.json() == expected
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(
-                f"{API_ROOT}filter/first_name/{person.first_name}"
+                f"{API_ROOT}filter/first_name/{person.first_name[:4].lower()}"
             )
         expected = {"success": True, "users": [{"id": person.id, **USER_DATA}]}
 
