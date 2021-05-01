@@ -102,7 +102,7 @@ async def users_by_attribute(
             **response,
             "detail": f"""
             Invalid attribute filter.
-            Try with: {API_functools.get_attributes(User)}
+            Try with: {User.attributes()}
             """,
         }
     kwargs = {}

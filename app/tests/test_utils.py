@@ -43,7 +43,7 @@ class TestUtils(test.TestCase):
             "date_of_birth",
             "country_of_birth",
         )
-        assert API_functools.get_attributes(User) == expected
+        assert User.attributes() == expected
 
     def test_valid_order(self):
         # valid order must consist of an attribute of the Person class
@@ -59,7 +59,7 @@ class TestUtils(test.TestCase):
             assert API_functools.valid_order(User, order[0]) == order[1]
 
     def test_is_attribute_of(self):
-        for attr in API_functools.get_attributes(User):
+        for attr in User.attributes():
             assert API_functools.is_attribute_of(attr, User) is True
         assert API_functools.is_attribute_of("id", User) is False
         assert API_functools.is_attribute_of("invalid", User) is False
