@@ -1,6 +1,7 @@
 # Get started Python FastAPI
 
 [![codecov](https://codecov.io/gh/meschac38700/Test-FastAPI/branch/master/graph/badge.svg?token=iffvr8Fmg5)](https://codecov.io/gh/meschac38700/Test-FastAPI)
+![Api Workflow](https://github.com/meschac38700/Test-FastAPI/actions/workflows/api-workflow.yml/badge.svg) 
 
 ## Python versions
 
