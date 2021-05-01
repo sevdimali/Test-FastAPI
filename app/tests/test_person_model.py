@@ -268,22 +268,15 @@ class TestPersonAPi(test.TestCase):
 
     async def test_put_user(self):
         # Create new User
-        person1 = await Person.create(**USER_DATA)
-        person2 = await Person.create(**USER_DATA2)
-        assert person1.id == 1
-        assert person2.id == 2
+        person = await Person.create(**USER_DATA2)
+        assert person.id == 1
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.put(
-                f"{API_ROOT}{person1.id}",
+                f"{API_ROOT}{person.id}",
                 data=json.dumps(USER_DATA),
-                params={"new_user": person2.id},
             )
-        expected = {"id": person2.id, **USER_DATA}
-
-        user_deleted = await Person.filter(id=person1.id).first()
-
-        assert user_deleted is None
+        expected = {"id": person.id, **USER_DATA}
 
         assert response.status_code == 200
         assert response.json() == expected
