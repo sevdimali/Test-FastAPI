@@ -1,8 +1,8 @@
 import re
 from datetime import date
+from typing import Optional
 
 from pydantic import BaseModel, validator
-from typing import Optional
 from email_validator import validate_email, EmailNotValidError
 
 from api.api_v1.models.types import Gender
@@ -10,19 +10,15 @@ from api.api_v1.models.types import Gender
 avatar = "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1"
 
 
-class User(BaseModel):
-    is_admin: Optional[bool] = False
+class PartialUser(BaseModel):
     first_name: str
     last_name: str
     email: str
-    gender: Gender
     avatar: Optional[str]
     company: Optional[str]
     job: Optional[str]
-    date_of_birth: date
-    country_of_birth: str
 
-    @validator("last_name", "first_name", "country_of_birth", "job", "company")
+    @validator("last_name", "first_name", "job", "company")
     def between_3_and_50_characters(
         cls, value: str, **kwargs
     ) -> str:  # pragma no cover
@@ -92,6 +88,29 @@ class User(BaseModel):
                 f"{kwargs['field'].name} is not a valid email address."
             )
         return value.lower()
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "first_name": "John",
+                "last_name": "DOE",
+                "email": "john.doe@eliam-lotonga.fr",
+                "avatar": avatar,
+                "job": "Compensation Analyst",
+                "company": "Edgetag",
+            }
+        }
+
+
+class User(PartialUser):
+    is_admin: Optional[bool] = False
+    gender: Gender
+    date_of_birth: date
+    country_of_birth: str
+
+    @validator("country_of_birth")
+    def between_3_and_50_characters(cls, value: str) -> Optional[str]:
+        return super().between_3_and_50_characters(value)
 
     class Config:
         schema_extra = {

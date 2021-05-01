@@ -32,14 +32,14 @@ class TestUtils(test.TestCase):
 
     def test_get_attributes(self):
         expected = (
-            "is_admin",
             "first_name",
             "last_name",
             "email",
-            "gender",
             "avatar",
             "company",
             "job",
+            "is_admin",
+            "gender",
             "date_of_birth",
             "country_of_birth",
         )

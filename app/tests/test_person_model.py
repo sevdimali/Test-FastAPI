@@ -28,14 +28,14 @@ USER_DATA = {
     "country_of_birth": "No where",
 }
 USER_DATA2 = {
-    "is_admin": False,
     "first_name": "John1",
     "last_name": "DOE1",
     "email": "john1.doe1@eliam-lotonga.fr",
-    "gender": "Female",
     "avatar": avatar + "1",
-    "job": "Compensation Analyst 1",
     "company": "Edgetag 1",
+    "job": "Compensation Analyst 1",
+    "is_admin": False,
+    "gender": "Female",
     "date_of_birth": "1971-02-02",
     "country_of_birth": "No where 1",
 }
@@ -95,6 +95,7 @@ class TestPersonAPi(test.TestCase):
 
         # Create new User
         person = await Person.create(**USER_DATA)
+        assert person.id == 1
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT)
@@ -239,35 +240,46 @@ class TestPersonAPi(test.TestCase):
 
         assert response.json() == expected
 
+        data = {
+            "first_name": "John",
+            "last_name": "DOE",
+            "email": "john.doe@eliam-lotonga.fr",
+            "avatar": avatar,
+            "job": "Compensation Analyst",
+            "company": "Edgetag",
+        }
         # Create new User
         person = await Person.create(**USER_DATA2)
+        assert person.id == 1
+
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.patch(
-                f"{API_ROOT}{person.id}", data=json.dumps(USER_DATA)
+                f"{API_ROOT}{person.id}", data=json.dumps(data)
             )
-        expected = {"id": person.id, **USER_DATA}
+        user_expected = {
+            **person.__dict__,
+            **data,
+            "gender": person.gender.value,
+            "date_of_birth": person.date_of_birth.strftime("%Y-%m-%d"),
+        }
+        user_expected.pop("_custom_generated_pk", None)
+        user_expected.pop("_partial", None)
+        user_expected.pop("_saved_in_db", None)
 
         assert response.status_code == 200
-        assert response.json() == expected
+        assert response.json() == user_expected
 
     async def test_put_user(self):
         # Create new User
-        person1 = await Person.create(**USER_DATA)
-        person2 = await Person.create(**USER_DATA2)
-        assert person1.id == 1
-        assert person2.id == 2
+        person = await Person.create(**USER_DATA2)
+        assert person.id == 1
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.put(
-                f"{API_ROOT}{person1.id}",
+                f"{API_ROOT}{person.id}",
                 data=json.dumps(USER_DATA),
-                params={"new_user": person2.id},
             )
-        expected = {"id": person2.id, **USER_DATA}
-
-        user_deleted = await Person.filter(id=person1.id).first()
-
-        assert user_deleted is None
+        expected = {"id": person.id, **USER_DATA}
 
         assert response.status_code == 200
         assert response.json() == expected
@@ -317,6 +329,7 @@ class TestPersonAPi(test.TestCase):
             User.__dict__.get("__fields__", {}).keys())}
             """,
         }
+        print("")
         assert response.status_code == 200
         assert response.json() == expected
 

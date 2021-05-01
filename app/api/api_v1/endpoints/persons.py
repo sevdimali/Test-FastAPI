@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request
 from typing import Optional, Dict, List, Any
 
 from api.utils import API_functools
-from api.api_v1.models.pydantic import User
+from api.api_v1.models.pydantic import User, PartialUser
 from api.api_v1.models.tortoise import Person, Person_Pydantic
 
 router = APIRouter()
@@ -135,7 +135,7 @@ async def create_user(user: User) -> Dict[str, Any]:
 
 @cache
 @router.patch("/{user_id}")
-async def fix_user(user_id: int, user: User) -> Dict[str, Any]:
+async def fix_user(user_id: int, user: PartialUser) -> Dict[str, Any]:
     """Fix some users attributes except his ID\n
 
     Args:\n
@@ -167,7 +167,7 @@ async def fix_user(user_id: int, user: User) -> Dict[str, Any]:
 
 @cache
 @router.put("/{user_id}")
-async def update_user(user_id: int, new_user: int) -> Dict[str, Any]:
+async def update_user(user_id: int, new_data: User) -> Dict[str, Any]:
     """Transfer data from one user to another\n
 
     Args:\n
@@ -178,28 +178,17 @@ async def update_user(user_id: int, new_user: int) -> Dict[str, Any]:
     Returns:\n
         Dict[str, Any]: contains User new data or error\n
     """
-    # TODO Review code logic maybe not switch users
-    # but just update all user's attributes except ID
     response = {"success": False, "user": {}}
-    if user_id == new_user:  # pragma no cover
-        response["detail"] = "Action not allowed."
-        return response
 
     # check if user exists
-    user_to_delete = await Person.get_or_none(id=user_id)
-    user_to_update = await Person.get_or_none(id=new_user)
-    cur_id = user_id if not user_to_delete else new_user
-    if user_to_update is None or user_to_delete is None:  # pragma no cover
-        response["detail"] = f"User with ID {cur_id} doesn't exist."
+    curr_user = await Person.get_or_none(id=user_id)
+    if curr_user is None:  # pragma no cover
+        response["detail"] = f"User with ID {user_id} doesn't exist."
         return response
-    data = {**user_to_delete.__dict__}
-    data.pop("_partial", None)
-    data.pop("_saved_in_db", None)
-    data.pop("id", None)
-    user_updated = await user_to_update.update_from_dict(data)
-    await user_updated.save()
-    await user_to_delete.delete()
-    return await Person_Pydantic.from_tortoise_orm(user_updated)
+
+    curr_user = await curr_user.update_from_dict(new_data.__dict__)
+    await curr_user.save()
+    return await Person_Pydantic.from_tortoise_orm(curr_user)
 
 
 @router.delete("/{user_id}")
