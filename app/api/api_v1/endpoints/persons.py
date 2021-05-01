@@ -114,24 +114,17 @@ async def users_by_attribute(
             Try with: {User.attributes()}
             """,
         }
-    # kwargs = {}
     attributes = re.compile(r"Or|And").split(user_attribute)
     query_builder = []
-    i = 0
-    while i < len(attributes):
-        attr = attributes[i].strip().lower()
-        cond = {}
-        cond[f"{attr}__icontains"] = value
-        print("condition ==>", cond)
+    for attr in attributes:
+        attr = attr.strip().lower()
+        cond = {f"{attr}__icontains": value}
         if user_attribute.split(attr)[0].lower().endswith("or"):
-            print("JOIN------------")
             last_query = query_builder.pop()
             query_builder.append(Q(last_query, Q(**cond), join_type="OR"))
         elif attr != "":
             query_builder = [*query_builder, Q(**cond)]
-        i += 1
 
-    # kwargs[f"{user_attribute}__icontains"] = value
     persons = await Person_Pydantic.from_queryset(
         Person.filter(*query_builder).order_by("id")
     )
