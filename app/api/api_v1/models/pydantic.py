@@ -18,6 +18,15 @@ class PartialUser(BaseModel):
     company: Optional[str]
     job: Optional[str]
 
+    @classmethod
+    def attributes(cls):
+        """Return class object attributes except ID\n
+
+        Returns:
+            tuple[str]: attributes
+        """
+        return tuple(cls.__dict__.get("__fields__", {}).keys())
+
     @validator("last_name", "first_name", "job", "company")
     def between_3_and_50_characters(
         cls, value: str, **kwargs
