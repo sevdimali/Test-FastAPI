@@ -106,17 +106,14 @@ async def users_by_attribute(
             """,
         }
     kwargs = {}
-    kwargs[user_attribute] = value
-    person = await Person.get_or_none(**kwargs)
-
-    if person is None:
+    kwargs[f"{user_attribute}__icontains"] = value
+    persons = await Person_Pydantic.from_queryset(
+        Person.filter(**kwargs).order_by(user_attribute)
+    )
+    if len(persons) == 0:
         return {**response, "detail": "Not Found"}
 
-    data = {**person.__dict__}
-    data.pop("_partial", None)
-    data.pop("_saved_in_db", None)
-
-    return {"success": True, "users": [data]}
+    return {"success": True, "users": persons}
 
 
 @router.post("/", response_model=Person_Pydantic)
