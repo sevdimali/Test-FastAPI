@@ -32,14 +32,14 @@ class TestUtils(test.TestCase):
 
     def test_get_attributes(self):
         expected = (
-            "is_admin",
             "first_name",
             "last_name",
             "email",
-            "gender",
             "avatar",
             "company",
             "job",
+            "is_admin",
+            "gender",
             "date_of_birth",
             "country_of_birth",
         )
@@ -59,9 +59,6 @@ class TestUtils(test.TestCase):
             assert API_functools.valid_order(User, order[0]) == order[1]
 
     def test_is_attribute_of(self):
-        print("_________________________")
-        print(API_functools.get_attributes(User))
-        print("_________________________")
         for attr in API_functools.get_attributes(User):
             assert API_functools.is_attribute_of(attr, User) is True
         assert API_functools.is_attribute_of("id", User) is False

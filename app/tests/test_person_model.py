@@ -28,14 +28,14 @@ USER_DATA = {
     "country_of_birth": "No where",
 }
 USER_DATA2 = {
-    "is_admin": False,
     "first_name": "John1",
     "last_name": "DOE1",
     "email": "john1.doe1@eliam-lotonga.fr",
-    "gender": "Female",
     "avatar": avatar + "1",
-    "job": "Compensation Analyst 1",
     "company": "Edgetag 1",
+    "job": "Compensation Analyst 1",
+    "is_admin": False,
+    "gender": "Female",
     "date_of_birth": "1971-02-02",
     "country_of_birth": "No where 1",
 }
@@ -253,7 +253,13 @@ class TestPersonAPi(test.TestCase):
             response = await ac.patch(
                 f"{API_ROOT}{person.id}", data=json.dumps(data)
             )
-        user_expected = {**person.__dict__, **data}
+        user_expected = {
+            **person.__dict__,
+            **data,
+            "gender": person.gender.value,
+            "date_of_birth": person.date_of_birth.strftime("%Y-%m-%d"),
+        }
+        user_expected.pop("_custom_generated_pk", None)
         user_expected.pop("_partial", None)
         user_expected.pop("_saved_in_db", None)
 
