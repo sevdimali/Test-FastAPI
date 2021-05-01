@@ -4,9 +4,9 @@
 .DS_Store
 .vscode
 Dockerfile
-docker-compose.*
-aerich.ini
-migrations
+*docker-compose.*
+*aerich.ini*
+*migrations*
 *coverage*
 requirements
 !requirements/common.txt
