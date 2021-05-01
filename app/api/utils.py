@@ -47,6 +47,15 @@ class API_functools:
         return el.__class__.__name__.lower() == class_expected.__name__.lower()
 
     @classmethod
+    def get_attributes(cls: MODEL, target_cls) -> tuple[str]:
+        """Return class object attributes except ID\n
+
+        Returns:
+            tuple[str]: attributes
+        """
+        return tuple(target_cls.__dict__.get("__fields__", {}).keys())
+
+    @classmethod
     def valid_order(
         cls: MODEL, target_cls: BaseModel, sort: str
     ) -> Optional[str]:
