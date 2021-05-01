@@ -114,7 +114,7 @@ async def users_by_attribute(
             Try with: {User.attributes()}
             """,
         }
-    attributes = re.compile(r"Or|And").split(user_attribute)
+    attributes = re.compile(r"Or|And|OR|AND").split(user_attribute)
     query_builder = []
     for attr in attributes:
         attr = attr.strip().lower()
