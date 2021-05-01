@@ -1,10 +1,9 @@
-import re
 from functools import cache
 
-from tortoise.query_utils import Q
 from fastapi import APIRouter, Request
 from typing import Optional, Dict, List, Any
 
+from api.api_v1.storage.database import Database
 from api.utils import API_functools
 from api.api_v1.models.pydantic import User, PartialUser
 from api.api_v1.models.tortoise import Person, Person_Pydantic
@@ -114,16 +113,7 @@ async def users_by_attribute(
             Try with: {User.attributes()}
             """,
         }
-    attributes = re.compile(r"Or|And|OR|AND").split(user_attribute)
-    query_builder = []
-    for attr in attributes:
-        attr = attr.strip().lower()
-        cond = {f"{attr}__icontains": value}
-        if user_attribute.split(attr)[0].lower().endswith("or"):
-            last_query = query_builder.pop()
-            query_builder.append(Q(last_query, Q(**cond), join_type="OR"))
-        elif attr != "":
-            query_builder = [*query_builder, Q(**cond)]
+    query_builder = Database.query_builder(user_attribute, value)
 
     persons = await Person_Pydantic.from_queryset(
         Person.filter(*query_builder).order_by("id")
