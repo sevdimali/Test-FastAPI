@@ -95,6 +95,7 @@ class TestPersonAPi(test.TestCase):
 
         # Create new User
         person = await Person.create(**USER_DATA)
+        assert person.id == 1
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT)
@@ -249,6 +250,8 @@ class TestPersonAPi(test.TestCase):
         }
         # Create new User
         person = await Person.create(**USER_DATA2)
+        assert person.id == 1
+
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.patch(
                 f"{API_ROOT}{person.id}", data=json.dumps(data)
