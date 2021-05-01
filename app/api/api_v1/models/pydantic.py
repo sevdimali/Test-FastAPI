@@ -3,7 +3,6 @@ from datetime import date
 from typing import Optional
 
 from pydantic import BaseModel, validator
-from typing import Optional
 from email_validator import validate_email, EmailNotValidError
 
 from api.api_v1.models.types import Gender
