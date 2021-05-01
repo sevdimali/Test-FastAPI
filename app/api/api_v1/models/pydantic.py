@@ -1,5 +1,6 @@
 import re
 from datetime import date
+from typing import Optional
 
 from pydantic import BaseModel, validator
 from typing import Optional
@@ -18,7 +19,7 @@ class PartialUser(BaseModel):
     company: Optional[str]
     job: Optional[str]
 
-    @validator("last_name", "first_name", "country_of_birth", "job", "company")
+    @validator("last_name", "first_name", "job", "company")
     def between_3_and_50_characters(
         cls, value: str, **kwargs
     ) -> str:  # pragma no cover
@@ -107,6 +108,10 @@ class User(PartialUser):
     gender: Gender
     date_of_birth: date
     country_of_birth: str
+
+    @validator("country_of_birth")
+    def between_3_and_50_characters(cls, value: str) -> Optional[str]:
+        return super().between_3_and_50_characters(value)
 
     class Config:
         schema_extra = {
