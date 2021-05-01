@@ -3,7 +3,7 @@ from tortoise.contrib import test
 
 from api.utils import API_functools
 from api.api_v1.models.tortoise import Person
-from api.api_v1.models.pydantic import User
+from api.api_v1.models.pydantic import User, PartialUser
 from api.api_v1.storage.initial_data import INIT_DATA
 
 
@@ -31,7 +31,7 @@ class TestUtils(test.TestCase):
             assert API_functools.instance_of(el, instance) is True
 
     def test_get_attributes(self):
-        expected = (
+        user_attributes = (
             "first_name",
             "last_name",
             "email",
@@ -43,7 +43,18 @@ class TestUtils(test.TestCase):
             "date_of_birth",
             "country_of_birth",
         )
-        assert User.attributes() == expected
+        assert API_functools.get_attributes(User) == user_attributes
+        partialUser_attributes = (
+            "first_name",
+            "last_name",
+            "email",
+            "avatar",
+            "company",
+            "job",
+        )
+        assert (
+            API_functools.get_attributes(PartialUser) == partialUser_attributes
+        )
 
     def test_valid_order(self):
         # valid order must consist of an attribute of the Person class
