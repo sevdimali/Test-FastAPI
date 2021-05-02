@@ -1,7 +1,9 @@
 from functools import cache
+
 from fastapi import APIRouter, Request
 from typing import Optional, Dict, List, Any
 
+from api.api_v1.storage.database import Database
 from api.utils import API_functools
 from api.api_v1.models.pydantic import User, PartialUser
 from api.api_v1.models.tortoise import Person, Person_Pydantic
@@ -92,12 +94,18 @@ async def users_by_attribute(
 
     Args:
         user_attribute (Any): user's attribute\n
+        you can combine two or more attributes
+        with keywords "Or", "And"\n
+        ex: first_nameOrlast_name, genderAndemail
 
     Returns:
         List[Dict[str, Any]]: List of users found
     """
     response = {"success": False, "users": []}
-    if not API_functools.is_attribute_of(user_attribute, User):
+    lower_user_attribute = user_attribute.lower()
+    if (
+        "and" not in lower_user_attribute and "or" not in lower_user_attribute
+    ) and not API_functools.is_attribute_of(user_attribute, User):
         return {
             **response,
             "detail": f"""
@@ -105,10 +113,10 @@ async def users_by_attribute(
             Try with: {User.attributes()}
             """,
         }
-    kwargs = {}
-    kwargs[f"{user_attribute}__icontains"] = value
+    query_builder = Database.query_builder(user_attribute, value)
+
     persons = await Person_Pydantic.from_queryset(
-        Person.filter(**kwargs).order_by(user_attribute)
+        Person.filter(*query_builder).order_by("id")
     )
     if len(persons) == 0:
         return {**response, "detail": "Not Found"}

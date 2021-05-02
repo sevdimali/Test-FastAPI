@@ -7,6 +7,10 @@
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 [![CC-0 license](https://img.shields.io/badge/License-CC--0-blue.svg)](https://creativecommons.org/licenses/by-nd/4.0)
 
+## Client code
+
+![Client App](https://github.com/meschac38700/fastAPI-client-side)
+
 ## Python versions
 
 ### >= 3.9

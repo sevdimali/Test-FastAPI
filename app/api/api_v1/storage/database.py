@@ -1,4 +1,8 @@
+import re
+from typing import Any, List
+
 from tortoise.contrib.fastapi import register_tortoise
+from tortoise.query_utils import Q
 
 from api.api_v1.settings import TORTOISE_ORM as DATABASE_CONFIG
 
@@ -19,3 +23,27 @@ class Database:
             success = False
 
         return success
+
+    @classmethod
+    def query_builder(cls, user_attribute: str, value: Any) -> List[Q]:
+        """Build a query with Q function and attributes separates
+        with (Or, And, AND, OR) keywords
+
+        Args:
+            user_attribute (str): attributes ex: first_nameOrlast_nameAndemail
+            value (Any): value that equals attribute
+
+        Returns:
+            List[Q]: List of Q functions according to attributes and value
+        """
+        attributes = re.compile(r"Or|And|OR|AND").split(user_attribute)
+        query_builder = []
+        for attr in attributes:
+            attr = attr.strip().lower()
+            cond = {f"{attr}__icontains": value}
+            if user_attribute.split(attr)[0].lower().endswith("or"):
+                last_query = query_builder.pop()
+                query_builder.append(Q(last_query, Q(**cond), join_type="OR"))
+            elif attr != "":
+                query_builder = [*query_builder, Q(**cond)]
+        return query_builder

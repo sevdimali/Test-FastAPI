@@ -27,6 +27,18 @@ USER_DATA = {
     "date_of_birth": "1970-01-01",
     "country_of_birth": "No where",
 }
+USER_DATA_WITH_SAME_NAME = {
+    "is_admin": True,
+    "first_name": "Alice",
+    "last_name": "Bod",
+    "email": "alice.bob@eliam-lotonga.fr",
+    "gender": "Male",
+    "avatar": avatar,
+    "job": "Compensation Analyst",
+    "company": "Edgetag",
+    "date_of_birth": "1970-01-01",
+    "country_of_birth": "No where",
+}
 USER_DATA2 = {
     "first_name": "John1",
     "last_name": "DOE1",
@@ -309,6 +321,10 @@ class TestPersonAPi(test.TestCase):
         person = await Person.create(**USER_DATA)
         assert person.id == 1
 
+        # Create new User
+        person2 = await Person.create(**USER_DATA_WITH_SAME_NAME)
+        assert person2.id == 2
+
         # Not found
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(f"{API_ROOT}filter/first_name/notfound")
@@ -337,6 +353,51 @@ class TestPersonAPi(test.TestCase):
                 f"{API_ROOT}filter/first_name/{person.first_name[:4].lower()}"
             )
         expected = {"success": True, "users": [{"id": person.id, **USER_DATA}]}
+
+        assert response.status_code == 200
+        assert response.json() == expected
+
+        # first_name 'john'
+        url = "filter/first_name/"
+        # Test with keyword "Or"
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT + url + "john")
+        expected = {"success": True, "users": [{"id": person.id, **USER_DATA}]}
+
+        assert response.status_code == 200
+        assert response.json() == expected
+
+        # first_name or last_name must contains 'john'
+        url = "filter/first_nameOrlast_name/"
+        # Test with keyword "Or"
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT + url + "john")
+        expected = {"success": True, "users": [{"id": person.id, **USER_DATA}]}
+
+        assert response.status_code == 200
+        assert response.json() == expected
+
+        # first_name or last_name or email must contains "bob"
+        url = "filter/first_nameOrlast_nameOremail/"
+        # Test with keyword "Or" "And"
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT + url + "bob")
+        expected = {
+            "success": True,
+            "users": [
+                {"id": person2.id, **USER_DATA_WITH_SAME_NAME},
+            ],
+        }
+
+        assert response.status_code == 200
+        assert response.json() == expected
+
+        # last_name doesn't contain 'alic' word so it should fail
+        url = "filter/first_nameAndlast_nameAndemail/"
+        # Test with keyword "And"
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT + url + "alic")
+        expected = {"success": False, "users": [], "detail": "Not Found"}
 
         assert response.status_code == 200
         assert response.json() == expected
