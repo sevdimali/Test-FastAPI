@@ -50,7 +50,7 @@ class PartialUser(BaseModel):
         return value
 
     @validator("avatar")
-    def valid_url(cls, value: str, **kwargs) -> str:
+    def valid_url_avatar(cls, value: str, **kwargs) -> str:
         """Validate url\n
 
         Args:\n
