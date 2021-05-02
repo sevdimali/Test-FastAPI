@@ -113,7 +113,7 @@ async def users_by_attribute(
             Try with: {User.attributes()}
             """,
         }
-    query_builder = Database.query_builder(user_attribute, value)
+    query_builder = Database.query_filter_builder(user_attribute, value)
 
     persons = await Person_Pydantic.from_queryset(
         Person.filter(*query_builder).order_by("id")
