@@ -25,8 +25,8 @@ class Database:
         return success
 
     @classmethod
-    def query_builder(cls, user_attribute: str, value: Any) -> List[Q]:
-        """Build a query with Q function and attributes separates
+    def query_filter_builder(cls, user_attribute: str, value: Any) -> List[Q]:
+        """Build a filter with Q function and attributes separates
         with (Or, And, AND, OR) keywords
 
         Args:

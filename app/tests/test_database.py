@@ -17,7 +17,7 @@ class TestDatabase(test.TestCase):
             # Connection NOK
             assert executor.submit(Database.connect).result() is False
 
-    def test_query_builder(self):
+    def test_query_filter_builder(self):
         value = "john"
         scenes = [
             {
@@ -67,6 +67,6 @@ class TestDatabase(test.TestCase):
             },
         ]
         for scene in scenes:
-            assert len(Database.query_builder(scene["attr"], value)) == len(
-                scene["expected"]
-            )
+            assert len(
+                Database.query_filter_builder(scene["attr"], value)
+            ) == len(scene["expected"])
