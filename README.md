@@ -5,7 +5,7 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Pypi](https://img.shields.io/pypi/v/pip.svg)](https://pypi.org/project/pip/)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
-[![CC-0 license](https://img.shields.io/badge/License-CC--0-blue.svg)](https://creativecommons.org/licenses/by-nd/4.0)
+[![CC-0 license](https://img.shields.io/badge/License-CC--0-blue.svg)](https://github.com/meschac38700/Test-FastAPI/blob/master/LICENSE)
 
 ## Client code
 
