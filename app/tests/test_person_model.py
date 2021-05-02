@@ -54,6 +54,14 @@ USER_DATA2 = {
 
 
 class TestPersonAPi(test.TestCase):
+    def test__str__repr__(self):
+        person = Person(**USER_DATA)
+        expected = "{}(name={} {})".format(
+            person.__class__.__name__, person.first_name, person.last_name
+        )
+        assert person.__repr__() == expected
+        assert person.__str__() == expected
+
     async def test_root(self):
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get("/")
