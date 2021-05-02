@@ -83,3 +83,19 @@ class TestPydantic(test.TestCase):
         ]
         for url in good_urls_format:
             assert PartialUser.valid_url_avatar(url, field=field) == url
+
+    def test_valid_email(self):
+        field = ModelField(
+            name="name",
+            type_=str,
+            class_validators={},
+            model_config=BaseConfig,
+        )
+        with pytest.raises(ValueError):
+            bad_email_format = ["johndoe.com" "johndoe@.com" "johndoe@123.com"]
+            for email in bad_email_format:
+                PartialUser.valid_email(email, field=field)
+
+        good_email_format = ["contact@eliam-lotonga.fr", "johndoe@gmail.com"]
+        for email in good_email_format:
+            assert PartialUser.valid_email(email, field=field) == email
