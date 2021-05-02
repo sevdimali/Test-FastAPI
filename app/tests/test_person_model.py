@@ -54,6 +54,14 @@ USER_DATA2 = {
 
 
 class TestPersonAPi(test.TestCase):
+    def test__str__repr__(self):
+        person = Person(**USER_DATA)
+        expected = "{}(name={} {})".format(
+            person.__class__.__name__, person.first_name, person.last_name
+        )
+        assert person.__repr__() == expected
+        assert person.__str__() == expected
+
     async def test_root(self):
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get("/")
@@ -282,6 +290,23 @@ class TestPersonAPi(test.TestCase):
         assert response.json() == user_expected
 
     async def test_put_user(self):
+
+        # test user doesn't exist
+        user_id = 1
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.put(
+                f"{API_ROOT}{user_id}",
+                data=json.dumps(USER_DATA),
+            )
+        expected = {
+            "success": False,
+            "user": {},
+            "detail": f"User with ID {user_id} doesn't exist.",
+        }
+
+        assert response.status_code == 200
+        assert response.json() == expected
+
         # Create new User
         person = await Person.create(**USER_DATA2)
         assert person.id == 1

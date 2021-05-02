@@ -28,9 +28,7 @@ class PartialUser(BaseModel):
         return tuple(cls.__dict__.get("__fields__", {}).keys())
 
     @validator("last_name", "first_name", "job", "company")
-    def between_3_and_50_characters(
-        cls, value: str, **kwargs
-    ) -> str:  # pragma no cover
+    def between_3_and_50_characters(cls, value: str, **kwargs) -> str:
         """Validate str attributes that must contains minimum 3 characters\
             and maximum 50 characters\n
 
@@ -52,7 +50,7 @@ class PartialUser(BaseModel):
         return value
 
     @validator("avatar")
-    def valid_url(cls, value: str, **kwargs) -> str:  # pragma no cover
+    def valid_url_avatar(cls, value: str, **kwargs) -> str:
         """Validate url\n
 
         Args:\n
@@ -77,7 +75,7 @@ class PartialUser(BaseModel):
         return value
 
     @validator("email")
-    def valid_email(cls, value: str, **kwargs) -> str:  # pragma no cover
+    def valid_email(cls, value: str, **kwargs) -> str:
         """Validate email attribute using validate_email package
 
         Args:

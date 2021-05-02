@@ -187,7 +187,7 @@ async def update_user(user_id: int, new_data: User) -> Dict[str, Any]:
 
     # check if user exists
     curr_user = await Person.get_or_none(id=user_id)
-    if curr_user is None:  # pragma no cover
+    if curr_user is None:
         response["detail"] = f"User with ID {user_id} doesn't exist."
         return response
 
