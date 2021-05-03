@@ -18,6 +18,10 @@ class TestUtils(test.TestCase):
             assert (
                 API_functools.get_or_default(list_object, index, None) == obj
             )
+        assert (
+            API_functools.get_or_default(list_object, len(list_object), None)
+            is None
+        )
 
     async def test_instance_of(self):
         obj = await Person.create(**INIT_DATA[0])
@@ -29,32 +33,12 @@ class TestUtils(test.TestCase):
         }
         for el, instance in elements.items():
             assert API_functools.instance_of(el, instance) is True
+        assert API_functools.instance_of("Hello", int) is False
 
     def test_get_attributes(self):
-        user_attributes = (
-            "first_name",
-            "last_name",
-            "email",
-            "avatar",
-            "company",
-            "job",
-            "is_admin",
-            "gender",
-            "date_of_birth",
-            "country_of_birth",
-        )
-        assert API_functools.get_attributes(User) == user_attributes
-        partialUser_attributes = (
-            "first_name",
-            "last_name",
-            "email",
-            "avatar",
-            "company",
-            "job",
-        )
-        assert (
-            API_functools.get_attributes(PartialUser) == partialUser_attributes
-        )
+        assert API_functools.get_attributes(User) == User.attributes()
+        partial_attr = PartialUser.attributes()
+        assert API_functools.get_attributes(PartialUser) == partial_attr
 
     def test_valid_order(self):
         # valid order must consist of an attribute of the Person class
@@ -67,7 +51,6 @@ class TestUtils(test.TestCase):
         ]
         for order in orders:
             assert API_functools.valid_order(User, order[0]) == order[1]
-            assert API_functools.valid_order(User, order[0]) == order[1]
 
     def test_is_attribute_of(self):
         for attr in User.attributes():
@@ -78,7 +61,6 @@ class TestUtils(test.TestCase):
     def test_manage_next_previous_page(self):
         scope = {"type": "http", "path": "/", "method": "GET"}
         request = Request(scope)
-        data = []
         scenes = [
             {
                 "data": (0, 5, 0),  # nb_total_data, limit, offset
@@ -112,7 +94,7 @@ class TestUtils(test.TestCase):
         for scene in scenes:
             # scene 1 next=None, previous=None
             actual = API_functools.manage_next_previous_page(
-                request, data, *scene["data"]
+                request, [], *scene["data"]
             )
             assert actual == scene["expected"]
 
@@ -121,14 +103,14 @@ class TestUtils(test.TestCase):
         await API_functools.insert_default_data(
             data=INIT_DATA[:nb_users_inserted]
         )
-        nb_users = await Person.all().count()
-        assert nb_users == nb_users_inserted
+        assert await Person.all().count() == nb_users_inserted
 
     async def test_create_default_person(self):
         user_to_create = INIT_DATA[0]
         user_created = await API_functools._create_default_person(
             user_to_create
         )
+        assert API_functools.instance_of(user_created, Person) is True
         actual = {
             **user_created.__dict__,
             "gender": user_created.gender.value,
