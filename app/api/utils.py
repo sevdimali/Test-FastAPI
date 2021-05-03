@@ -13,7 +13,7 @@ MODEL = TypeVar("MODEL", bound="API_functools")
 class API_functools:
     @classmethod
     def get_or_default(
-        cls: MODEL, list_el: tuple, index: int, default: Any = None
+        cls: Type[MODEL], list_el: tuple, index: int, default: Any = None
     ) -> Any:
         """Search element from specific list\n
 
@@ -27,13 +27,12 @@ class API_functools:
         Returns:\n
             Any: element if found else default
         """
-        if len(list_el) <= index:
-            return default
-
-        return list_el[index]
+        return default if len(list_el) <= index else list_el[index]
 
     @classmethod
-    def instance_of(cls: MODEL, el: Any, class_expected: Type[Any]) -> bool:
+    def instance_of(
+        cls: Type[MODEL], el: Any, class_expected: Type[Any]
+    ) -> bool:
         """Check element is from specific class\n
 
         Args:\n
@@ -47,7 +46,7 @@ class API_functools:
         return el.__class__.__name__.lower() == class_expected.__name__.lower()
 
     @classmethod
-    def get_attributes(cls: MODEL, target_cls) -> tuple[str]:
+    def get_attributes(cls: Type[MODEL], target_cls) -> tuple[str]:
         """Return class object attributes except ID\n
 
         Returns:
@@ -57,7 +56,7 @@ class API_functools:
 
     @classmethod
     def valid_order(
-        cls: MODEL, target_cls: BaseModel, sort: str
+        cls: Type[MODEL], target_cls: BaseModel, sort: str
     ) -> Optional[str]:
         """Validator for sort db query result with \
             attribute:direction(asc or desc)\n
@@ -70,15 +69,15 @@ class API_functools:
         Returns:\n
             Optional[str]: valid sql string order by or None
         """
-        attr, order = sort.split(":")
+        attr, order = sort.lower().split(":")
         valid_attributes = ("id",) + cls.get_attributes(target_cls)
-        if attr.lower() in valid_attributes and order.lower() in ORDERS.keys():
-            return f"{ORDERS.get(order.lower(), '')}{attr.lower()}"
+        if attr in valid_attributes and order in ORDERS.keys():
+            return f"{ORDERS.get(order, '')}{attr}"
         return None
 
     @classmethod
     def is_attribute_of(
-        cls: MODEL,
+        cls: Type[MODEL],
         attr: str,
         target_cls: BaseModel,
     ) -> bool:
@@ -143,9 +142,8 @@ class API_functools:
         Returns:\n
             None: nothing
         """
-        quantity = (
-            quantity if len(INIT_DATA) >= quantity >= 1 else len(INIT_DATA)
-        )
+        data_length = len(INIT_DATA)
+        quantity = quantity if data_length >= quantity >= 1 else data_length
         data = data[:quantity]
         with futures.ProcessPoolExecutor() as executor:
             for user in data:
@@ -162,16 +160,4 @@ class API_functools:
         Returns:\n
             Person: inserted person
         """
-        person = await Person.create(
-            is_admin=user["is_admin"],
-            first_name=user["first_name"],
-            last_name=user["last_name"],
-            gender=user["gender"],
-            email=user["email"],
-            avatar=user["avatar"],
-            company=user["company"],
-            job=user["job"],
-            date_of_birth=user["date_of_birth"],
-            country_of_birth=user["country_of_birth"],
-        )
-        return person
+        return await Person.create(**user)
