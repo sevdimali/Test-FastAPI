@@ -2,6 +2,7 @@
 
 [![codecov](https://codecov.io/gh/meschac38700/Test-FastAPI/branch/master/graph/badge.svg?token=iffvr8Fmg5)](https://codecov.io/gh/meschac38700/Test-FastAPI)
 [![Workflow](https://github.com/meschac38700/Test-FastAPI/actions/workflows/api-workflow.yml/badge.svg?branch=master)](https://github.com/meschac38700/Test-FastAPI/actions/workflows/api-workflow.yml)
+[![Lint](https://github.com/meschac38700/Test-FastAPI/actions/workflows/black.yaml/badge.svg)](https://github.com/meschac38700/Test-FastAPI/actions/workflows/back.yaml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Pypi](https://img.shields.io/pypi/v/pip.svg)](https://pypi.org/project/pip/)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
