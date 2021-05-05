@@ -10,7 +10,7 @@
 
 ## Client code
 
-![Client App](https://github.com/meschac38700/fastAPI-client-side)
+[Client App](https://github.com/meschac38700/fastAPI-client-side)
 
 ## Python versions
 
