@@ -30,7 +30,8 @@ class Database:
            by following keywords: Or, And, AND, OR\n
 
         Args:
-            user_attribute (str): attributes ex: first_nameOrlast_nameAndemail\n
+            user_attribute (str): attributes
+            ex: first_nameOrlast_nameAndemail\n
             value (Any): value that equals attribute\n
 
         Returns:
