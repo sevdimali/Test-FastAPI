@@ -56,11 +56,14 @@ USER_DATA2 = {
 class TestPersonAPi(test.TestCase):
     def test__str__repr__(self):
         person = Person(**USER_DATA)
-        expected = "{}(name={} {})".format(
+        expected_repr = "Class({!r})(first_name={!r}, last_name={!r},...)"
+        expected_str = "{!s}(first_name={!s}, last_name={!s},...)"
+        assert person.__repr__() == expected_repr.format(
             person.__class__.__name__, person.first_name, person.last_name
         )
-        assert person.__repr__() == expected
-        assert person.__str__() == expected
+        assert person.__str__() == expected_str.format(
+            person.__class__.__name__, person.first_name, person.last_name
+        )
 
     async def test_root(self):
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
@@ -83,7 +86,7 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
-    async def test_load_fake_data(self):
+    async def test_loading_data(self):
         quantity_users = 4
         # load fake data
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
@@ -128,7 +131,7 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
-    async def test_get_users_with_limit_and_offset(self):
+    async def test_limit_offset(self):
         limit = 5
         offset = 0
         users = INIT_DATA[:10]
@@ -147,7 +150,7 @@ class TestPersonAPi(test.TestCase):
             )
 
         expected = {
-            "next": f"/api/v1/users/?limit={limit}&offset={limit}",
+            "next": f"{API_ROOT}?limit={limit}&offset={limit}",
             "previous": None,
             "users": [
                 {"id": n, **user}
@@ -165,7 +168,7 @@ class TestPersonAPi(test.TestCase):
             )
         expected = {
             "next": None,
-            "previous": f"/api/v1/users/?limit={limit}&offset={offset}",
+            "previous": f"{API_ROOT}?limit={limit}&offset={offset}",
             "users": [
                 {"id": n, **user}
                 for n, user in enumerate(users[limit:], start=limit + 1)
@@ -188,7 +191,7 @@ class TestPersonAPi(test.TestCase):
             "detail": "Invalid values: offset(>=0) or limit(>0)",
         }
 
-    async def test_get_users_sorted_by_attribute(self):
+    async def test_sorted_by_attribute(self):
         # sort by first_name ascending order
         asc = "first_name:asc"
         # sort by first_name descending order
@@ -233,7 +236,7 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
-        # Test bad order by input
+        # Test bad order by
         order_by = "undefined:asc"
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT, params={"sort": order_by})
@@ -247,27 +250,24 @@ class TestPersonAPi(test.TestCase):
     async def test_patch_user(self):
 
         # User doesn't exist
-        user_id = 100
+        user_ID = 100
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.patch(
-                f"{API_ROOT}{user_id}", data=json.dumps(USER_DATA)
+                f"{API_ROOT}{user_ID}", data=json.dumps(USER_DATA)
             )
         expected = {
             "success": False,
             "user": {},
-            "detail": "User with ID {user_id} doesn't exist.",
+            "detail": f"User with ID {user_ID} doesn't exist.",
         }
 
         assert response.json() == expected
 
-        data = {
-            "first_name": "John",
-            "last_name": "DOE",
-            "email": "john.doe@eliam-lotonga.fr",
-            "avatar": avatar,
-            "job": "Compensation Analyst",
-            "company": "Edgetag",
-        }
+        data = {**USER_DATA}
+        data.pop("is_admin", None)
+        data.pop("gender", None)
+        data.pop("date_of_birth", None)
+        data.pop("country_of_birth", None)
         # Create new User
         person = await Person.create(**USER_DATA2)
         assert person.id == 1
@@ -292,16 +292,16 @@ class TestPersonAPi(test.TestCase):
     async def test_put_user(self):
 
         # test user doesn't exist
-        user_id = 1
+        user_ID = 1
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.put(
-                f"{API_ROOT}{user_id}",
+                f"{API_ROOT}{user_ID}",
                 data=json.dumps(USER_DATA),
             )
         expected = {
             "success": False,
             "user": {},
-            "detail": f"User with ID {user_id} doesn't exist.",
+            "detail": f"User with ID {user_ID} doesn't exist.",
         }
 
         assert response.status_code == 200
@@ -321,7 +321,7 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert response.json() == expected
 
-    async def test_get_user_by_id(self):
+    async def test_get_user_by_ID(self):
         # Not found
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(f"{API_ROOT}1")
@@ -430,13 +430,13 @@ class TestPersonAPi(test.TestCase):
     async def test_delete_user(self):
 
         # User doesn't exist
-        user_id = 100
+        user_ID = 100
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.delete(f"{API_ROOT}{user_id}")
+            response = await ac.delete(f"{API_ROOT}{user_ID}")
         expected = {
             "success": False,
             "user": {},
-            "detail": f"User with ID {user_id} doesn't exist",
+            "detail": f"User with ID {user_ID} doesn't exist",
         }
         assert response.json() == expected
 

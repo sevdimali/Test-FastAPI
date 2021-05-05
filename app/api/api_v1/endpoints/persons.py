@@ -65,16 +65,16 @@ async def users(
 
 
 @cache
-@router.get("/{user_id}")
-async def users_by_id(user_id: int) -> Dict[str, Any]:
+@router.get("/{user_ID}")
+async def users_by_ID(user_ID: int) -> Dict[str, Any]:
     """Get user api\n
 
     Args:\n
-        user_id (int): user ID\n
+        user_ID (int): user ID\n
     Returns:\n
         Dict[str, Any]: contains user found\n
     """
-    user = await Person_Pydantic.from_queryset(Person.filter(pk=user_id))
+    user = await Person_Pydantic.from_queryset(Person.filter(pk=user_ID))
     data = {
         "success": True,
         "user": API_functools.get_or_default(user, 0, {}),
@@ -139,12 +139,12 @@ async def create_user(user: User) -> Dict[str, Any]:
 
 
 @cache
-@router.patch("/{user_id}")
-async def fix_user(user_id: int, user: PartialUser) -> Dict[str, Any]:
+@router.patch("/{user_ID}")
+async def fix_user(user_ID: int, user: PartialUser) -> Dict[str, Any]:
     """Fix some users attributes except his ID\n
 
     Args:\n
-        user_id (int): user ID\n
+        user_ID (int): user ID\n
         user_data (User): new data\n
 
     Returns:\n
@@ -158,9 +158,9 @@ async def fix_user(user_id: int, user: PartialUser) -> Dict[str, Any]:
     than the tortoiseORM validator in my opinion
     see: https://pydantic-docs.helpmanual.io/usage/validators/
     """
-    user_found = await Person.get_or_none(id=user_id)
+    user_found = await Person.get_or_none(id=user_ID)
     if user_found is None:
-        response["detail"] = "User with ID {user_id} doesn't exist."
+        response["detail"] = f"User with ID {user_ID} doesn't exist."
         return response
 
     user_updated = user_found.update_from_dict(
@@ -171,12 +171,12 @@ async def fix_user(user_id: int, user: PartialUser) -> Dict[str, Any]:
 
 
 @cache
-@router.put("/{user_id}")
-async def update_user(user_id: int, new_data: User) -> Dict[str, Any]:
+@router.put("/{user_ID}")
+async def update_user(user_ID: int, new_data: User) -> Dict[str, Any]:
     """Transfer data from one user to another\n
 
     Args:\n
-        user_id (int): user who transfers the data and will be deleted\n
+        user_ID (int): user who transfers the data and will be deleted\n
         new_user (int): user receiving data, \
         its data will be updated with the data of the first user\n
 
@@ -186,9 +186,9 @@ async def update_user(user_id: int, new_data: User) -> Dict[str, Any]:
     response = {"success": False, "user": {}}
 
     # check if user exists
-    curr_user = await Person.get_or_none(id=user_id)
+    curr_user = await Person.get_or_none(id=user_ID)
     if curr_user is None:
-        response["detail"] = f"User with ID {user_id} doesn't exist."
+        response["detail"] = f"User with ID {user_ID} doesn't exist."
         return response
 
     curr_user = await curr_user.update_from_dict(new_data.__dict__)
@@ -196,21 +196,21 @@ async def update_user(user_id: int, new_data: User) -> Dict[str, Any]:
     return await Person_Pydantic.from_tortoise_orm(curr_user)
 
 
-@router.delete("/{user_id}")
-async def delete_user(user_id: int) -> Dict[str, Any]:
+@router.delete("/{user_ID}")
+async def delete_user(user_ID: int) -> Dict[str, Any]:
     """Delete a user\n
 
     Args:\n
-        user_id (int): user to delete\n
+        user_ID (int): user to delete\n
 
     Returns:\n
         Dict[str, Any]: contains deleted User data or error\n
     """
     response = {"success": False, "user": {}}
 
-    user_found = await Person.get_or_none(id=user_id)
+    user_found = await Person.get_or_none(id=user_ID)
     if not user_found:
-        response["detail"] = f"User with ID {user_id} doesn't exist"
+        response["detail"] = f"User with ID {user_ID} doesn't exist"
         return response
 
     await user_found.delete()
@@ -219,5 +219,5 @@ async def delete_user(user_id: int) -> Dict[str, Any]:
     response["user"] = user_found.__dict__
     response["user"].pop("_partial", None)
     response["user"].pop("_saved_in_db", None)
-    response["detail"] = f"User {user_id} delete successfully ⭐"
+    response["detail"] = f"User {user_ID} delete successfully ⭐"
     return response

@@ -17,12 +17,14 @@ class Person(models.Model):
     country_of_birth = fields.CharField(max_length=50)
 
     def __str__(self):
-        return "{}(name={} {})".format(
+        return "{!s}(first_name={!s}, last_name={!s},...)".format(
             self.__class__.__name__, self.first_name, self.last_name
         )
 
     def __repr__(self):
-        return self.__str__()
+        return "Class({!r})(first_name={!r}, last_name={!r},...)".format(
+            self.__class__.__name__, self.first_name, self.last_name
+        )
 
 
 Person_Pydantic = pydantic_model_creator(Person, name="Person")
