@@ -90,9 +90,7 @@ class TestPersonAPi(test.TestCase):
         quantity_users = 4
         # load fake data
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.get(
-                "/data", params={"quantity": quantity_users}
-            )
+            response = await ac.get("/data", params={"quantity": quantity_users})
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT)
@@ -145,16 +143,13 @@ class TestPersonAPi(test.TestCase):
 
         # Scene 1 get first data, previous=Null
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.get(
-                API_ROOT, params={"limit": limit, "offset": offset}
-            )
+            response = await ac.get(API_ROOT, params={"limit": limit, "offset": offset})
 
         expected = {
             "next": f"{API_ROOT}?limit={limit}&offset={limit}",
             "previous": None,
             "users": [
-                {"id": n, **user}
-                for n, user in enumerate(users[:limit], start=1)
+                {"id": n, **user} for n, user in enumerate(users[:limit], start=1)
             ],
         }
 
@@ -163,9 +158,7 @@ class TestPersonAPi(test.TestCase):
 
         # Scene 2 get last data, next=Null
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.get(
-                API_ROOT, params={"limit": limit, "offset": limit}
-            )
+            response = await ac.get(API_ROOT, params={"limit": limit, "offset": limit})
         expected = {
             "next": None,
             "previous": f"{API_ROOT}?limit={limit}&offset={offset}",
@@ -182,9 +175,7 @@ class TestPersonAPi(test.TestCase):
         offset = -1
         # Test bad limit and offset values
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.get(
-                API_ROOT, params={"limit": limit, "offset": limit}
-            )
+            response = await ac.get(API_ROOT, params={"limit": limit, "offset": limit})
         expected = {
             "success": False,
             "users": [],
@@ -273,9 +264,7 @@ class TestPersonAPi(test.TestCase):
         assert person.id == 1
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.patch(
-                f"{API_ROOT}{person.id}", data=json.dumps(data)
-            )
+            response = await ac.patch(f"{API_ROOT}{person.id}", data=json.dumps(data))
         user_expected = {
             **person.__dict__,
             **data,

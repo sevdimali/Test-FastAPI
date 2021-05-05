@@ -30,9 +30,7 @@ class API_functools:
         return default if len(list_el) <= index else list_el[index]
 
     @classmethod
-    def instance_of(
-        cls: Type[MODEL], el: Any, class_expected: Type[Any]
-    ) -> bool:
+    def instance_of(cls: Type[MODEL], el: Any, class_expected: Type[Any]) -> bool:
         """Check element is from specific class\n
 
         Args:\n
@@ -130,9 +128,7 @@ class API_functools:
         return data
 
     @classmethod
-    async def insert_default_data(
-        cls, data=INIT_DATA, quantity: int = -1
-    ) -> None:
+    async def insert_default_data(cls, data=INIT_DATA, quantity: int = -1) -> None:
         """Init `person` table with some default users\n
 
         Args:

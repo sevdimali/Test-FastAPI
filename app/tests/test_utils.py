@@ -15,13 +15,8 @@ class TestUtils(test.TestCase):
             {"name": "Alice Doe"},
         )
         for index, obj in enumerate(list_object):
-            assert (
-                API_functools.get_or_default(list_object, index, None) == obj
-            )
-        assert (
-            API_functools.get_or_default(list_object, len(list_object), None)
-            is None
-        )
+            assert API_functools.get_or_default(list_object, index, None) == obj
+        assert API_functools.get_or_default(list_object, len(list_object), None) is None
 
     async def test_instance_of(self):
         obj = await Person.create(**INIT_DATA[0])
@@ -100,16 +95,12 @@ class TestUtils(test.TestCase):
 
     async def test_insert_default_data(self):
         nb_users_inserted = 4
-        await API_functools.insert_default_data(
-            data=INIT_DATA[:nb_users_inserted]
-        )
+        await API_functools.insert_default_data(data=INIT_DATA[:nb_users_inserted])
         assert await Person.all().count() == nb_users_inserted
 
     async def test_create_default_person(self):
         user_to_create = INIT_DATA[0]
-        user_created = await API_functools._create_default_person(
-            user_to_create
-        )
+        user_created = await API_functools._create_default_person(user_to_create)
         assert API_functools.instance_of(user_created, Person) is True
         actual = {
             **user_created.__dict__,

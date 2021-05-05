@@ -68,6 +68,4 @@ if __name__ == "__main__":  # pragma no cover
     Database.connect(app)
 
     # Run app
-    uvicorn.run(
-        app, host="0.0.0.0", port=int(os.getenv("APP_EXPOSED_PORT", 8000))
-    )
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("APP_EXPOSED_PORT", 8000)))

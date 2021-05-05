@@ -63,9 +63,7 @@ class PartialUser(BaseModel):
             str: validate attribute
         """
         value = value.title().strip().lower()
-        patt = (
-            r"(https?:\/\/(www\.)?|(www\.))([\w\-\_\.]+)(\.[a-z]{2,10})(\/.+)?"
-        )
+        patt = r"(https?:\/\/(www\.)?|(www\.))([\w\-\_\.]+)(\.[a-z]{2,10})(\/.+)?"
         result = re.match(
             patt,
             value,
@@ -91,9 +89,7 @@ class PartialUser(BaseModel):
         try:
             validate_email(value)
         except EmailNotValidError:
-            raise ValueError(
-                f"{kwargs['field'].name} is not a valid email address."
-            )
+            raise ValueError(f"{kwargs['field'].name} is not a valid email address.")
         return value.lower()
 
     class Config:

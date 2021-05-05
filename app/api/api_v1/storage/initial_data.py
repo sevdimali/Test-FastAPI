@@ -9,7 +9,7 @@ INIT_DATA = [
         "country_of_birth": "Egypt",
         "avatar": "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1",
         "job": "Compensation Analyst",
-        "company": "Edgetag"
+        "company": "Edgetag",
     },
     {
         "first_name": "Hobard",
@@ -21,7 +21,7 @@ INIT_DATA = [
         "country_of_birth": "Russia",
         "avatar": "https://robohash.org/eaquedeseruntin.png?size=150x150&set=set1",
         "job": "Recruiting Manager",
-        "company": "Bubblebox"
+        "company": "Bubblebox",
     },
     {
         "first_name": "Flor",
@@ -33,7 +33,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/doloresvoluptatemdolores.png?size=150x150&set=set1",
         "job": "Speech Pathologist",
-        "company": "Feedspan"
+        "company": "Feedspan",
     },
     {
         "first_name": "Vilma",
@@ -45,7 +45,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/voluptatemrerumerror.png?size=150x150&set=set1",
         "job": "Senior Quality Engineer",
-        "company": "Jabbercube"
+        "company": "Jabbercube",
     },
     {
         "first_name": "Peyter",
@@ -57,7 +57,7 @@ INIT_DATA = [
         "country_of_birth": "Ukraine",
         "avatar": "https://robohash.org/quipossimusvoluptatem.png?size=150x150&set=set1",
         "job": "Internal Auditor",
-        "company": "Zoonder"
+        "company": "Zoonder",
     },
     {
         "first_name": "Karita",
@@ -69,7 +69,7 @@ INIT_DATA = [
         "country_of_birth": "Brazil",
         "avatar": "https://robohash.org/estaperiameligendi.png?size=150x150&set=set1",
         "job": "Senior Developer",
-        "company": "Aibox"
+        "company": "Aibox",
     },
     {
         "first_name": "Josie",
@@ -81,7 +81,7 @@ INIT_DATA = [
         "country_of_birth": "Bahamas",
         "avatar": "https://robohash.org/ipsamporrosapiente.png?size=150x150&set=set1",
         "job": "Geological Engineer",
-        "company": "Edgeblab"
+        "company": "Edgeblab",
     },
     {
         "first_name": "Kamila",
@@ -93,7 +93,7 @@ INIT_DATA = [
         "country_of_birth": "Japan",
         "avatar": "https://robohash.org/veronatusnihil.png?size=150x150&set=set1",
         "job": "VP Product Management",
-        "company": "Dabtype"
+        "company": "Dabtype",
     },
     {
         "first_name": "Harrison",
@@ -105,7 +105,7 @@ INIT_DATA = [
         "country_of_birth": "Slovenia",
         "avatar": "https://robohash.org/quassuntexercitationem.png?size=150x150&set=set1",
         "job": "Budget/Accounting Analyst IV",
-        "company": "Voonyx"
+        "company": "Voonyx",
     },
     {
         "first_name": "Cammi",
@@ -117,7 +117,7 @@ INIT_DATA = [
         "country_of_birth": "Honduras",
         "avatar": "https://robohash.org/magnisuntnumquam.png?size=150x150&set=set1",
         "job": "Recruiting Manager",
-        "company": "Edgewire"
+        "company": "Edgewire",
     },
     {
         "first_name": "Darbee",
@@ -129,7 +129,7 @@ INIT_DATA = [
         "country_of_birth": "Armenia",
         "avatar": "https://robohash.org/dictaidrerum.png?size=150x150&set=set1",
         "job": "General Manager",
-        "company": "Tazzy"
+        "company": "Tazzy",
     },
     {
         "first_name": "Ag",
@@ -141,7 +141,7 @@ INIT_DATA = [
         "country_of_birth": "Ukraine",
         "avatar": "https://robohash.org/vitaeiustonam.png?size=150x150&set=set1",
         "job": "Financial Analyst",
-        "company": "Thoughtbeat"
+        "company": "Thoughtbeat",
     },
     {
         "first_name": "Maxine",
@@ -153,7 +153,7 @@ INIT_DATA = [
         "country_of_birth": "France",
         "avatar": "https://robohash.org/eaaccusantiumdolor.png?size=150x150&set=set1",
         "job": "Structural Engineer",
-        "company": "Latz"
+        "company": "Latz",
     },
     {
         "first_name": "Willi",
@@ -165,7 +165,7 @@ INIT_DATA = [
         "country_of_birth": "Indonesia",
         "avatar": "https://robohash.org/voluptasquasiimpedit.png?size=150x150&set=set1",
         "job": "Senior Editor",
-        "company": "Fivespan"
+        "company": "Fivespan",
     },
     {
         "first_name": "Cornelle",
@@ -177,7 +177,7 @@ INIT_DATA = [
         "country_of_birth": "Greece",
         "avatar": "https://robohash.org/molestiaevoluptatemalias.png?size=150x150&set=set1",
         "job": "Community Outreach Specialist",
-        "company": "Miboo"
+        "company": "Miboo",
     },
     {
         "first_name": "Lara",
@@ -189,7 +189,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/fugitutdeleniti.png?size=150x150&set=set1",
         "job": "Operator",
-        "company": "Wikizz"
+        "company": "Wikizz",
     },
     {
         "first_name": "Dagny",
@@ -201,7 +201,7 @@ INIT_DATA = [
         "country_of_birth": "Indonesia",
         "avatar": "https://robohash.org/etnihildolor.png?size=150x150&set=set1",
         "job": "Senior Quality Engineer",
-        "company": "Realbuzz"
+        "company": "Realbuzz",
     },
     {
         "first_name": "Bevon",
@@ -213,7 +213,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/debitisvelnon.png?size=150x150&set=set1",
         "job": "Financial Analyst",
-        "company": "Skinix"
+        "company": "Skinix",
     },
     {
         "first_name": "Ajay",
@@ -225,7 +225,7 @@ INIT_DATA = [
         "country_of_birth": "Russia",
         "avatar": "https://robohash.org/modiquasdoloremque.png?size=150x150&set=set1",
         "job": "Sales Representative",
-        "company": "Fiveclub"
+        "company": "Fiveclub",
     },
     {
         "first_name": "Dosi",
@@ -237,7 +237,7 @@ INIT_DATA = [
         "country_of_birth": "United States",
         "avatar": "https://robohash.org/enimfugaut.png?size=150x150&set=set1",
         "job": "Computer Systems Analyst IV",
-        "company": "Divape"
+        "company": "Divape",
     },
     {
         "first_name": "Hallsy",
@@ -249,7 +249,7 @@ INIT_DATA = [
         "country_of_birth": "Japan",
         "avatar": "https://robohash.org/voluptatemisteillo.png?size=150x150&set=set1",
         "job": "Assistant Professor",
-        "company": "Browsecat"
+        "company": "Browsecat",
     },
     {
         "first_name": "Cull",
@@ -261,7 +261,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/dictaautemodio.png?size=150x150&set=set1",
         "job": "Civil Engineer",
-        "company": "Yakidoo"
+        "company": "Yakidoo",
     },
     {
         "first_name": "Jermain",
@@ -273,7 +273,7 @@ INIT_DATA = [
         "country_of_birth": "Poland",
         "avatar": "https://robohash.org/utiustout.png?size=150x150&set=set1",
         "job": "Staff Accountant I",
-        "company": "Skivee"
+        "company": "Skivee",
     },
     {
         "first_name": "Bobinette",
@@ -285,7 +285,7 @@ INIT_DATA = [
         "country_of_birth": "Peru",
         "avatar": "https://robohash.org/nobisatex.png?size=150x150&set=set1",
         "job": "Quality Engineer",
-        "company": "Youbridge"
+        "company": "Youbridge",
     },
     {
         "first_name": "Harlen",
@@ -297,7 +297,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/fugadoloremfugiat.png?size=150x150&set=set1",
         "job": "Help Desk Operator",
-        "company": "Wikido"
+        "company": "Wikido",
     },
     {
         "first_name": "Alfonso",
@@ -309,7 +309,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/nonomnisquibusdam.png?size=150x150&set=set1",
         "job": "Project Manager",
-        "company": "Voomm"
+        "company": "Voomm",
     },
     {
         "first_name": "Melisande",
@@ -321,7 +321,7 @@ INIT_DATA = [
         "country_of_birth": "Philippines",
         "avatar": "https://robohash.org/maximevelitharum.png?size=150x150&set=set1",
         "job": "Analyst Programmer",
-        "company": "Dabjam"
+        "company": "Dabjam",
     },
     {
         "first_name": "Edmund",
@@ -333,7 +333,7 @@ INIT_DATA = [
         "country_of_birth": "Ukraine",
         "avatar": "https://robohash.org/assumendavoluptatemadipisci.png?size=150x150&set=set1",
         "job": "Analyst Programmer",
-        "company": "Buzzster"
+        "company": "Buzzster",
     },
     {
         "first_name": "Hillard",
@@ -345,7 +345,7 @@ INIT_DATA = [
         "country_of_birth": "Colombia",
         "avatar": "https://robohash.org/maximemagnisunt.png?size=150x150&set=set1",
         "job": "Mechanical Systems Engineer",
-        "company": "Shufflebeat"
+        "company": "Shufflebeat",
     },
     {
         "first_name": "Ambrosi",
@@ -357,7 +357,7 @@ INIT_DATA = [
         "country_of_birth": "Russia",
         "avatar": "https://robohash.org/nonsuscipitautem.png?size=150x150&set=set1",
         "job": "Editor",
-        "company": "Quinu"
+        "company": "Quinu",
     },
     {
         "first_name": "Agretha",
@@ -369,7 +369,7 @@ INIT_DATA = [
         "country_of_birth": "France",
         "avatar": "https://robohash.org/sitetblanditiis.png?size=150x150&set=set1",
         "job": "Media Manager II",
-        "company": "Jayo"
+        "company": "Jayo",
     },
     {
         "first_name": "Flemming",
@@ -381,7 +381,7 @@ INIT_DATA = [
         "country_of_birth": "Portugal",
         "avatar": "https://robohash.org/laboreimpeditrepellendus.png?size=150x150&set=set1",
         "job": "Data Coordiator",
-        "company": "Innotype"
+        "company": "Innotype",
     },
     {
         "first_name": "Deny",
@@ -393,7 +393,7 @@ INIT_DATA = [
         "country_of_birth": "Spain",
         "avatar": "https://robohash.org/porrovelitquam.png?size=150x150&set=set1",
         "job": "Technical Writer",
-        "company": "Tagpad"
+        "company": "Tagpad",
     },
     {
         "first_name": "Carolan",
@@ -405,7 +405,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/quiaquaeratet.png?size=150x150&set=set1",
         "job": "Director of Sales",
-        "company": "Demivee"
+        "company": "Demivee",
     },
     {
         "first_name": "Lilla",
@@ -417,7 +417,7 @@ INIT_DATA = [
         "country_of_birth": "Colombia",
         "avatar": "https://robohash.org/delectusdoloressed.png?size=150x150&set=set1",
         "job": "Account Executive",
-        "company": "Demizz"
+        "company": "Demizz",
     },
     {
         "first_name": "Jodi",
@@ -429,7 +429,7 @@ INIT_DATA = [
         "country_of_birth": "Indonesia",
         "avatar": "https://robohash.org/ullamhicmolestias.png?size=150x150&set=set1",
         "job": "Computer Systems Analyst II",
-        "company": "Babbleblab"
+        "company": "Babbleblab",
     },
     {
         "first_name": "Gerhardine",
@@ -441,7 +441,7 @@ INIT_DATA = [
         "country_of_birth": "Indonesia",
         "avatar": "https://robohash.org/sitestvel.png?size=150x150&set=set1",
         "job": "Professor",
-        "company": "Zava"
+        "company": "Zava",
     },
     {
         "first_name": "Rice",
@@ -453,7 +453,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/laudantiumdistinctioquod.png?size=150x150&set=set1",
         "job": "Analog Circuit Design manager",
-        "company": "Quatz"
+        "company": "Quatz",
     },
     {
         "first_name": "Ros",
@@ -465,7 +465,7 @@ INIT_DATA = [
         "country_of_birth": "Russia",
         "avatar": "https://robohash.org/excepturisuntvoluptatum.png?size=150x150&set=set1",
         "job": "Social Worker",
-        "company": "Riffpedia"
+        "company": "Riffpedia",
     },
     {
         "first_name": "Ruprecht",
@@ -477,7 +477,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/doloresquaefuga.png?size=150x150&set=set1",
         "job": "Research Nurse",
-        "company": "Topicblab"
+        "company": "Topicblab",
     },
     {
         "first_name": "Almira",
@@ -489,7 +489,7 @@ INIT_DATA = [
         "country_of_birth": "Tunisia",
         "avatar": "https://robohash.org/assumendarecusandaein.png?size=150x150&set=set1",
         "job": "Senior Financial Analyst",
-        "company": "Vidoo"
+        "company": "Vidoo",
     },
     {
         "first_name": "Jennica",
@@ -501,7 +501,7 @@ INIT_DATA = [
         "country_of_birth": "Afghanistan",
         "avatar": "https://robohash.org/dolornesciuntrecusandae.png?size=150x150&set=set1",
         "job": "Statistician III",
-        "company": "Eire"
+        "company": "Eire",
     },
     {
         "first_name": "Valina",
@@ -513,7 +513,7 @@ INIT_DATA = [
         "country_of_birth": "Indonesia",
         "avatar": "https://robohash.org/quaeporrocorrupti.png?size=150x150&set=set1",
         "job": "Senior Financial Analyst",
-        "company": "Realbuzz"
+        "company": "Realbuzz",
     },
     {
         "first_name": "Roselia",
@@ -525,7 +525,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/molestiaesintest.png?size=150x150&set=set1",
         "job": "Senior Developer",
-        "company": "Devpoint"
+        "company": "Devpoint",
     },
     {
         "first_name": "Waverley",
@@ -537,7 +537,7 @@ INIT_DATA = [
         "country_of_birth": "Serbia",
         "avatar": "https://robohash.org/commodiperferendisquaerat.png?size=150x150&set=set1",
         "job": "Teacher",
-        "company": "Jatri"
+        "company": "Jatri",
     },
     {
         "first_name": "Caye",
@@ -549,7 +549,7 @@ INIT_DATA = [
         "country_of_birth": "Poland",
         "avatar": "https://robohash.org/natusrecusandaequidem.png?size=150x150&set=set1",
         "job": "Physical Therapy Assistant",
-        "company": "Youbridge"
+        "company": "Youbridge",
     },
     {
         "first_name": "Tatum",
@@ -561,7 +561,7 @@ INIT_DATA = [
         "country_of_birth": "Russia",
         "avatar": "https://robohash.org/totamfaceredolores.png?size=150x150&set=set1",
         "job": "Nurse",
-        "company": "Riffpath"
+        "company": "Riffpath",
     },
     {
         "first_name": "Chrissie",
@@ -573,7 +573,7 @@ INIT_DATA = [
         "country_of_birth": "Russia",
         "avatar": "https://robohash.org/ullamestdoloremque.png?size=150x150&set=set1",
         "job": "Senior Cost Accountant",
-        "company": "Linklinks"
+        "company": "Linklinks",
     },
     {
         "first_name": "Janith",
@@ -585,7 +585,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/magnivoluptatemmaiores.png?size=150x150&set=set1",
         "job": "Sales Associate",
-        "company": "Bubblemix"
+        "company": "Bubblemix",
     },
     {
         "first_name": "Marlowe",
@@ -597,7 +597,7 @@ INIT_DATA = [
         "country_of_birth": "Tunisia",
         "avatar": "https://robohash.org/quisexcepturieum.png?size=150x150&set=set1",
         "job": "Financial Advisor",
-        "company": "Livetube"
+        "company": "Livetube",
     },
     {
         "first_name": "Florri",
@@ -609,7 +609,7 @@ INIT_DATA = [
         "country_of_birth": "Thailand",
         "avatar": "https://robohash.org/harumrerumpariatur.png?size=150x150&set=set1",
         "job": "Graphic Designer",
-        "company": "Trudeo"
+        "company": "Trudeo",
     },
     {
         "first_name": "Nicolina",
@@ -621,7 +621,7 @@ INIT_DATA = [
         "country_of_birth": "Norway",
         "avatar": "https://robohash.org/eumexpeditacum.png?size=150x150&set=set1",
         "job": "Librarian",
-        "company": "Kimia"
+        "company": "Kimia",
     },
     {
         "first_name": "Nelli",
@@ -633,7 +633,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/aliquamautodit.png?size=150x150&set=set1",
         "job": "Editor",
-        "company": "Skippad"
+        "company": "Skippad",
     },
     {
         "first_name": "Vance",
@@ -645,7 +645,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/quisquamcommodinesciunt.png?size=150x150&set=set1",
         "job": "Desktop Support Technician",
-        "company": "Wikido"
+        "company": "Wikido",
     },
     {
         "first_name": "Cally",
@@ -657,7 +657,7 @@ INIT_DATA = [
         "country_of_birth": "Thailand",
         "avatar": "https://robohash.org/quisrecusandaemodi.png?size=150x150&set=set1",
         "job": "VP Product Management",
-        "company": "Geba"
+        "company": "Geba",
     },
     {
         "first_name": "Feodor",
@@ -669,7 +669,7 @@ INIT_DATA = [
         "country_of_birth": "Bulgaria",
         "avatar": "https://robohash.org/nihilconsequaturquidem.png?size=150x150&set=set1",
         "job": "Physical Therapy Assistant",
-        "company": "Tagfeed"
+        "company": "Tagfeed",
     },
     {
         "first_name": "Raleigh",
@@ -681,7 +681,7 @@ INIT_DATA = [
         "country_of_birth": "Israel",
         "avatar": "https://robohash.org/aliquidsapientenobis.png?size=150x150&set=set1",
         "job": "Senior Cost Accountant",
-        "company": "Shufflester"
+        "company": "Shufflester",
     },
     {
         "first_name": "Cara",
@@ -693,7 +693,7 @@ INIT_DATA = [
         "country_of_birth": "Brazil",
         "avatar": "https://robohash.org/itaqueoditlaboriosam.png?size=150x150&set=set1",
         "job": "Web Designer I",
-        "company": "Rooxo"
+        "company": "Rooxo",
     },
     {
         "first_name": "Benton",
@@ -705,7 +705,7 @@ INIT_DATA = [
         "country_of_birth": "Belarus",
         "avatar": "https://robohash.org/autemearumeligendi.png?size=150x150&set=set1",
         "job": "Programmer Analyst IV",
-        "company": "Bubblebox"
+        "company": "Bubblebox",
     },
     {
         "first_name": "Nollie",
@@ -717,7 +717,7 @@ INIT_DATA = [
         "country_of_birth": "Serbia",
         "avatar": "https://robohash.org/estlaborequia.png?size=150x150&set=set1",
         "job": "VP Sales",
-        "company": "Cogibox"
+        "company": "Cogibox",
     },
     {
         "first_name": "Katlin",
@@ -729,7 +729,7 @@ INIT_DATA = [
         "country_of_birth": "Colombia",
         "avatar": "https://robohash.org/perspiciatiserrorsunt.png?size=150x150&set=set1",
         "job": "Business Systems Development Analyst",
-        "company": "Dabshots"
+        "company": "Dabshots",
     },
     {
         "first_name": "Nady",
@@ -741,7 +741,7 @@ INIT_DATA = [
         "country_of_birth": "Portugal",
         "avatar": "https://robohash.org/explicabofugitautem.png?size=150x150&set=set1",
         "job": "Compensation Analyst",
-        "company": "Centizu"
+        "company": "Centizu",
     },
     {
         "first_name": "Ronnie",
@@ -753,7 +753,7 @@ INIT_DATA = [
         "country_of_birth": "Colombia",
         "avatar": "https://robohash.org/voluptasdistinctioet.png?size=150x150&set=set1",
         "job": "Geological Engineer",
-        "company": "Kaymbo"
+        "company": "Kaymbo",
     },
     {
         "first_name": "Travis",
@@ -765,7 +765,7 @@ INIT_DATA = [
         "country_of_birth": "Ukraine",
         "avatar": "https://robohash.org/similiquesuscipitcorrupti.png?size=150x150&set=set1",
         "job": "Senior Editor",
-        "company": "Vimbo"
+        "company": "Vimbo",
     },
     {
         "first_name": "Desmond",
@@ -777,7 +777,7 @@ INIT_DATA = [
         "country_of_birth": "Cameroon",
         "avatar": "https://robohash.org/idporroexpedita.png?size=150x150&set=set1",
         "job": "Programmer IV",
-        "company": "Meezzy"
+        "company": "Meezzy",
     },
     {
         "first_name": "Bernadette",
@@ -789,7 +789,7 @@ INIT_DATA = [
         "country_of_birth": "Bosnia and Herzegovina",
         "avatar": "https://robohash.org/remetfugiat.png?size=150x150&set=set1",
         "job": "Assistant Manager",
-        "company": "Skyba"
+        "company": "Skyba",
     },
     {
         "first_name": "North",
@@ -801,7 +801,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/voluptateminvoluptas.png?size=150x150&set=set1",
         "job": "Graphic Designer",
-        "company": "Realfire"
+        "company": "Realfire",
     },
     {
         "first_name": "Dell",
@@ -813,7 +813,7 @@ INIT_DATA = [
         "country_of_birth": "Philippines",
         "avatar": "https://robohash.org/adipiscinostrumin.png?size=150x150&set=set1",
         "job": "Accountant IV",
-        "company": "Innojam"
+        "company": "Innojam",
     },
     {
         "first_name": "Selig",
@@ -825,7 +825,7 @@ INIT_DATA = [
         "country_of_birth": "Ukraine",
         "avatar": "https://robohash.org/omnisdoloresveniam.png?size=150x150&set=set1",
         "job": "Electrical Engineer",
-        "company": "Oloo"
+        "company": "Oloo",
     },
     {
         "first_name": "Edy",
@@ -837,7 +837,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/nostrumquasivoluptas.png?size=150x150&set=set1",
         "job": "Research Nurse",
-        "company": "Rhycero"
+        "company": "Rhycero",
     },
     {
         "first_name": "Merissa",
@@ -849,7 +849,7 @@ INIT_DATA = [
         "country_of_birth": "Russia",
         "avatar": "https://robohash.org/suntextemporibus.png?size=150x150&set=set1",
         "job": "Software Engineer IV",
-        "company": "Dynava"
+        "company": "Dynava",
     },
     {
         "first_name": "Cosme",
@@ -861,7 +861,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/doloribusfugiatexercitationem.png?size=150x150&set=set1",
         "job": "Geologist II",
-        "company": "Yodo"
+        "company": "Yodo",
     },
     {
         "first_name": "Ginger",
@@ -873,7 +873,7 @@ INIT_DATA = [
         "country_of_birth": "Poland",
         "avatar": "https://robohash.org/cupiditatenemosimilique.png?size=150x150&set=set1",
         "job": "Cost Accountant",
-        "company": "Ntags"
+        "company": "Ntags",
     },
     {
         "first_name": "Arnold",
@@ -885,7 +885,7 @@ INIT_DATA = [
         "country_of_birth": "Indonesia",
         "avatar": "https://robohash.org/etreprehenderitveniam.png?size=150x150&set=set1",
         "job": "Clinical Specialist",
-        "company": "Tambee"
+        "company": "Tambee",
     },
     {
         "first_name": "Krissy",
@@ -897,7 +897,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/officiaautest.png?size=150x150&set=set1",
         "job": "VP Accounting",
-        "company": "Trupe"
+        "company": "Trupe",
     },
     {
         "first_name": "Morganne",
@@ -909,7 +909,7 @@ INIT_DATA = [
         "country_of_birth": "Indonesia",
         "avatar": "https://robohash.org/totamutet.png?size=150x150&set=set1",
         "job": "Office Assistant II",
-        "company": "Edgeclub"
+        "company": "Edgeclub",
     },
     {
         "first_name": "Fred",
@@ -921,7 +921,7 @@ INIT_DATA = [
         "country_of_birth": "Indonesia",
         "avatar": "https://robohash.org/veritatisnequererum.png?size=150x150&set=set1",
         "job": "Financial Analyst",
-        "company": "Npath"
+        "company": "Npath",
     },
     {
         "first_name": "Maggi",
@@ -933,7 +933,7 @@ INIT_DATA = [
         "country_of_birth": "Philippines",
         "avatar": "https://robohash.org/sedeavel.png?size=150x150&set=set1",
         "job": "Help Desk Operator",
-        "company": "Tekfly"
+        "company": "Tekfly",
     },
     {
         "first_name": "Tove",
@@ -945,7 +945,7 @@ INIT_DATA = [
         "country_of_birth": "Ukraine",
         "avatar": "https://robohash.org/suntcorruptitenetur.png?size=150x150&set=set1",
         "job": "Staff Scientist",
-        "company": "Centimia"
+        "company": "Centimia",
     },
     {
         "first_name": "Jenelle",
@@ -957,7 +957,7 @@ INIT_DATA = [
         "country_of_birth": "Czech Republic",
         "avatar": "https://robohash.org/eiusmaioresvoluptatem.png?size=150x150&set=set1",
         "job": "Nurse Practicioner",
-        "company": "Twitternation"
+        "company": "Twitternation",
     },
     {
         "first_name": "Caren",
@@ -969,7 +969,7 @@ INIT_DATA = [
         "country_of_birth": "Niger",
         "avatar": "https://robohash.org/temporaeumin.png?size=150x150&set=set1",
         "job": "General Manager",
-        "company": "Eamia"
+        "company": "Eamia",
     },
     {
         "first_name": "Constantine",
@@ -981,7 +981,7 @@ INIT_DATA = [
         "country_of_birth": "Afghanistan",
         "avatar": "https://robohash.org/aliquametex.png?size=150x150&set=set1",
         "job": "Internal Auditor",
-        "company": "Kanoodle"
+        "company": "Kanoodle",
     },
     {
         "first_name": "Tonnie",
@@ -993,7 +993,7 @@ INIT_DATA = [
         "country_of_birth": "China",
         "avatar": "https://robohash.org/aperiamrerumvoluptatem.png?size=150x150&set=set1",
         "job": "Desktop Support Technician",
-        "company": "Ntag"
+        "company": "Ntag",
     },
     {
         "first_name": "Ruth",
@@ -1005,7 +1005,7 @@ INIT_DATA = [
         "country_of_birth": "Israel",
         "avatar": "https://robohash.org/undefaciliset.png?size=150x150&set=set1",
         "job": "Data Coordiator",
-        "company": "Voolia"
+        "company": "Voolia",
     },
     {
         "first_name": "Rollie",
@@ -1017,7 +1017,7 @@ INIT_DATA = [
         "country_of_birth": "Poland",
         "avatar": "https://robohash.org/quaeratdolorumest.png?size=150x150&set=set1",
         "job": "Senior Quality Engineer",
-        "company": "Ozu"
+        "company": "Ozu",
     },
     {
         "first_name": "Louella",
@@ -1029,7 +1029,7 @@ INIT_DATA = [
         "country_of_birth": "Poland",
         "avatar": "https://robohash.org/ametutsed.png?size=150x150&set=set1",
         "job": "Biostatistician IV",
-        "company": "Roodel"
+        "company": "Roodel",
     },
     {
         "first_name": "Trevor",
@@ -1041,7 +1041,7 @@ INIT_DATA = [
         "country_of_birth": "Poland",
         "avatar": "https://robohash.org/nihilmollitiaquisquam.png?size=150x150&set=set1",
         "job": "Director of Sales",
-        "company": "Demivee"
+        "company": "Demivee",
     },
     {
         "first_name": "Brandi",
@@ -1053,7 +1053,7 @@ INIT_DATA = [
         "country_of_birth": "Serbia",
         "avatar": "https://robohash.org/eumassumendaaspernatur.png?size=150x150&set=set1",
         "job": "Software Test Engineer III",
-        "company": "Miboo"
+        "company": "Miboo",
     },
     {
         "first_name": "Ninetta",
@@ -1065,7 +1065,7 @@ INIT_DATA = [
         "country_of_birth": "Czech Republic",
         "avatar": "https://robohash.org/fugitvoluptastempore.png?size=150x150&set=set1",
         "job": "Web Developer II",
-        "company": "Voolia"
+        "company": "Voolia",
     },
     {
         "first_name": "Carmella",
@@ -1077,7 +1077,7 @@ INIT_DATA = [
         "country_of_birth": "Malawi",
         "avatar": "https://robohash.org/liberocumid.png?size=150x150&set=set1",
         "job": "Help Desk Operator",
-        "company": "Photofeed"
+        "company": "Photofeed",
     },
     {
         "first_name": "Katinka",
@@ -1089,7 +1089,7 @@ INIT_DATA = [
         "country_of_birth": "Saint Martin",
         "avatar": "https://robohash.org/expeditatemporadolor.png?size=150x150&set=set1",
         "job": "VP Quality Control",
-        "company": "Shuffletag"
+        "company": "Shuffletag",
     },
     {
         "first_name": "Putnam",
@@ -1101,7 +1101,7 @@ INIT_DATA = [
         "country_of_birth": "Poland",
         "avatar": "https://robohash.org/maioresautodio.png?size=150x150&set=set1",
         "job": "Mechanical Systems Engineer",
-        "company": "Brightbean"
+        "company": "Brightbean",
     },
     {
         "first_name": "Malia",
@@ -1113,7 +1113,7 @@ INIT_DATA = [
         "country_of_birth": "Japan",
         "avatar": "https://robohash.org/eaquecommodifugit.png?size=150x150&set=set1",
         "job": "Product Engineer",
-        "company": "Skipstorm"
+        "company": "Skipstorm",
     },
     {
         "first_name": "Kurtis",
@@ -1125,7 +1125,7 @@ INIT_DATA = [
         "country_of_birth": "Thailand",
         "avatar": "https://robohash.org/autmollitiaatque.png?size=150x150&set=set1",
         "job": "Desktop Support Technician",
-        "company": "DabZ"
+        "company": "DabZ",
     },
     {
         "first_name": "Allison",
@@ -1137,7 +1137,7 @@ INIT_DATA = [
         "country_of_birth": "Italy",
         "avatar": "https://robohash.org/magnameumipsa.png?size=150x150&set=set1",
         "job": "Software Test Engineer I",
-        "company": "Mybuzz"
+        "company": "Mybuzz",
     },
     {
         "first_name": "Ingelbert",
@@ -1149,7 +1149,7 @@ INIT_DATA = [
         "country_of_birth": "Niger",
         "avatar": "https://robohash.org/eumfugitcumque.png?size=150x150&set=set1",
         "job": "Statistician IV",
-        "company": "Quimm"
+        "company": "Quimm",
     },
     {
         "first_name": "Sherrie",
@@ -1161,7 +1161,7 @@ INIT_DATA = [
         "country_of_birth": "Laos",
         "avatar": "https://robohash.org/enimnequesaepe.png?size=150x150&set=set1",
         "job": "Design Engineer",
-        "company": "Voolith"
+        "company": "Voolith",
     },
     {
         "first_name": "Georas",
@@ -1173,7 +1173,7 @@ INIT_DATA = [
         "country_of_birth": "Philippines",
         "avatar": "https://robohash.org/etpraesentiumest.png?size=150x150&set=set1",
         "job": "Help Desk Technician",
-        "company": "Meedoo"
+        "company": "Meedoo",
     },
     {
         "first_name": "Pedro",
@@ -1185,7 +1185,7 @@ INIT_DATA = [
         "country_of_birth": "Brazil",
         "avatar": "https://robohash.org/temporehicqui.png?size=150x150&set=set1",
         "job": "Clinical Specialist",
-        "company": "Wordtune"
+        "company": "Wordtune",
     },
     {
         "first_name": "Erna",
@@ -1197,6 +1197,6 @@ INIT_DATA = [
         "country_of_birth": "Poland",
         "avatar": "https://robohash.org/liberovitaeunde.png?size=150x150&set=set1",
         "job": "Project Manager",
-        "company": "Demizz"
-    }
+        "company": "Demizz",
+    },
 ]
