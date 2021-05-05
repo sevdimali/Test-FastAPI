@@ -26,15 +26,15 @@ class Database:
 
     @classmethod
     def query_filter_builder(cls, user_attribute: str, value: Any) -> List[Q]:
-        """Build a filter with Q function and attributes separates
-        with (Or, And, AND, OR) keywords
+        """Build a filter with Q function and attributes separated
+           by following keywords: Or, And, AND, OR\n
 
         Args:
-            user_attribute (str): attributes ex: first_nameOrlast_nameAndemail
-            value (Any): value that equals attribute
+            user_attribute (str): attributes ex: first_nameOrlast_nameAndemail\n
+            value (Any): value that equals attribute\n
 
         Returns:
-            List[Q]: List of Q functions according to attributes and value
+            List[Q]: List of Q functions according to attributes and value\n
         """
         attributes = re.compile(r"Or|And|OR|AND").split(user_attribute)
         query_builder = []
