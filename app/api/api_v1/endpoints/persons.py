@@ -87,7 +87,9 @@ async def users_by_ID(user_ID: int) -> Dict[str, Any]:
 
 @cache
 @router.get("/filter/{user_attribute}/{value}")
-async def users_by_attribute(user_attribute: Any, value: Any) -> List[Dict[str, Any]]:
+async def users_by_attribute(
+    user_attribute: Any, value: Any
+) -> List[Dict[str, Any]]:
     """Get user by attribute except ID attribute\n
 
     Args:
@@ -161,7 +163,9 @@ async def fix_user(user_ID: int, user: PartialUser) -> Dict[str, Any]:
         response["detail"] = f"User with ID {user_ID} doesn't exist."
         return response
 
-    user_updated = user_found.update_from_dict({**user.__dict__, "id": user_found.id})
+    user_updated = user_found.update_from_dict(
+        {**user.__dict__, "id": user_found.id}
+    )
     await user_updated.save()
     return await Person_Pydantic.from_tortoise_orm(user_updated)
 
