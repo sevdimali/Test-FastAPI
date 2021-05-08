@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: psf/black@stable
         with:
-          args: .
+          args: ". --line-length 90"
       - name: Check for modified files
         id: git-check
         run: echo ::set-output name=modified::$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)

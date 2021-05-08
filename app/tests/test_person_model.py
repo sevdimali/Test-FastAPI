@@ -1,6 +1,7 @@
 import json
 import concurrent.futures as futures
 
+from fastapi import status
 from httpx import AsyncClient
 from tortoise.contrib import test
 
@@ -68,7 +69,7 @@ class TestPersonAPi(test.TestCase):
     async def test_root(self):
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get("/")
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == {
             "detail": "Welcome to FastAPI",
             "apis": ["/api/v1/users"],
@@ -82,8 +83,7 @@ class TestPersonAPi(test.TestCase):
             response = await ac.post(API_ROOT, data=json.dumps(USER_DATA))
 
         expected = {"id": 1, **USER_DATA}
-
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_201_CREATED
         assert response.json() == expected
 
     async def test_loading_data(self):
@@ -102,7 +102,7 @@ class TestPersonAPi(test.TestCase):
                 for pk, user in enumerate(INIT_DATA[:quantity_users], start=1)
             ],
         }
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
     async def test_get_users(self):
@@ -111,7 +111,7 @@ class TestPersonAPi(test.TestCase):
 
         expected = {"detail": "Not Found", "success": False, "users": []}
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected
 
         # Create new User
@@ -126,7 +126,7 @@ class TestPersonAPi(test.TestCase):
             "users": [{"id": person.id, **USER_DATA}],
         }
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
     async def test_limit_offset(self):
@@ -153,7 +153,7 @@ class TestPersonAPi(test.TestCase):
             ],
         }
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
         # Scene 2 get last data, next=Null
@@ -168,7 +168,7 @@ class TestPersonAPi(test.TestCase):
             ],
         }
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
         limit = 0
@@ -181,6 +181,8 @@ class TestPersonAPi(test.TestCase):
             "users": [],
             "detail": "Invalid values: offset(>=0) or limit(>0)",
         }
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json() == expected
 
     async def test_sorted_by_attribute(self):
         # sort by first_name ascending order
@@ -208,7 +210,7 @@ class TestPersonAPi(test.TestCase):
             ),
         }
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
         # Test order by first_name DESC
@@ -224,19 +226,22 @@ class TestPersonAPi(test.TestCase):
             ),
         }
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
         # Test bad order by
         order_by = "undefined:asc"
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT, params={"sort": order_by})
+        detail = "Invalid sort parameters. it must match \
+            attribute:order. ex: id:asc or id:desc"
         expected = {
             "success": False,
             "users": [],
-            "detail": "Invalid sort parameters. it must match \
-                attribute:order. ex: id:asc or id:desc",
+            "detail": detail,
         }
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json() == expected
 
     async def test_patch_user(self):
 
@@ -251,7 +256,7 @@ class TestPersonAPi(test.TestCase):
             "user": {},
             "detail": f"User with ID {user_ID} doesn't exist.",
         }
-
+        assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected
 
         data = {**USER_DATA}
@@ -275,7 +280,7 @@ class TestPersonAPi(test.TestCase):
         user_expected.pop("_partial", None)
         user_expected.pop("_saved_in_db", None)
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_202_ACCEPTED
         assert response.json() == user_expected
 
     async def test_put_user(self):
@@ -293,7 +298,7 @@ class TestPersonAPi(test.TestCase):
             "detail": f"User with ID {user_ID} doesn't exist.",
         }
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected
 
         # Create new User
@@ -307,7 +312,7 @@ class TestPersonAPi(test.TestCase):
             )
         expected = {"id": person.id, **USER_DATA}
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_202_ACCEPTED
         assert response.json() == expected
 
     async def test_get_user_by_ID(self):
@@ -316,7 +321,7 @@ class TestPersonAPi(test.TestCase):
             response = await ac.get(f"{API_ROOT}1")
         expected = {"success": False, "user": {}, "detail": "Not Found"}
 
-        assert response.status_code == 200
+        assert response.status_code == 404
         assert response.json() == expected
 
         # Create new User
@@ -342,7 +347,7 @@ class TestPersonAPi(test.TestCase):
             response = await ac.get(f"{API_ROOT}filter/first_name/notfound")
         expected = {"success": False, "users": [], "detail": "Not Found"}
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected
 
         # Invalid attribute
@@ -357,7 +362,7 @@ class TestPersonAPi(test.TestCase):
             User.__dict__.get("__fields__", {}).keys())}
             """,
         }
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json() == expected
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
@@ -366,7 +371,7 @@ class TestPersonAPi(test.TestCase):
             )
         expected = {"success": True, "users": [{"id": person.id, **USER_DATA}]}
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
         # first_name 'john'
@@ -376,7 +381,7 @@ class TestPersonAPi(test.TestCase):
             response = await ac.get(API_ROOT + url + "john")
         expected = {"success": True, "users": [{"id": person.id, **USER_DATA}]}
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
         # first_name or last_name must contains 'john'
@@ -386,7 +391,7 @@ class TestPersonAPi(test.TestCase):
             response = await ac.get(API_ROOT + url + "john")
         expected = {"success": True, "users": [{"id": person.id, **USER_DATA}]}
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
         # first_name or last_name or email must contains "bob"
@@ -401,7 +406,7 @@ class TestPersonAPi(test.TestCase):
             ],
         }
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
         # last_name doesn't contain 'alic' word so it should fail
@@ -411,7 +416,7 @@ class TestPersonAPi(test.TestCase):
             response = await ac.get(API_ROOT + url + "alic")
         expected = {"success": False, "users": [], "detail": "Not Found"}
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected
 
     async def test_delete_user(self):
@@ -425,6 +430,7 @@ class TestPersonAPi(test.TestCase):
             "user": {},
             "detail": f"User with ID {user_ID} doesn't exist",
         }
+        assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected
 
         # Create new User
@@ -439,6 +445,6 @@ class TestPersonAPi(test.TestCase):
             "detail": f"User {person.id} delete successfully ⭐",
         }
         deleted_user = await Person.filter(id=person.id).first()
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_202_ACCEPTED
         assert response.json() == expected
         assert None is deleted_user
