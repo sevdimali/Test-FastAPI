@@ -373,7 +373,7 @@ class TestPersonAPi(test.TestCase):
             User.__dict__.get("__fields__", {}).keys())}
             """,
         }
-        assert response.status_code == 200
+        assert response.status_code == 400
         assert response.json() == expected
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:

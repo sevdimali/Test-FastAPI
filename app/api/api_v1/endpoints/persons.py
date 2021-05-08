@@ -93,7 +93,7 @@ async def users_by_ID(res: Response, user_ID: int) -> Dict[str, Any]:
 @cache
 @router.get("/filter/{user_attribute}/{value}")
 async def users_by_attribute(
-    user_attribute: Any, value: Any
+    res: Response, user_attribute: Any, value: Any
 ) -> List[Dict[str, Any]]:
     """Get user by attribute except ID attribute\n
 
@@ -111,6 +111,7 @@ async def users_by_attribute(
     if (
         "and" not in lower_user_attribute and "or" not in lower_user_attribute
     ) and not API_functools.is_attribute_of(user_attribute, User):
+        res.status_code = status.HTTP_400_BAD_REQUEST
         return {
             **response,
             "detail": f"""
