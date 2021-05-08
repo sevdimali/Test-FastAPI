@@ -121,7 +121,7 @@ The app running on http://127.0.0.1:8000/
 ## Fake Data
 
 To load some fake data, go to http://127.0.0.1:8000/data
-which will load fake data and redirect you to tha app root path `/`
+which will load fake data and redirect you to the app root `/`
 
 ## Run all the tests
 
