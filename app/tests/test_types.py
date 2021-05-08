@@ -7,9 +7,7 @@ class TestTypes(test.TestCase):
         male = Gender("Male")
         female = Gender("Female")
         male_expected = "{}(gender={})".format(male.__class__.__name__, male.value)
-        female_expected = "{}(gender={})".format(
-            female.__class__.__name__, female.value
-        )
+        female_expected = "{}(gender={})".format(female.__class__.__name__, female.value)
         assert male.__repr__() == male_expected
         assert male.__str__() == male_expected
 

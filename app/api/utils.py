@@ -53,9 +53,7 @@ class API_functools:
         return tuple(target_cls.__dict__.get("__fields__", {}).keys())
 
     @classmethod
-    def valid_order(
-        cls: Type[MODEL], target_cls: BaseModel, sort: str
-    ) -> Optional[str]:
+    def valid_order(cls: Type[MODEL], target_cls: BaseModel, sort: str) -> Optional[str]:
         """Validator for sort db query result with \
             attribute:direction(asc or desc)\n
 

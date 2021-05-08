@@ -148,9 +148,7 @@ class TestPersonAPi(test.TestCase):
         expected = {
             "next": f"{API_ROOT}?limit={limit}&offset={limit}",
             "previous": None,
-            "users": [
-                {"id": n, **user} for n, user in enumerate(users[:limit], start=1)
-            ],
+            "users": [{"id": n, **user} for n, user in enumerate(users[:limit], start=1)],
         }
 
         assert response.status_code == status.HTTP_200_OK
@@ -163,8 +161,7 @@ class TestPersonAPi(test.TestCase):
             "next": None,
             "previous": f"{API_ROOT}?limit={limit}&offset={offset}",
             "users": [
-                {"id": n, **user}
-                for n, user in enumerate(users[limit:], start=limit + 1)
+                {"id": n, **user} for n, user in enumerate(users[limit:], start=limit + 1)
             ],
         }
 
@@ -248,9 +245,7 @@ class TestPersonAPi(test.TestCase):
         # User doesn't exist
         user_ID = 100
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.patch(
-                f"{API_ROOT}{user_ID}", data=json.dumps(USER_DATA)
-            )
+            response = await ac.patch(f"{API_ROOT}{user_ID}", data=json.dumps(USER_DATA))
         expected = {
             "success": False,
             "user": {},

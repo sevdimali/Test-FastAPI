@@ -88,9 +88,7 @@ class TestUtils(test.TestCase):
         ]
         for scene in scenes:
             # scene 1 next=None, previous=None
-            actual = API_functools.manage_next_previous_page(
-                request, [], *scene["data"]
-            )
+            actual = API_functools.manage_next_previous_page(request, [], *scene["data"])
             assert actual == scene["expected"]
 
     async def test_insert_default_data(self):
