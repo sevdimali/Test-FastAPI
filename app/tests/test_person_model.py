@@ -190,6 +190,8 @@ class TestPersonAPi(test.TestCase):
             "users": [],
             "detail": "Invalid values: offset(>=0) or limit(>0)",
         }
+        assert response.status_code == 400
+        assert response.json() == expected
 
     async def test_sorted_by_attribute(self):
         # sort by first_name ascending order
