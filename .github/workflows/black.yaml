@@ -8,20 +8,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - name: Install black dependencie
-        run: |
-          python -m pip install --upgrade pip
-          pip install black==21.5b0
       - uses: psf/black@stable
         with:
-          args: ". --check"
-      - name: Reformatting code
-        if: failure()
+          args: .
+      - name: Check for modified files
+        id: git-check
+        run: echo ::set-output name=modified::$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)
+      - name: Push changes
+        if: steps.git-check.outputs.modified == 'true'
         run: |
           black .
           git config --global user.name 'Eliam LOTONGA'
           git config --global user.email 'e.m.lotonga@gmail.com'
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
-          git checkout $GITHUB_HEAD_REF
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git commit -am "Fixup: format code with Black"
           git push
