@@ -113,7 +113,7 @@ class TestPersonAPi(test.TestCase):
 
         expected = {"detail": "Not Found", "success": False, "users": []}
 
-        assert response.status_code == 200
+        assert response.status_code == 404
         assert response.json() == expected
 
         # Create new User

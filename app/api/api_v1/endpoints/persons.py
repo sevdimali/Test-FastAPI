@@ -60,6 +60,7 @@ async def users(
     )
 
     if len(users) == 0:
+        res.status_code = status.HTTP_404_NOT_FOUND
         return {**response, "detail": "Not Found"}
 
     return API_functools.manage_next_previous_page(
