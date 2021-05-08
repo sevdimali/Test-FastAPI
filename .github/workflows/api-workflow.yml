@@ -27,7 +27,7 @@ jobs:
       - name: Black check code format
         uses: psf/black@stable
         with:
-          args: ". --check"
+          args: ". --line-length 90 --check"
       - name: Running unit-tests and code-coverage
         working-directory: ./app
         run: |
