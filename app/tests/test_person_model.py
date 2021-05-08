@@ -332,7 +332,7 @@ class TestPersonAPi(test.TestCase):
             response = await ac.get(f"{API_ROOT}1")
         expected = {"success": False, "user": {}, "detail": "Not Found"}
 
-        assert response.status_code == 200
+        assert response.status_code == 404
         assert response.json() == expected
 
         # Create new User

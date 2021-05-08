@@ -70,7 +70,7 @@ async def users(
 
 @cache
 @router.get("/{user_ID}")
-async def users_by_ID(user_ID: int) -> Dict[str, Any]:
+async def users_by_ID(res: Response, user_ID: int) -> Dict[str, Any]:
     """Get user api\n
 
     Args:\n
@@ -84,6 +84,7 @@ async def users_by_ID(user_ID: int) -> Dict[str, Any]:
         "user": API_functools.get_or_default(user, 0, {}),
     }
     if not API_functools.instance_of(data["user"], Person):
+        res.status_code = status.HTTP_404_NOT_FOUND
         data["success"] = False
         data["detail"] = "Not Found"
     return data
