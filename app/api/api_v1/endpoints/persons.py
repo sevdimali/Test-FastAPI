@@ -1,6 +1,6 @@
 from functools import cache
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Response, status
 from typing import Optional, Dict, List, Any
 
 from api.api_v1.storage.database import Database
@@ -12,9 +12,10 @@ router = APIRouter()
 
 
 @cache
-@router.get("/")
+@router.get("/", status_code=200)
 async def users(
     request: Request,
+    res: Response,
     limit: Optional[int] = 20,
     offset: Optional[int] = 0,
     sort: Optional[str] = "id:asc",
@@ -39,6 +40,7 @@ async def users(
     }
     order_by = API_functools.valid_order(User, sort)
     if order_by is None:
+        res.status_code = status.HTTP_400_BAD_REQUEST
         return {
             **response,
             "detail": "Invalid sort parameters. it must match \
