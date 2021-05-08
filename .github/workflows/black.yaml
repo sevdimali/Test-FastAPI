@@ -17,7 +17,6 @@ jobs:
       - name: Push changes
         if: steps.git-check.outputs.modified == 'true'
         run: |
-          black .
           git config --global user.name 'Eliam LOTONGA'
           git config --global user.email 'e.m.lotonga@gmail.com'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
