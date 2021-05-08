@@ -1,5 +1,4 @@
 black==21.5b0
-pre_commit==2.12.1
 asynctest==0.13.0
 pytest==6.2.3
 pytest-cov==2.11.1
