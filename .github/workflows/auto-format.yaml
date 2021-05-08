@@ -1,4 +1,4 @@
-name: Lint
+name: Auto-format
 
 on:
   push:
