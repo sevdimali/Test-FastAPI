@@ -3,7 +3,7 @@ from typing import Dict, Any, Optional
 
 import uvicorn
 from starlette.responses import RedirectResponse
-from fastapi import FastAPI
+from fastapi import FastAPI, status, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.api_v1.api import router as api_router
@@ -34,7 +34,7 @@ app = FastAPI(
 app.add_middleware(CORSMiddleware, **CORS_MIDDLEWARE_CONFIG)
 
 
-@app.get("/data")
+@app.get("/data", status_code=status.HTTP_301_MOVED_PERMANENTLY)
 async def load_fake_data(quantity: Optional[int] = 0) -> Dict[str, Any]:
     """loading fake data
 
@@ -45,7 +45,7 @@ async def load_fake_data(quantity: Optional[int] = 0) -> Dict[str, Any]:
     return RedirectResponse(url="/")
 
 
-@app.get("/")
+@app.get("/", status_code=status.HTTP_200_OK)
 async def index() -> Dict[str, Any]:
     """root path, returns some API paths
 

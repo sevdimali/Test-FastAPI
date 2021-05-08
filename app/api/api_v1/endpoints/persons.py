@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @cache
-@router.get("/", status_code=200)
+@router.get("/", status_code=status.HTTP_200_OK)
 async def users(
     request: Request,
     res: Response,
@@ -69,7 +69,7 @@ async def users(
 
 
 @cache
-@router.get("/{user_ID}")
+@router.get("/{user_ID}", status_code=status.HTTP_200_OK)
 async def users_by_ID(res: Response, user_ID: int) -> Dict[str, Any]:
     """Get user api\n
 
@@ -91,7 +91,7 @@ async def users_by_ID(res: Response, user_ID: int) -> Dict[str, Any]:
 
 
 @cache
-@router.get("/filter/{user_attribute}/{value}")
+@router.get("/filter/{user_attribute}/{value}", status_code=status.HTTP_200_OK)
 async def users_by_attribute(
     res: Response, user_attribute: Any, value: Any
 ) -> List[Dict[str, Any]]:
@@ -125,12 +125,13 @@ async def users_by_attribute(
         Person.filter(*query_builder).order_by("id")
     )
     if len(persons) == 0:
+        res.status_code = status.HTTP_404_NOT_FOUND
         return {**response, "detail": "Not Found"}
 
     return {"success": True, "users": persons}
 
 
-@router.post("/", response_model=Person_Pydantic)
+@router.post("/", response_model=Person_Pydantic, status_code=status.HTTP_201_CREATED)
 async def create_user(user: User) -> Dict[str, Any]:
     """Create new users\n
 
@@ -145,8 +146,8 @@ async def create_user(user: User) -> Dict[str, Any]:
 
 
 @cache
-@router.patch("/{user_ID}")
-async def fix_user(user_ID: int, user: PartialUser) -> Dict[str, Any]:
+@router.patch("/{user_ID}", status_code=status.HTTP_202_ACCEPTED)
+async def fix_user(res: Response, user_ID: int, user: PartialUser) -> Dict[str, Any]:
     """Fix some users attributes except his ID\n
 
     Args:\n
@@ -166,19 +167,18 @@ async def fix_user(user_ID: int, user: PartialUser) -> Dict[str, Any]:
     """
     user_found = await Person.get_or_none(id=user_ID)
     if user_found is None:
+        res.status_code = status.HTTP_404_NOT_FOUND
         response["detail"] = f"User with ID {user_ID} doesn't exist."
         return response
 
-    user_updated = user_found.update_from_dict(
-        {**user.__dict__, "id": user_found.id}
-    )
+    user_updated = user_found.update_from_dict({**user.__dict__, "id": user_found.id})
     await user_updated.save()
     return await Person_Pydantic.from_tortoise_orm(user_updated)
 
 
 @cache
-@router.put("/{user_ID}")
-async def update_user(user_ID: int, new_data: User) -> Dict[str, Any]:
+@router.put("/{user_ID}", status_code=status.HTTP_202_ACCEPTED)
+async def update_user(res: Response, user_ID: int, new_data: User) -> Dict[str, Any]:
     """Transfer data from one user to another\n
 
     Args:\n
@@ -194,6 +194,7 @@ async def update_user(user_ID: int, new_data: User) -> Dict[str, Any]:
     # check if user exists
     curr_user = await Person.get_or_none(id=user_ID)
     if curr_user is None:
+        res.status_code = status.HTTP_404_NOT_FOUND
         response["detail"] = f"User with ID {user_ID} doesn't exist."
         return response
 
@@ -202,8 +203,8 @@ async def update_user(user_ID: int, new_data: User) -> Dict[str, Any]:
     return await Person_Pydantic.from_tortoise_orm(curr_user)
 
 
-@router.delete("/{user_ID}")
-async def delete_user(user_ID: int) -> Dict[str, Any]:
+@router.delete("/{user_ID}", status_code=status.HTTP_202_ACCEPTED)
+async def delete_user(res: Response, user_ID: int) -> Dict[str, Any]:
     """Delete a user\n
 
     Args:\n
@@ -216,6 +217,7 @@ async def delete_user(user_ID: int) -> Dict[str, Any]:
 
     user_found = await Person.get_or_none(id=user_ID)
     if not user_found:
+        res.status_code = status.HTTP_404_NOT_FOUND
         response["detail"] = f"User with ID {user_ID} doesn't exist"
         return response
 
