@@ -1,7 +1,7 @@
 from functools import cache
+from typing import Optional, Dict, List, Any
 
 from fastapi import APIRouter, Request, Response, status
-from typing import Optional, Dict, List, Any
 
 from api.api_v1.storage.database import Database
 from api.utils import API_functools
@@ -131,7 +131,9 @@ async def users_by_attribute(
     return {"success": True, "users": persons}
 
 
-@router.post("/", response_model=Person_Pydantic, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=Person_Pydantic, status_code=status.HTTP_201_CREATED
+)
 async def create_user(user: User) -> Dict[str, Any]:
     """Create new user\n
 
@@ -147,7 +149,9 @@ async def create_user(user: User) -> Dict[str, Any]:
 
 @cache
 @router.patch("/{user_ID}", status_code=status.HTTP_202_ACCEPTED)
-async def fix_user(res: Response, user_ID: int, user: PartialUser) -> Dict[str, Any]:
+async def fix_user(
+    res: Response, user_ID: int, user: PartialUser
+) -> Dict[str, Any]:
     """Fix some user attributes according to PartialUser class\n
 
     Args:\n
@@ -171,14 +175,18 @@ async def fix_user(res: Response, user_ID: int, user: PartialUser) -> Dict[str, 
         response["detail"] = f"User with ID {user_ID} doesn't exist."
         return response
 
-    user_updated = user_found.update_from_dict({**user.__dict__, "id": user_found.id})
+    user_updated = user_found.update_from_dict(
+        {**user.__dict__, "id": user_found.id}
+    )
     await user_updated.save()
     return await Person_Pydantic.from_tortoise_orm(user_updated)
 
 
 @cache
 @router.put("/{user_ID}", status_code=status.HTTP_202_ACCEPTED)
-async def update_user(res: Response, user_ID: int, new_data: User) -> Dict[str, Any]:
+async def update_user(
+    res: Response, user_ID: int, new_data: User
+) -> Dict[str, Any]:
     """Update user attributes according to User class\n
 
     Args:\n
