@@ -20,7 +20,7 @@ async def users(
     offset: Optional[int] = 0,
     sort: Optional[str] = "id:asc",
 ) -> Optional[List[Dict[str, Any]]]:
-    """Get users from data(DB)\n
+    """Get all users or some of them using 'offset' and 'limit'\n
 
     Args:\n
         limit (int, optional): max number of returned users. \
@@ -71,7 +71,7 @@ async def users(
 @cache
 @router.get("/{user_ID}", status_code=status.HTTP_200_OK)
 async def users_by_ID(res: Response, user_ID: int) -> Dict[str, Any]:
-    """Get user api\n
+    """Get user by ID\n
 
     Args:\n
         user_ID (int): user ID\n
@@ -131,9 +131,11 @@ async def users_by_attribute(
     return {"success": True, "users": persons}
 
 
-@router.post("/", response_model=Person_Pydantic, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=Person_Pydantic, status_code=status.HTTP_201_CREATED
+)
 async def create_user(user: User) -> Dict[str, Any]:
-    """Create new users\n
+    """Create new user\n
 
     Args:\n
         user (User): User to create\n
@@ -147,8 +149,10 @@ async def create_user(user: User) -> Dict[str, Any]:
 
 @cache
 @router.patch("/{user_ID}", status_code=status.HTTP_202_ACCEPTED)
-async def fix_user(res: Response, user_ID: int, user: PartialUser) -> Dict[str, Any]:
-    """Fix some users attributes except his ID\n
+async def fix_user(
+    res: Response, user_ID: int, user: PartialUser
+) -> Dict[str, Any]:
+    """Fix some user attributes according to PartialUser class\n
 
     Args:\n
         user_ID (int): user ID\n
@@ -171,20 +175,23 @@ async def fix_user(res: Response, user_ID: int, user: PartialUser) -> Dict[str, 
         response["detail"] = f"User with ID {user_ID} doesn't exist."
         return response
 
-    user_updated = user_found.update_from_dict({**user.__dict__, "id": user_found.id})
+    user_updated = user_found.update_from_dict(
+        {**user.__dict__, "id": user_found.id}
+    )
     await user_updated.save()
     return await Person_Pydantic.from_tortoise_orm(user_updated)
 
 
 @cache
 @router.put("/{user_ID}", status_code=status.HTTP_202_ACCEPTED)
-async def update_user(res: Response, user_ID: int, new_data: User) -> Dict[str, Any]:
-    """Transfer data from one user to another\n
+async def update_user(
+    res: Response, user_ID: int, new_data: User
+) -> Dict[str, Any]:
+    """Update user attributes according to User class\n
 
     Args:\n
         user_ID (int): user who transfers the data and will be deleted\n
-        new_user (int): user receiving data, \
-        its data will be updated with the data of the first user\n
+        new_data (User): new user data\n
 
     Returns:\n
         Dict[str, Any]: contains User new data or error\n
