@@ -16,7 +16,7 @@
 
 ### >= 3.9
 
-### Install with docker-compose
+## Install with docker-compose
 
 Move to the app folder
 
