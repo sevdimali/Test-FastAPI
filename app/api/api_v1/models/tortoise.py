@@ -18,12 +18,16 @@ class Person(models.Model):
 
     def __str__(self):
         return "{!s}(first_name={!s}, last_name={!s},...)".format(
-            self.__class__.__name__, self.first_name, self.last_name
+            self.__class__.__name__,
+            self.first_name,
+            self.last_name
         )
 
     def __repr__(self):
         return "Class({!r})(first_name={!r}, last_name={!r},...)".format(
-            self.__class__.__name__, self.first_name, self.last_name
+            self.__class__.__name__,
+            self.first_name,
+            self.last_name
         )
 
 
