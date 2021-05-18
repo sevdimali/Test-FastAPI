@@ -3,7 +3,7 @@ from typing import Dict, Any, Optional
 
 import uvicorn
 from starlette.responses import RedirectResponse
-from fastapi import FastAPI, status, Response
+from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.api_v1.api import router as api_router
