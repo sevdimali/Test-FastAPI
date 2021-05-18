@@ -4,10 +4,11 @@
 name: Workflow
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+  workflow_run:
+    workflows:
+      - "Auto-format"
+    types:
+      - completed
 
 jobs:
   build:
@@ -15,19 +16,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
+
       - name: Set up Python 3.9
         uses: actions/setup-python@master
         with:
           python-version: 3.9
+
       - name: Install dependencies
         working-directory: ./app
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements/common.txt -r requirements/dev.txt
+
+      - name: Running Flake8
+        run: flake8
+
       - name: Running unit-tests and code-coverage
         working-directory: ./app
-        run: |
-          pytest
+        run: pytest
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
