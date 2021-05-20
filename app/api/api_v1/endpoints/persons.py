@@ -55,17 +55,13 @@ async def users(
         }
     nb_users = await Person.all().count()
 
-    users = await Person_Pydantic.from_queryset(
-        Person.all().limit(limit).offset(offset).order_by(order_by)
-    )
+    users = await Person_Pydantic.from_queryset(Person.all().limit(limit).offset(offset).order_by(order_by))
 
     if len(users) == 0:
         res.status_code = status.HTTP_404_NOT_FOUND
         return {**response, "detail": "Not Found"}
 
-    return API_functools.manage_next_previous_page(
-        request, users, nb_users, limit, offset
-    )
+    return API_functools.manage_next_previous_page(request, users, nb_users, limit, offset)
 
 
 @cache
@@ -92,9 +88,7 @@ async def users_by_ID(res: Response, user_ID: int) -> Dict[str, Any]:
 
 @cache
 @router.get("/filter/{user_attribute}/{value}", status_code=status.HTTP_200_OK)
-async def users_by_attribute(
-    res: Response, user_attribute: Any, value: Any
-) -> List[Dict[str, Any]]:
+async def users_by_attribute(res: Response, user_attribute: Any, value: Any) -> List[Dict[str, Any]]:
     """Get user by attribute except ID attribute\n
 
     Args:
@@ -108,9 +102,9 @@ async def users_by_attribute(
     """
     response = {"success": False, "users": []}
     lower_user_attribute = user_attribute.lower()
-    if (
-        "and" not in lower_user_attribute and "or" not in lower_user_attribute
-    ) and not API_functools.is_attribute_of(user_attribute, User):
+    if ("and" not in lower_user_attribute and "or" not in lower_user_attribute) and not API_functools.is_attribute_of(
+        user_attribute, User
+    ):
         res.status_code = status.HTTP_400_BAD_REQUEST
         return {
             **response,
@@ -121,9 +115,7 @@ async def users_by_attribute(
         }
     query_builder = Database.query_filter_builder(user_attribute, value)
 
-    persons = await Person_Pydantic.from_queryset(
-        Person.filter(*query_builder).order_by("id")
-    )
+    persons = await Person_Pydantic.from_queryset(Person.filter(*query_builder).order_by("id"))
     if len(persons) == 0:
         res.status_code = status.HTTP_404_NOT_FOUND
         return {**response, "detail": "Not Found"}

@@ -12,9 +12,7 @@ MODEL = TypeVar("MODEL", bound="API_functools")
 
 class API_functools:
     @classmethod
-    def get_or_default(
-        cls: Type[MODEL], list_el: tuple, index: int, default: Any = None
-    ) -> Any:
+    def get_or_default(cls: Type[MODEL], list_el: tuple, index: int, default: Any = None) -> Any:
         """Search element from specific list\n
 
         Args:\n
