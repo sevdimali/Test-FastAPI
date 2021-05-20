@@ -59,12 +59,8 @@ class TestPersonAPi(test.TestCase):
         person = Person(**USER_DATA)
         expected_repr = "Class({!r})(first_name={!r}, last_name={!r},...)"
         expected_str = "{!s}(first_name={!s}, last_name={!s},...)"
-        assert person.__repr__() == expected_repr.format(
-            person.__class__.__name__, person.first_name, person.last_name
-        )
-        assert person.__str__() == expected_str.format(
-            person.__class__.__name__, person.first_name, person.last_name
-        )
+        assert person.__repr__() == expected_repr.format(person.__class__.__name__, person.first_name, person.last_name)
+        assert person.__str__() == expected_str.format(person.__class__.__name__, person.first_name, person.last_name)
 
     async def test_root(self):
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
@@ -97,10 +93,7 @@ class TestPersonAPi(test.TestCase):
         expected = {
             "next": None,
             "previous": None,
-            "users": [
-                {"id": pk, **user}
-                for pk, user in enumerate(INIT_DATA[:quantity_users], start=1)
-            ],
+            "users": [{"id": pk, **user} for pk, user in enumerate(INIT_DATA[:quantity_users], start=1)],
         }
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
@@ -160,9 +153,7 @@ class TestPersonAPi(test.TestCase):
         expected = {
             "next": None,
             "previous": f"{API_ROOT}?limit={limit}&offset={offset}",
-            "users": [
-                {"id": n, **user} for n, user in enumerate(users[limit:], start=limit + 1)
-            ],
+            "users": [{"id": n, **user} for n, user in enumerate(users[limit:], start=limit + 1)],
         }
 
         assert response.status_code == status.HTTP_200_OK
@@ -361,9 +352,7 @@ class TestPersonAPi(test.TestCase):
         assert response.json() == expected
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.get(
-                f"{API_ROOT}filter/first_name/{person.first_name[:4].lower()}"
-            )
+            response = await ac.get(f"{API_ROOT}filter/first_name/{person.first_name[:4].lower()}")
         expected = {"success": True, "users": [{"id": person.id, **USER_DATA}]}
 
         assert response.status_code == status.HTTP_200_OK

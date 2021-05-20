@@ -64,6 +64,4 @@ class TestDatabase(test.TestCase):
             },
         ]
         for scene in scenes:
-            assert len(Database.query_filter_builder(scene["attr"], value)) == len(
-                scene["expected"]
-            )
+            assert len(Database.query_filter_builder(scene["attr"], value)) == len(scene["expected"])
