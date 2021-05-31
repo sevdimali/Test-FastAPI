@@ -54,7 +54,7 @@ source {choose-name}/bin/activate
 Windows
 
 ```bash
-bash ./{choose-name}/Scripts/activate
+./{choose-name}/Scripts/activate
 ```
 
 Move to app folder
