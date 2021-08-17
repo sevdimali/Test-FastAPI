@@ -1,13 +1,19 @@
 import re
 from datetime import date
-from typing import Optional
+from typing import Optional, Type, TypeVar
 
+from ..models.types import Gender
+from ...utils import API_functools
 from pydantic import BaseModel, validator
 from email_validator import validate_email, EmailNotValidError
 
-from api.api_v1.models.types import Gender
-
 avatar = "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1"
+default_content = (
+    """Lorem ipsum dolor sit amet consectetur adipisicing elit.
+    Consequuntur ratione omnis alias magnam?""",
+)
+
+PU = TypeVar("PU", bound="PartialUser")
 
 
 class PartialUser(BaseModel):
@@ -19,7 +25,7 @@ class PartialUser(BaseModel):
     job: Optional[str]
 
     @classmethod
-    def attributes(cls):
+    def attributes(cls: Type[PU]):
         """Return class object attributes except ID\n
 
         Returns:
@@ -27,8 +33,11 @@ class PartialUser(BaseModel):
         """
         return tuple(cls.__dict__.get("__fields__", {}).keys())
 
+    @classmethod
     @validator("last_name", "first_name", "job", "company")
-    def between_3_and_50_characters(cls, value: str, **kwargs) -> str:
+    def between_3_and_50_characters(
+        cls: Type[PU], value: str, **kwargs
+    ) -> str:
         """Validate str attributes that must contains minimum 3 characters\
             and maximum 50 characters\n
 
@@ -41,7 +50,7 @@ class PartialUser(BaseModel):
         Returns:
             str: validate attribute
         """
-        str_to_validate = value.title().strip()
+        str_to_validate = API_functools.strip_spaces(value.title())
         if not (3 <= len(str_to_validate) <= 50):
             raise ValueError(
                 f"{kwargs['field'].name} must contain between 3 and 50 \
@@ -49,8 +58,9 @@ class PartialUser(BaseModel):
             )
         return value
 
+    @classmethod
     @validator("avatar")
-    def valid_url_avatar(cls, value: str, **kwargs) -> str:
+    def valid_url_avatar(cls: Type[PU], value: str, **kwargs) -> str:
         """Validate url\n
 
         Args:\n
@@ -62,18 +72,21 @@ class PartialUser(BaseModel):
         Returns:
             str: validate attribute
         """
-        value = value.title().strip().lower()
-        patt = r"(https?:\/\/(www\.)?|(www\.))([\w\-\_\.]+)(\.[a-z]{2,10})(\/.+)?"
+        value = API_functools.strip_spaces(value.title()).lower()
+        pattern = (
+            r"(https?:\/\/(www\.)?|(www\.))([\w\-\_\.]+)(\.[a-z]{2,10})(\/.+)?"
+        )
         result = re.match(
-            patt,
+            pattern,
             value,
         )
         if result is None:
             raise ValueError(f"{kwargs['field'].name} must be a valid url.")
         return value
 
+    @classmethod
     @validator("email")
-    def valid_email(cls, value: str, **kwargs) -> str:
+    def valid_email(cls: Type[PU], value: str, **kwargs) -> str:
         """Validate email attribute using validate_email package
 
         Args:
@@ -85,11 +98,13 @@ class PartialUser(BaseModel):
         Returns:
             [str]: email
         """
-        value = value.title().strip()
+        value = API_functools.strip_spaces(value.title())
         try:
             validate_email(value)
         except EmailNotValidError:
-            raise ValueError(f"{kwargs['field'].name} is not a valid email address.")
+            raise ValueError(
+                f"{kwargs['field'].name} is not a valid email address."
+            )
         return value.lower()
 
     class Config:
@@ -105,14 +120,18 @@ class PartialUser(BaseModel):
         }
 
 
+U = TypeVar("U", bound="User")
+
+
 class User(PartialUser):
     is_admin: Optional[bool] = False
     gender: Gender
     date_of_birth: date
     country_of_birth: str
 
+    @classmethod
     @validator("country_of_birth")
-    def between_3_and_50_characters(cls, value: str) -> Optional[str]:
+    def between_3_and_50_characters(cls: Type[U], value: str) -> Optional[str]:
         return super().between_3_and_50_characters(value)
 
     class Config:
@@ -128,5 +147,48 @@ class User(PartialUser):
                 "company": "Edgetag",
                 "date_of_birth": "1970-01-01",
                 "country_of_birth": "No where",
+            }
+        }
+
+
+C = TypeVar("C", bound="Comment")
+
+
+class Comment(BaseModel):
+    owner: User
+    added: date
+    content: str
+
+    @classmethod
+    @validator("country_of_birth")
+    def at_least_10_characters(
+        cls: Type[C], value: str, **kwargs
+    ) -> Optional[str]:
+        """Validate content that must contains minimum 10 characters\
+
+        Args:\n
+            value (str): content to validate
+
+        Raises:
+            ValueError: if constraint not respected
+
+        Returns:
+            str: valid content
+        """
+        str_to_validate = API_functools.strip_spaces(value.title())
+        if len(str_to_validate) < 10:
+            raise ValueError(
+                f"{kwargs['field'].name} must contain at least 10\
+                    characters."
+            )
+        return value
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": 1,
+                "owner": "John Doe",
+                "added": "2021-08-16T00:00:00Z",
+                "content": default_content,
             }
         }
