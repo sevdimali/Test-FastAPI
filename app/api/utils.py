@@ -1,16 +1,29 @@
+import re
 import concurrent.futures as futures
-
 from typing import Optional, Dict, Any, Type, TypeVar, List
+
+
 from pydantic import BaseModel
 
-from api.api_v1.models.tortoise import Person
-from api.api_v1.storage.initial_data import INIT_DATA
+from .api_v1.models.tortoise import Person
+from .api_v1.storage.initial_data import INIT_DATA
 
 ORDERS: Dict[str, str] = {"asc": "", "desc": "-"}
 MODEL = TypeVar("MODEL", bound="API_functools")
 
 
 class API_functools:
+    @classmethod
+    def strip_spaces(cls: Type[MODEL], string: str) -> str:
+        """Remove multiple spaces in the given string
+
+        Args:
+            string (str): string to be processed
+        Returns:
+            str: processed string
+        """
+        return re.sub(r"\s{2,}", " ", string.strip())
+
     @classmethod
     def get_or_default(
         cls: Type[MODEL], list_el: tuple, index: int, default: Any = None
@@ -30,7 +43,9 @@ class API_functools:
         return default if len(list_el) <= index else list_el[index]
 
     @classmethod
-    def instance_of(cls: Type[MODEL], el: Any, class_expected: Type[Any]) -> bool:
+    def instance_of(
+        cls: Type[MODEL], el: Any, class_expected: Type[Any]
+    ) -> bool:
         """Check element is from specific class\n
 
         Args:\n
@@ -53,7 +68,9 @@ class API_functools:
         return tuple(target_cls.__dict__.get("__fields__", {}).keys())
 
     @classmethod
-    def valid_order(cls: Type[MODEL], target_cls: BaseModel, sort: str) -> Optional[str]:
+    def valid_order(
+        cls: Type[MODEL], target_cls: BaseModel, sort: str
+    ) -> Optional[str]:
         """Validator for sort db query result with \
             attribute:direction(asc or desc)\n
 
@@ -126,7 +143,9 @@ class API_functools:
         return data
 
     @classmethod
-    async def insert_default_data(cls, data=INIT_DATA, quantity: int = -1) -> None:
+    async def insert_default_data(
+        cls, data=INIT_DATA, quantity: int = -1
+    ) -> None:
         """Init `person` table with some default users\n
 
         Args:
