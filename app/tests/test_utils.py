@@ -8,6 +8,10 @@ from api.api_v1.storage.initial_data import INIT_DATA
 
 
 class TestUtils(test.TestCase):
+    def test_strip_spaces(self):
+        s = API_functools.strip_spaces("       Hello         World       ")
+        assert s == "Hello World"
+
     def test_get_or_default(self):
         list_object = (
             {"name": "John Doe"},
