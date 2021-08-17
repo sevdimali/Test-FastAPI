@@ -25,15 +25,6 @@ class PartialUser(BaseModel):
     job: Optional[str]
 
     @classmethod
-    def attributes(cls: Type[PU]):
-        """Return class object attributes except ID\n
-
-        Returns:
-            tuple[str]: attributes
-        """
-        return tuple(cls.__dict__.get("__fields__", {}).keys())
-
-    @classmethod
     @validator("last_name", "first_name", "job", "company")
     def between_3_and_50_characters(
         cls: Type[PU], value: str, **kwargs
@@ -161,10 +152,10 @@ class Comment(BaseModel):
 
     @classmethod
     @validator("country_of_birth")
-    def at_least_10_characters(
+    def at_least_1_character(
         cls: Type[C], value: str, **kwargs
     ) -> Optional[str]:
-        """Validate content that must contains minimum 10 characters\
+        """Validate content that must contains minimum 1 character\
 
         Args:\n
             value (str): content to validate
@@ -176,10 +167,10 @@ class Comment(BaseModel):
             str: valid content
         """
         str_to_validate = API_functools.strip_spaces(value.title())
-        if len(str_to_validate) < 10:
+        if len(str_to_validate) <= 1:
             raise ValueError(
-                f"{kwargs['field'].name} must contain at least 10\
-                    characters."
+                f"{kwargs['field'].name} must contain at least 1\
+                    character."
             )
         return value
 

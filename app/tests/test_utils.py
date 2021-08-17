@@ -15,8 +15,13 @@ class TestUtils(test.TestCase):
             {"name": "Alice Doe"},
         )
         for index, obj in enumerate(list_object):
-            assert API_functools.get_or_default(list_object, index, None) == obj
-        assert API_functools.get_or_default(list_object, len(list_object), None) is None
+            assert (
+                API_functools.get_or_default(list_object, index, None) == obj
+            )
+        assert (
+            API_functools.get_or_default(list_object, len(list_object), None)
+            is None
+        )
 
     async def test_instance_of(self):
         obj = await Person.create(**INIT_DATA[0])
@@ -31,9 +36,20 @@ class TestUtils(test.TestCase):
         assert API_functools.instance_of("Hello", int) is False
 
     def test_get_attributes(self):
-        assert API_functools.get_attributes(User) == User.attributes()
-        partial_attr = PartialUser.attributes()
-        assert API_functools.get_attributes(PartialUser) == partial_attr
+        user_attributes = (
+            "first_name",
+            "last_name",
+            "email",
+            "avatar",
+            "company",
+            "job",
+            "is_admin",
+            "gender",
+            "date_of_birth",
+            "country_of_birth",
+        )
+        assert API_functools.get_attributes(User) == user_attributes
+        assert API_functools.get_attributes(PartialUser) == user_attributes[:6]
 
     def test_valid_order(self):
         # valid order must consist of an attribute of the Person class
@@ -48,7 +64,7 @@ class TestUtils(test.TestCase):
             assert API_functools.valid_order(User, order[0]) == order[1]
 
     def test_is_attribute_of(self):
-        for attr in User.attributes():
+        for attr in API_functools.get_attributes(User):
             assert API_functools.is_attribute_of(attr, User) is True
         assert API_functools.is_attribute_of("id", User) is False
         assert API_functools.is_attribute_of("invalid", User) is False
@@ -88,17 +104,23 @@ class TestUtils(test.TestCase):
         ]
         for scene in scenes:
             # scene 1 next=None, previous=None
-            actual = API_functools.manage_next_previous_page(request, [], *scene["data"])
+            actual = API_functools.manage_next_previous_page(
+                request, [], *scene["data"]
+            )
             assert actual == scene["expected"]
 
     async def test_insert_default_data(self):
         nb_users_inserted = 4
-        await API_functools.insert_default_data(data=INIT_DATA[:nb_users_inserted])
+        await API_functools.insert_default_data(
+            data=INIT_DATA[:nb_users_inserted]
+        )
         assert await Person.all().count() == nb_users_inserted
 
     async def test_create_default_person(self):
         user_to_create = INIT_DATA[0]
-        user_created = await API_functools._create_default_person(user_to_create)
+        user_created = await API_functools._create_default_person(
+            user_to_create
+        )
         assert API_functools.instance_of(user_created, Person) is True
         actual = {
             **user_created.__dict__,
