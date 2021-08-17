@@ -182,3 +182,8 @@ class Comment(BaseModel):
                 "content": default_content,
             }
         }
+
+
+class Vote(BaseModel):
+    comment: Comment
+    user: User
