@@ -6,10 +6,12 @@ from tortoise.contrib import test
 
 from api.api_v1.models.pydantic import User, PartialUser
 
-url_regex = r"(https?:\/\/(www\.)?|(www\.))([\w\-\_\.]+)(\.[a-z]{2,10})(\/[^\s,%]+)?"
+url_regex = (
+    r"(https?:\/\/(www\.)?|(www\.))([\w\-\_\.]+)(\.[a-z]{2,10})(\/[^\s,%]+)?"
+)
 
 
-class TestPydantic(test.TestCase):
+class TestPerson(test.TestCase):
     def test_user_attributes(self):
         user_attributes = (
             "first_name",
