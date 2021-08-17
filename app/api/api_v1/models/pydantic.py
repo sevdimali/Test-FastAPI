@@ -120,7 +120,6 @@ class User(PartialUser):
     date_of_birth: date
     country_of_birth: str
 
-    @classmethod
     @validator("country_of_birth")
     def between_3_and_50_characters(cls: Type[U], value: str) -> Optional[str]:
         return super().between_3_and_50_characters(value)
