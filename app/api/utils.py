@@ -4,6 +4,8 @@ from typing import Optional, Dict, Any, Type, TypeVar, List
 
 
 from pydantic import BaseModel
+from tortoise.models import Model
+
 
 from .api_v1.models.tortoise import Person, Comment
 from .api_v1.storage.initial_data import INIT_DATA
@@ -184,7 +186,7 @@ class API_functools:
     @classmethod
     async def _insert_default_data(
         cls: Type[MODEL], table: str, data: dict
-    ) -> Person:
+    ) -> Model:
         """Insert data into specific table
             called by insert_default_data function\n
 
@@ -193,7 +195,7 @@ class API_functools:
             data (dict): data to insert according to table model\n
 
         Returns:\n
-            Person: inserted person
+            Model: inserted instance
         """
         # Replace foreign attribute to an instance of foreign model
         if table.lower() == "comment" and cls.instance_of(data["owner"], int):
@@ -206,5 +208,4 @@ class API_functools:
             data["user"] = await Person.filter(id=data["user"]).first()
             data["comment"] = await Comment.filter(id=data["comment"]).first()
 
-        script = await eval(f"{table.capitalize()}.create(**data)")
-        return script
+        return await eval(f"{table.capitalize()}.create(**data)")
