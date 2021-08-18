@@ -2,10 +2,8 @@ import re
 import concurrent.futures as futures
 from typing import Optional, Dict, Any, Type, TypeVar, List
 
-
 from pydantic import BaseModel
 from tortoise.models import Model
-
 
 from .api_v1.models.tortoise import Person, Comment
 from .api_v1.storage.initial_data import INIT_DATA
@@ -155,7 +153,7 @@ class API_functools:
 
         Args:
             table (str): specific table to manage, Default to None == all
-            data ([type], optional): data to load. Defaults to INIT_DATA.
+            data ([dict], optional): data to load. Defaults to INIT_DATA.
             max_data (int, optional): quantity of data to load. \
                 Defaults to -1.
         Returns:\n
@@ -170,7 +168,7 @@ class API_functools:
             with futures.ProcessPoolExecutor() as executor:
                 for user in data:
                     executor.map(await cls._insert_default_data(table, user))
-        else:
+        elif cls.instance_of(data, dict):
             for _table, _data in data.items():
                 data_length = len(_data)
                 quantity = (
@@ -182,6 +180,8 @@ class API_functools:
                         executor.map(
                             await cls._insert_default_data(_table, user)
                         )
+        else:
+            raise ValueError("Data must be a list or dict")
 
     @classmethod
     async def _insert_default_data(
