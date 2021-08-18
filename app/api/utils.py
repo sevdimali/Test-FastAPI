@@ -1,12 +1,11 @@
 import re
-import asyncio
 import concurrent.futures as futures
 from typing import Optional, Dict, Any, Type, TypeVar, List
 
 
 from pydantic import BaseModel
 
-from .api_v1.models.tortoise import Person, Comment, Vote
+from .api_v1.models.tortoise import Person, Comment
 from .api_v1.storage.initial_data import INIT_DATA
 
 ORDERS: Dict[str, str] = {"asc": "", "desc": "-"}
@@ -196,16 +195,16 @@ class API_functools:
         Returns:\n
             Person: inserted person
         """
-        if table.lower() == "person":
-            return await Person.create(**data)
-        elif table.lower() == "comment":
-            # Replace id to an instance of Person
+        # Replace foreign attribute to an instance of foreign model
+        if table.lower() == "comment" and cls.instance_of(data["owner"], int):
             data["owner"] = await Person.filter(id=data["owner"]).first()
-            return await Comment.create(**data)
-        elif table.lower() == "vote":
-            # Replace id to an instance of Person and Comment
+        elif (
+            table.lower() == "vote"
+            and cls.instance_of(data["user"], int)
+            and cls.instance_of(data["comment"], int)
+        ):
+            data["user"] = await Person.filter(id=data["user"]).first()
             data["comment"] = await Comment.filter(id=data["comment"]).first()
-            data["user"] = await Comment.filter(id=data["user"]).first()
-            return await Vote.create(**data)
-        else:
-            raise ValueError(f'Table "{table}" not exists.')
+
+        script = await eval(f"{table.capitalize()}.create(**data)")
+        return script
