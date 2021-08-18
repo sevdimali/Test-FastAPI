@@ -1,11 +1,12 @@
 import re
+import asyncio
 import concurrent.futures as futures
 from typing import Optional, Dict, Any, Type, TypeVar, List
 
 
 from pydantic import BaseModel
 
-from .api_v1.models.tortoise import Person
+from .api_v1.models.tortoise import Person, Comment, Vote
 from .api_v1.storage.initial_data import INIT_DATA
 
 ORDERS: Dict[str, str] = {"asc": "", "desc": "-"}
@@ -144,33 +145,67 @@ class API_functools:
 
     @classmethod
     async def insert_default_data(
-        cls, data=INIT_DATA, quantity: int = -1
+        cls: Type[MODEL],
+        table: Optional[str] = None,
+        data: Optional[dict] = INIT_DATA,
+        quantity: int = -1,
     ) -> None:
-        """Init `person` table with some default users\n
+        """Init tables with some default fake data\n
 
         Args:
+            table (str): specific table to manage, Default to None == all
             data ([type], optional): data to load. Defaults to INIT_DATA.
             max_data (int, optional): quantity of data to load. \
                 Defaults to -1.
         Returns:\n
             None: nothing
         """
-        data_length = len(INIT_DATA)
-        quantity = quantity if data_length >= quantity >= 1 else data_length
-        data = data[:quantity]
-        with futures.ProcessPoolExecutor() as executor:
-            for user in data:
-                executor.map(await cls._create_default_person(user))
+        if cls.instance_of(data, list) and table is not None:
+            data_length = len(data)
+            quantity = (
+                quantity if data_length >= quantity >= 1 else data_length
+            )
+            data = data[:quantity]
+            with futures.ProcessPoolExecutor() as executor:
+                for user in data:
+                    executor.map(await cls._insert_default_data(table, user))
+        else:
+            for _table, _data in data.items():
+                data_length = len(_data)
+                quantity = (
+                    quantity if data_length >= quantity >= 1 else data_length
+                )
+                c_data = _data[:quantity]
+                with futures.ProcessPoolExecutor() as executor:
+                    for user in c_data:
+                        executor.map(
+                            await cls._insert_default_data(_table, user)
+                        )
 
     @classmethod
-    async def _create_default_person(cls, user: dict) -> Person:
-        """Insert person into `person` table
+    async def _insert_default_data(
+        cls: Type[MODEL], table: str, data: dict
+    ) -> Person:
+        """Insert data into specific table
             called by insert_default_data function\n
 
         Args:\n
-            user (dict): user data to insert according to person model\n
+            table (str): table to modify
+            data (dict): data to insert according to table model\n
 
         Returns:\n
             Person: inserted person
         """
-        return await Person.create(**user)
+        if table.lower() == "person":
+            return await Person.create(**data)
+        elif table.lower() == "comment":
+            # Replace id to an instance of Person
+            data["owner"] = await Person.filter(id=data["owner"]).first()
+            return await Comment.create(**data)
+        elif table.lower() == "vote":
+            # Replace id to an instance of Person and Comment
+            data["comment"] = await Comment.filter(id=data["comment"]).first()
+            data["user"] = await Comment.filter(id=data["user"]).first()
+            return await Vote.create(**data)
+        else:
+            raise ValueError(f'Table "{table}" not exists.')
