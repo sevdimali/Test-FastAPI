@@ -115,6 +115,7 @@ class API_functools:
         nb_total_data: int,
         limit: int,
         offset: int,
+        data_type: str = "users",
     ) -> Dict[str, Any]:
         """Manage next/previous data link(url)
 
@@ -124,23 +125,27 @@ class API_functools:
             nb_total_data (int): total number of resources from DB
             limit (int): limit quantity of returned data
             offset (int): offset of returned data
+            data_type (str): type of data, Default to users.
 
         Returns:
             Dict[str, Any]: response
         """
-        data = {"next": None, "previous": None, "users": data}
+        _data = {"next": None, "previous": None}
+        _data[data_type] = data
 
         # manage next data
         base = request.scope.get("path")
         if offset + limit < nb_total_data and limit <= nb_total_data:
             next_offset = offset + limit
-            data["next"] = f"{base}?limit={limit}&offset={next_offset}"
+            _data["next"] = f"{base}?limit={limit}&offset={next_offset}"
 
         # manage previous data
         if offset - limit >= 0 and limit <= nb_total_data:
             previous_offset = offset - limit
-            data["previous"] = f"{base}?limit={limit}&offset={previous_offset}"
-        return data
+            _data[
+                "previous"
+            ] = f"{base}?limit={limit}&offset={previous_offset}"
+        return _data
 
     @classmethod
     async def insert_default_data(
@@ -205,6 +210,7 @@ class API_functools:
             and cls.instance_of(data["user"], int)
             and cls.instance_of(data["comment"], int)
         ):
+            exec("from .api_v1.models.tortoise import Vote")
             data["user"] = await Person.filter(id=data["user"]).first()
             data["comment"] = await Comment.filter(id=data["comment"]).first()
 
