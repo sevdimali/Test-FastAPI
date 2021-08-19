@@ -109,7 +109,7 @@ class TestUtils(test.TestCase):
         for scene in scenes:
             # scene 1 next=None, previous=None
             actual = API_functools.manage_next_previous_page(
-                request, [], *scene["data"]
+                request, [], *scene["data"], data_type="users"
             )
             assert actual == scene["expected"]
 

@@ -8,10 +8,8 @@ from pydantic import BaseModel, validator
 from email_validator import validate_email, EmailNotValidError
 
 avatar = "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1"
-default_content = (
-    """Lorem ipsum dolor sit amet consectetur adipisicing elit.
-    Consequuntur ratione omnis alias magnam?""",
-)
+default_content = """Lorem ipsum dolor sit amet consectetur adipisicing elit.
+Consequuntur ratione omnis alias magnam?"""
 
 PU = TypeVar("PU", bound="PartialUser")
 
