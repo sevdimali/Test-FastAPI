@@ -18,12 +18,6 @@
 
 ## Install with docker-compose
 
-Move to the app folder
-
-```bash
-cd app
-```
-
 Then run:
 
 ```bash
@@ -55,12 +49,6 @@ Windows
 
 ```bash
 bash ./{choose-name}/Scripts/activate
-```
-
-Move to app folder
-
-```bash
-cd app/
 ```
 
 ### Install requirements
@@ -98,12 +86,12 @@ CREATE DATABASE fastapidb;
 ```
 
 Then Edit `TORTOISE_ORM` variable in the `settings.py` correctly.
-You will find settings file in `api/api_v1` folder
+You will find settings file in `app/api/api_v1` folder
 
 Then run migrations using `aerich` command to create table(s).
 
 ```bash
-aerich init -t api.api_v1.settings.TORTOISE_ORM
+aerich init -t app.api.api_v1.settings.TORTOISE_ORM
 ```
 
 ```bash
@@ -125,7 +113,7 @@ which will load fake data and redirect you to the app root `/`
 
 ## Run all the tests
 
-from `app` folder run:
+from root folder run (Test-FastAPI):
 
 ```bash
 pytest
