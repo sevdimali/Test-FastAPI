@@ -44,28 +44,57 @@ class API_functools:
 
     @classmethod
     def instance_of(
-        cls: Type[MODEL], el: Any, class_expected: Type[Any]
+        cls: Type[MODEL], el: Any, expected_class: Type[Any]
     ) -> bool:
         """Check element is from specific class\n
 
         Args:\n
             cls (API_functools): utility class that used to call this method\n
             el (Any): object from any class\n
-            class_expected (Type[U]): class expected\n
+            expected_class (Type[U]): class expected\n
 
         Returns:\n
             bool: equality(True if equals else False)
         """
-        return el.__class__.__name__.lower() == class_expected.__name__.lower()
+        return el.__class__.__name__.lower() == expected_class.__name__.lower()
 
     @classmethod
-    def get_attributes(cls: Type[MODEL], target_cls) -> tuple[str]:
+    def get_attributes(
+        cls: Type[MODEL], target_cls: BaseModel, **kwargs: dict
+    ) -> tuple[str]:
         """Return class object attributes except ID\n
 
+        Args:\n
+            target (BaseModel): The class
+            kwargs (dict): options
+                exclude (list or tuple): some of attributes to exclude from the return
+                replace (dict): attribute to replace, key(old) -> value(new)
+                add (list or tuple): some attribute to add to the return result
         Returns:
             tuple[str]: attributes
         """
-        return tuple(target_cls.__dict__.get("__fields__", {}).keys())
+        attributes = tuple(target_cls.__dict__.get("__fields__", {}).keys())
+        if cls.instance_of(kwargs.get("replace", None), dict):
+            for old, new in kwargs.get("replace").items():
+                attributes = tuple(
+                    map(lambda attr: new if attr == old else attr, attributes)
+                )
+
+        if cls.instance_of(kwargs.get("add", None), list) or cls.instance_of(
+            kwargs.get("add", None), tuple
+        ):
+            for attr in kwargs.get("add"):
+                attributes += (attr,)
+        if cls.instance_of(
+            kwargs.get("exclude", None), list
+        ) or cls.instance_of(kwargs.get("exclude", None), tuple):
+            attributes = tuple(
+                filter(
+                    lambda attr: attr not in kwargs.get("exclude"), attributes
+                )
+            )
+
+        return attributes
 
     @classmethod
     def valid_order(
