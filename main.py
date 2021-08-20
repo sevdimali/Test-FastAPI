@@ -6,10 +6,10 @@ from starlette.responses import RedirectResponse
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.api_v1.api import router as api_router
-from api.api_v1.storage.database import Database
-from api.api_v1.settings import CORS_MIDDLEWARE_CONFIG
-from api.utils import API_functools
+from app.api.api_v1.api import router as api_router
+from app.api.api_v1.storage.database import Database
+from app.api.api_v1.settings import CORS_MIDDLEWARE_CONFIG
+from app.api.utils import API_functools
 
 API_BASE_URL = "/api/v1"
 app = FastAPI(
