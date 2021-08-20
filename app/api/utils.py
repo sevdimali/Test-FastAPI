@@ -67,31 +67,27 @@ class API_functools:
         Args:\n
             target (BaseModel): The class
             kwargs (dict): options
-                exclude (list or tuple): some of attributes to exclude from the return
-                replace (dict): attribute to replace, key(old) -> value(new)
-                add (list or tuple): some attribute to add to the return result
+                exclude (list or tuple): attributes to exclude from attributes found
+                replace (dict): attributes to replace, key(old) -> value(new)
+                add (list or tuple): some attributes to add to the attributes found
         Returns:
             tuple[str]: attributes
         """
+        exclude = kwargs.get("exclude", tuple())  # (attr1, attr2)
+        add = kwargs.get("add", tuple())  # (new_attr1, new_attr2)
+        replace = kwargs.get("replace", dict())  # {old_attr: new_attr}
         attributes = tuple(target_cls.__dict__.get("__fields__", {}).keys())
-        if cls.instance_of(kwargs.get("replace", None), dict):
-            for old, new in kwargs.get("replace").items():
-                attributes = tuple(
-                    map(lambda attr: new if attr == old else attr, attributes)
-                )
 
-        if cls.instance_of(kwargs.get("add", None), list) or cls.instance_of(
-            kwargs.get("add", None), tuple
-        ):
-            for attr in kwargs.get("add"):
-                attributes += (attr,)
-        if cls.instance_of(
-            kwargs.get("exclude", None), list
-        ) or cls.instance_of(kwargs.get("exclude", None), tuple):
+        for old, new in replace.items():
             attributes = tuple(
-                filter(
-                    lambda attr: attr not in kwargs.get("exclude"), attributes
-                )
+                map(lambda attr: new if attr == old else attr, attributes)
+            )
+        if type(add) in (tuple, list):
+            for attr in add:
+                attributes += (attr,)
+        if type(exclude) in (tuple, list):
+            attributes = tuple(
+                filter(lambda attr: attr not in exclude, attributes)
             )
 
         return attributes
