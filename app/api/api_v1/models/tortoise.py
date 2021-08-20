@@ -1,7 +1,7 @@
 from tortoise import models, fields
 from tortoise.contrib.pydantic import pydantic_model_creator
 
-from api.api_v1.models.types import Gender
+from .types import Gender
 
 
 class Person(models.Model):
@@ -31,9 +31,7 @@ Person_Pydantic = pydantic_model_creator(Person, name="Person")
 
 
 class Comment(models.Model):
-    owner = fields.ForeignKeyField(
-        "models.Person", related_name="owner_comment"
-    )
+    owner = fields.ForeignKeyField("models.Person", related_name="comment")
     added = fields.DatetimeField(
         auto_now_add=True,
     )
@@ -53,10 +51,8 @@ Comment_Pydantic = pydantic_model_creator(Comment, name="Comment")
 
 
 class Vote(models.Model):
-    comment = fields.ForeignKeyField(
-        "models.Comment", related_name="comment_vote"
-    )
-    user = fields.ForeignKeyField("models.Person", related_name="user_vote")
+    comment = fields.ForeignKeyField("models.Comment", related_name="vote")
+    user = fields.ForeignKeyField("models.Person", related_name="vote")
 
     def __str__(self):
         return "{!s}(User={!s}, Comment={!s},...)".format(
