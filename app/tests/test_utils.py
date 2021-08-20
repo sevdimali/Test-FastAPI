@@ -1,10 +1,10 @@
 from fastapi import Request
 from tortoise.contrib import test
 
-from api.utils import API_functools
-from api.api_v1.models.tortoise import Person
-from api.api_v1.models.pydantic import User, PartialUser
-from api.api_v1.storage.initial_data import INIT_DATA
+from app.api.utils import API_functools
+from app.api.api_v1.models.tortoise import Person
+from app.api.api_v1.models.pydantic import User, PartialUser
+from app.api.api_v1.storage.initial_data import INIT_DATA
 
 
 class TestUtils(test.TestCase):

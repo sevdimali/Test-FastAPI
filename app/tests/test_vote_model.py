@@ -1,8 +1,8 @@
 from tortoise.contrib import test
 
-from api.api_v1 import settings
-from api.api_v1.models.pydantic import default_content
-from api.api_v1.models.tortoise import Person, Comment, Vote
+from app.api.api_v1 import settings
+from app.api.api_v1.models.pydantic import default_content
+from app.api.api_v1.models.tortoise import Person, Comment, Vote
 
 TORTOISE_TEST_DB = getattr(settings, "TORTOISE_TEST_DB", "sqlite://:memory:")
 BASE_URL = "http://127.0.0.1:8000"

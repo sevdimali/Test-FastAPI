@@ -6,11 +6,11 @@ from httpx import AsyncClient
 from tortoise.contrib import test
 
 from main import app
-from api.api_v1 import settings
-from api.utils import API_functools
-from api.api_v1.models.pydantic import User
-from api.api_v1.models.tortoise import Person
-from api.api_v1.storage.initial_data import INIT_DATA
+from app.api.api_v1 import settings
+from app.api.utils import API_functools
+from app.api.api_v1.models.pydantic import User
+from app.api.api_v1.models.tortoise import Person
+from app.api.api_v1.storage.initial_data import INIT_DATA
 
 TORTOISE_TEST_DB = getattr(settings, "TORTOISE_TEST_DB", "sqlite://:memory:")
 BASE_URL = "http://127.0.0.1:8000"

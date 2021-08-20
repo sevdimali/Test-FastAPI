@@ -3,14 +3,17 @@ import concurrent.futures as futures
 from tortoise.contrib import test
 from tortoise.query_utils import Q
 from main import app
-from api.api_v1.storage.database import Database
+from app.api.api_v1.storage.database import Database
 
 
 class TestDatabase(test.TestCase):
     def test_connection(self):
         with futures.ThreadPoolExecutor() as executor:
             # Connection OK
-            assert executor.submit(Database.connect, application=app).result() is True
+            assert (
+                executor.submit(Database.connect, application=app).result()
+                is True
+            )
             # Connection NOK
             assert executor.submit(Database.connect).result() is False
 
@@ -64,6 +67,6 @@ class TestDatabase(test.TestCase):
             },
         ]
         for scene in scenes:
-            assert len(Database.query_filter_builder(scene["attr"], value)) == len(
-                scene["expected"]
-            )
+            assert len(
+                Database.query_filter_builder(scene["attr"], value)
+            ) == len(scene["expected"])

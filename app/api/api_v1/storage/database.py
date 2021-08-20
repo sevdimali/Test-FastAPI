@@ -4,7 +4,7 @@ from typing import Any, List
 from tortoise.contrib.fastapi import register_tortoise
 from tortoise.query_utils import Q
 
-from api.api_v1.settings import TORTOISE_ORM as DATABASE_CONFIG
+from app.api.api_v1.settings import TORTOISE_ORM as DATABASE_CONFIG
 
 
 class Database:

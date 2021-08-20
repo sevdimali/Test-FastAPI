@@ -3,10 +3,10 @@ from typing import Optional, Dict, List, Any
 
 from fastapi import APIRouter, Request, Response, status
 
-from api.api_v1.storage.database import Database
-from api.utils import API_functools
-from api.api_v1.models.pydantic import User, PartialUser
-from api.api_v1.models.tortoise import Person, Person_Pydantic
+from app.api.api_v1.storage.database import Database
+from app.api.utils import API_functools
+from app.api.api_v1.models.pydantic import User, PartialUser
+from app.api.api_v1.models.tortoise import Person, Person_Pydantic
 
 router = APIRouter()
 

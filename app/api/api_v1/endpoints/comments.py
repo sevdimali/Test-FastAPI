@@ -4,9 +4,9 @@ from typing import Optional, Dict, List, Any
 from fastapi import APIRouter, status, Request, Response
 from fastapi.encoders import jsonable_encoder
 
-from api.utils import API_functools
-from api.api_v1.models.pydantic import Comment as CommentBaseModel
-from api.api_v1.models.tortoise import Comment
+from app.api.utils import API_functools
+from app.api.api_v1.models.pydantic import Comment as CommentBaseModel
+from app.api.api_v1.models.tortoise import Comment
 
 router = APIRouter()
 

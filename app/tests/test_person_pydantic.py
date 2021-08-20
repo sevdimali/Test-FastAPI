@@ -4,8 +4,8 @@ from pydantic import BaseConfig, Field
 from pydantic.fields import ModelField
 from tortoise.contrib import test
 
-from api.utils import API_functools
-from api.api_v1.models.pydantic import User, PartialUser
+from app.api.utils import API_functools
+from app.api.api_v1.models.pydantic import User, PartialUser
 
 url_regex = (
     r"(https?:\/\/(www\.)?|(www\.))([\w\-\_\.]+)(\.[a-z]{2,10})(\/[^\s,%]+)?"
