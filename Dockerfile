@@ -10,7 +10,7 @@ ENV APP_EXPOSED_PORT=80
 
 WORKDIR /src/app
 
-COPY ./app/requirements/common.txt .
+COPY ./requirements/common.txt .
 
 RUN pip install --no-cache-dir --no-input -r common.txt
 

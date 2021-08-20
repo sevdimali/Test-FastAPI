@@ -17,7 +17,7 @@ services:
     container_name: api
     restart: unless-stopped
     command: >
-      bash -c "aerich init -t api.api_v1.settings.TORTOISE_ORM
+      bash -c "aerich init -t app.api.api_v1.settings.TORTOISE_ORM
       && aerich init-db 
       && python main.py"
     ports:
