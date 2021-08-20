@@ -2,10 +2,11 @@ from functools import cache
 from typing import Optional, Dict, List, Any
 
 from fastapi import APIRouter, status, Request, Response
+from fastapi.encoders import jsonable_encoder
 
 from api.utils import API_functools
 from api.api_v1.models.pydantic import Comment as CommentBaseModel
-from api.api_v1.models.tortoise import Comment, Comment_Pydantic
+from api.api_v1.models.tortoise import Comment
 
 router = APIRouter()
 
@@ -55,8 +56,20 @@ async def comments(
         }
     nb_comments = await Comment.all().count()
 
-    comments = await Comment_Pydantic.from_queryset(
-        Comment.all().limit(limit).offset(offset).order_by(order_by)
+    comments = jsonable_encoder(
+        (
+            await Comment.all()
+            .limit(limit)
+            .offset(offset)
+            .order_by(order_by)
+            .values(
+                *API_functools.get_attributes(
+                    CommentBaseModel,
+                    replace={"owner": "owner_id"},
+                    add=("id",),
+                )
+            )
+        )
     )
 
     if len(comments) == 0:
@@ -64,5 +77,5 @@ async def comments(
         return {**response, "detail": "Not Found"}
 
     return API_functools.manage_next_previous_page(
-        request, comments, nb_comments, limit, offset
+        request, comments, nb_comments, limit, offset, data_type="comments"
     )
