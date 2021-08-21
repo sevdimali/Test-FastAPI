@@ -133,7 +133,7 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
-    async def test_limit_offset(self):
+    async def test_get_users_with_limit_offset(self):
         limit = 5
         offset = 0
         users = INIT_DATA.get("person", [])[:10]
@@ -197,7 +197,7 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json() == expected
 
-    async def test_sorted_by_attribute(self):
+    async def test_users_sorted_by_attribute(self):
         # sort by first_name ascending order
         asc = "first_name:asc"
         # sort by first_name descending order
