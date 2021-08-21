@@ -215,18 +215,19 @@ class API_functools:
 
     @classmethod
     async def _insert_default_data(
-        cls: Type[MODEL], table: str, data: dict
+        cls: Type[MODEL], table: str, _data: dict
     ) -> Model:
         """Insert data into specific table
             called by insert_default_data function\n
 
         Args:\n
             table (str): table to modify
-            data (dict): data to insert according to table model\n
+            _data (dict): data to insert according to table model\n
 
         Returns:\n
             Model: inserted instance
         """
+        data = {**_data}  # prevent: modify content of argument _data
         # Replace foreign attribute to an instance of foreign model
         if table.lower() == "comment" and cls.instance_of(data["owner"], int):
             data["owner"] = await Person.filter(id=data["owner"]).first()
