@@ -66,47 +66,12 @@ class TestPersonAPi(test.TestCase):
             person.__class__.__name__, person.first_name, person.last_name
         )
 
-    async def test_root(self):
-        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.get("/")
-        assert response.status_code == status.HTTP_200_OK
-        assert response.json() == {
-            "detail": "Welcome to FastAPI",
-            "apis": ["/api/v1/users"],
-            "fake_data": "/data",
-            "docs": ["/docs", "/redoc"],
-            "openapi": "/openapi.json",
-        }
-
     async def test_create_user(self):
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.post(API_ROOT, data=json.dumps(USER_DATA))
 
         expected = {"id": 1, **USER_DATA}
         assert response.status_code == status.HTTP_201_CREATED
-        assert response.json() == expected
-
-    async def test_loading_data(self):
-        quantity_users = 4
-        # load fake data
-        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.get(
-                "/data", params={"quantity": quantity_users}
-            )
-
-        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.get(API_ROOT)
-        expected = {
-            "next": None,
-            "previous": None,
-            "users": [
-                {"id": pk, **user}
-                for pk, user in enumerate(
-                    INIT_DATA.get("person", [])[:quantity_users], start=1
-                )
-            ],
-        }
-        assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
 
     async def test_get_users(self):
