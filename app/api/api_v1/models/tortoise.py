@@ -31,7 +31,7 @@ Person_Pydantic = pydantic_model_creator(Person, name="Person")
 
 
 class Comment(models.Model):
-    owner = fields.ForeignKeyField("models.Person", related_name="comment")
+    user = fields.ForeignKeyField("models.Person", related_name="comment")
     added = fields.DatetimeField(
         auto_now_add=True,
     )

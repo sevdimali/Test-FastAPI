@@ -143,7 +143,7 @@ C = TypeVar("C", bound="Comment")
 
 
 class Comment(BaseModel):
-    owner: User
+    user: User
     added: date
     content: str
 
@@ -175,7 +175,7 @@ class Comment(BaseModel):
         schema_extra = {
             "example": {
                 "id": 1,
-                "owner": "John Doe",
+                "user_id": 1,
                 "added": "2021-08-16T00:00:00Z",
                 "content": default_content,
             }
