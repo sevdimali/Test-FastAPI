@@ -1,10 +1,11 @@
+import pytest
 from fastapi import Request
 from tortoise.contrib import test
 
 from app.api.utils import API_functools
-from app.api.api_v1.models.tortoise import Person
-from app.api.api_v1.models.pydantic import User, PartialUser
 from app.api.api_v1.storage.initial_data import INIT_DATA
+from app.api.api_v1.models.pydantic import User, PartialUser
+from app.api.api_v1.models.tortoise import Person, Comment, Vote
 
 
 class TestUtils(test.TestCase):
@@ -119,21 +120,37 @@ class TestUtils(test.TestCase):
             table="person",
             data=INIT_DATA.get("person", [])[:nb_users_inserted],
         )
+        with pytest.raises(ValueError):
+            await API_functools.insert_default_data(
+                table="person",
+                data=None,
+            )
         assert await Person.all().count() == nb_users_inserted
 
     async def test__insert_default_data(self):
+        # Insert a Person
         user_to_create = INIT_DATA.get("person", [])[0]
         user_created = await API_functools._insert_default_data(
             "person", user_to_create
         )
         assert API_functools.instance_of(user_created, Person) is True
-        actual = {
-            **user_created.__dict__,
-            "gender": user_created.gender.value,
-            "date_of_birth": user_created.date_of_birth.strftime("%Y-%m-%d"),
+
+        # Insert a Comment
+        comment_to_create = {
+            **INIT_DATA.get("comment", [])[0],
+            "user": user_created.id,
         }
-        actual.pop("_partial")
-        actual.pop("_saved_in_db")
-        actual.pop("_custom_generated_pk")
-        actual.pop("id")
-        assert user_to_create == actual
+        comment_created = await API_functools._insert_default_data(
+            "comment", comment_to_create
+        )
+        assert API_functools.instance_of(comment_created, Comment) is True
+
+        # Insert a Vote
+        vote_to_create = {
+            "user": user_created.id,
+            "comment": comment_created.id,
+        }
+        vote_created = await API_functools._insert_default_data(
+            "vote", vote_to_create
+        )
+        assert API_functools.instance_of(vote_created, Vote) is True
