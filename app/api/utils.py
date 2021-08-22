@@ -94,7 +94,7 @@ class API_functools:
 
     @classmethod
     def valid_order(
-        cls: Type[MODEL], target_cls: BaseModel, sort: str
+        cls: Type[MODEL], target_cls: BaseModel, sort: str, **kwargs: dict
     ) -> Optional[str]:
         """Validator for sort db query result with \
             attribute:direction(asc or desc)\n
@@ -103,12 +103,16 @@ class API_functools:
             cls (API_functools): utility class that used to call this method\n
             target_cls (BaseModel): model for db data\n
             sort (str): string to valid from http request\n
+            kwargs (dict): Options
+                more_attributes (list or tuple): append more attributes to check
 
         Returns:\n
             Optional[str]: valid sql string order by or None
         """
         attr, order = sort.lower().split(":")
-        valid_attributes = ("id",) + cls.get_attributes(target_cls)
+        valid_attributes = ("id",) + cls.get_attributes(
+            target_cls, add=kwargs.get("more_attributes")
+        )
         if attr in valid_attributes and order in ORDERS.keys():
             return f"{ORDERS.get(order, '')}{attr}"
         return None
@@ -229,8 +233,8 @@ class API_functools:
         """
         data = {**_data}  # prevent: modify content of argument _data
         # Replace foreign attribute to an instance of foreign model
-        if table.lower() == "comment" and cls.instance_of(data["owner"], int):
-            data["owner"] = await Person.filter(id=data["owner"]).first()
+        if table.lower() == "comment" and cls.instance_of(data["user"], int):
+            data["user"] = await Person.filter(id=data["user"]).first()
         elif (
             table.lower() == "vote"
             and cls.instance_of(data["user"], int)
