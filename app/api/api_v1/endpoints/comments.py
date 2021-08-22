@@ -39,7 +39,9 @@ async def comments(
         "success": False,
         "comments": [],
     }
-    order_by = API_functools.valid_order(CommentBaseModel, sort)
+    order_by = API_functools.valid_order(
+        CommentBaseModel, sort, more_attributes=["user_id"]
+    )
     if order_by is None:
         res.status_code = status.HTTP_400_BAD_REQUEST
         return {
@@ -65,7 +67,7 @@ async def comments(
             .values(
                 *API_functools.get_attributes(
                     CommentBaseModel,
-                    replace={"owner": "owner_id"},
+                    replace={"user": "user_id"},
                     add=("id",),
                 )
             )
