@@ -6,6 +6,6 @@ router = APIRouter()
 
 
 @cache
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("/", status_code=status.HTTP_404_NOT_FOUND)
 async def votes(req: Request, res: Response):
-    return []
+    return {"detail": "Not Found", "success": False, "votes": []}
