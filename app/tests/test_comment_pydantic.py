@@ -10,7 +10,7 @@ from app.api.api_v1.models.pydantic import Comment
 
 class TestComment(test.TestCase):
     def test_user_attributes(self):
-        comment_attributes = ("owner", "added", "content")
+        comment_attributes = ("user", "added", "content")
         assert API_functools.get_attributes(Comment) == comment_attributes
 
     def test_as_least_1_character(self):

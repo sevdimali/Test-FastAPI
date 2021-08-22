@@ -30,12 +30,12 @@ USER_DATA = {
 
 
 class TestPersonAPi(test.TestCase):
-    async def insert_comments(self, comments: list[dict], owners: list[dict]):
+    async def insert_comments(self, comments: list[dict], users: list[dict]):
         # Insert data
         with futures.ProcessPoolExecutor() as executor:
-            for comment, owner in zip(comments, owners):
+            for comment, user in zip(comments, users):
                 executor.map(
-                    await API_functools._insert_default_data("person", owner)
+                    await API_functools._insert_default_data("person", user)
                 )
                 executor.map(
                     await API_functools._insert_default_data(
@@ -44,8 +44,8 @@ class TestPersonAPi(test.TestCase):
                 )
 
     async def test__str__repr__(self):
-        owner = await Person.create(**USER_DATA)
-        comment = await Comment.create(owner=owner, content=lorem)
+        user = await Person.create(**USER_DATA)
+        comment = await Comment.create(user=user, content=lorem)
 
         expected_repr = "Class({!r})[{!r}]".format(
             comment.__class__.__name__,
@@ -68,7 +68,7 @@ class TestPersonAPi(test.TestCase):
 
         # Create new User
         person = await Person.create(**USER_DATA)
-        comment = await Comment.create(owner=person, content=lorem)
+        comment = await Comment.create(user=person, content=lorem)
         assert comment.id == 1
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
@@ -79,7 +79,7 @@ class TestPersonAPi(test.TestCase):
             "comments": [
                 {
                     "id": comment.id,
-                    "owner_id": person.id,
+                    "user_id": person.id,
                     "added": comment.added.isoformat(),
                     "content": API_functools.strip_spaces(lorem),
                 }
@@ -92,11 +92,11 @@ class TestPersonAPi(test.TestCase):
         limit = 4
         offset = 0
         comments = sorted(
-            INIT_DATA.get("comment", []), key=lambda c: c["owner"]
+            INIT_DATA.get("comment", []), key=lambda c: c["user"]
         )[: limit + 4]
-        owners = INIT_DATA.get("person", [])[: limit + 4]
+        users = INIT_DATA.get("person", [])[: limit + 4]
 
-        await self.insert_comments(comments, owners)
+        await self.insert_comments(comments, users)
 
         assert await Comment.all().count() == len(comments)
 
@@ -114,7 +114,7 @@ class TestPersonAPi(test.TestCase):
                     "id": n,
                     "added": comment["added"],
                     "content": comment["content"],
-                    "owner_id": comment["owner"],
+                    "user_id": comment["user"],
                 }
                 for n, comment in enumerate(comments[:limit], start=1)
             ],
@@ -136,7 +136,7 @@ class TestPersonAPi(test.TestCase):
                     "id": n,
                     "added": comment["added"],
                     "content": comment["content"],
-                    "owner_id": comment["owner"],
+                    "user_id": comment["user"],
                 }
                 for n, comment in enumerate(comments[limit:], start=limit + 1)
             ],
@@ -156,6 +156,83 @@ class TestPersonAPi(test.TestCase):
             "success": False,
             "comments": [],
             "detail": "Invalid values: offset(>=0) or limit(>0)",
+        }
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json() == expected
+
+    async def test_comments_sorted_by_attribute(self):
+        # sort by user id ascending order
+        user_asc = "user_id:asc"
+        # sort by date added descending order
+        added_desc = "added:desc"
+        data_nbr = 4
+
+        comments = sorted(
+            INIT_DATA.get("comment", []), key=lambda c: c["user"]
+        )[:data_nbr]
+        users = INIT_DATA.get("person", [])[:data_nbr]
+
+        await self.insert_comments(comments, users)
+        assert await Comment.all().count() == data_nbr
+
+        # Test order by user id ASC
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT, params={"sort": user_asc})
+
+        expected = {
+            "next": None,
+            "previous": None,
+            "comments": sorted(
+                [
+                    {
+                        "id": n,
+                        "added": c["added"],
+                        "content": c["content"],
+                        "user_id": c["user"],
+                    }
+                    for n, c in enumerate(comments, start=1)
+                ],
+                key=lambda u: u[user_asc.split(":")[0]],
+            ),
+        }
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == expected
+
+        # Test order by added DESC
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT, params={"sort": added_desc})
+        expected = {
+            "next": None,
+            "previous": None,
+            "comments": sorted(
+                [
+                    {
+                        "id": n,
+                        "added": c["added"],
+                        "content": c["content"],
+                        "user_id": c["user"],
+                    }
+                    for n, c in enumerate(comments, start=1)
+                ],
+                key=lambda u: u[added_desc.split(":")[0]],
+                reverse=True,
+            ),
+        }
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == expected
+
+        # Test bad order by
+        order_by = "undefined:asc"
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(API_ROOT, params={"sort": order_by})
+        detail = "Invalid sort parameters. it must match \
+            attribute:order. ex: id:asc or id:desc"
+        expected = {
+            "success": False,
+            "comments": [],
+            "detail": detail,
         }
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json() == expected
