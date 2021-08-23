@@ -246,7 +246,7 @@ class TestPersonAPi(test.TestCase):
             "comment": {},
             "detail": "Comment owner doesn't exist",
         }
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected
 
         comment_owner = await Person.create(**INIT_DATA.get("person", [])[0])
