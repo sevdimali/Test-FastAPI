@@ -16,19 +16,6 @@ from app.api.api_v1.models.pydantic import default_content as lorem
 TORTOISE_TEST_DB = getattr(settings, "TORTOISE_TEST_DB", "sqlite://:memory:")
 BASE_URL = "http://127.0.0.1:8000"
 API_ROOT = "/api/v1/comments/"
-avatar = "https://robohash.org/autdoloremaccusamus.png?size=150x150&set=set1"
-USER_DATA = {
-    "is_admin": True,
-    "first_name": "John",
-    "last_name": "DOE",
-    "email": "john.doe@eliam-lotonga.fr",
-    "gender": "Male",
-    "avatar": avatar,
-    "job": "Compensation Analyst",
-    "company": "Edgetag",
-    "date_of_birth": "1970-01-01",
-    "country_of_birth": "No where",
-}
 
 
 class TestPersonAPi(test.TestCase):
@@ -57,7 +44,7 @@ class TestPersonAPi(test.TestCase):
                 )
 
     async def test__str__repr__(self):
-        user = await Person.create(**USER_DATA)
+        user = await Person.create(**INIT_DATA.get("person", [])[0])
         comment = await Comment.create(user=user, content=lorem)
 
         expected_repr = "Class({!r})[{!r}]".format(
@@ -95,9 +82,7 @@ class TestPersonAPi(test.TestCase):
                     "id": 1,
                     "user_id": 1,
                     "added": comment_inserted["added"],
-                    "content": API_functools.strip_spaces(
-                        comment_inserted["lorem"]
-                    ),
+                    "content": comment_inserted["content"],
                 }
             ],
         }
@@ -107,9 +92,7 @@ class TestPersonAPi(test.TestCase):
     async def test_get_comments_with_limit_offset(self):
         limit = 4
         offset = 0
-        comments = sorted(
-            INIT_DATA.get("comment", []), key=lambda c: c["user"]
-        )[: limit + 4]
+        comments = INIT_DATA.get("comment", [])[: limit + 4]
         users = INIT_DATA.get("person", [])[: limit + 4]
 
         await self.insert_comments(comments, users)
@@ -178,14 +161,12 @@ class TestPersonAPi(test.TestCase):
 
     async def test_comments_sorted_by_attribute(self):
         # sort by user id ascending order
-        user_asc = "user_id:asc"
+        content_asc = "content:asc"
         # sort by date added descending order
         added_desc = "added:desc"
         data_nbr = 4
 
-        comments = sorted(
-            INIT_DATA.get("comment", []), key=lambda c: c["user"]
-        )[:data_nbr]
+        comments = INIT_DATA.get("comment", [])[:data_nbr]
         users = INIT_DATA.get("person", [])[:data_nbr]
 
         await self.insert_comments(comments, users)
@@ -193,7 +174,7 @@ class TestPersonAPi(test.TestCase):
 
         # Test order by user id ASC
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-            response = await ac.get(API_ROOT, params={"sort": user_asc})
+            response = await ac.get(API_ROOT, params={"sort": content_asc})
 
         expected = {
             "next": None,
@@ -208,7 +189,7 @@ class TestPersonAPi(test.TestCase):
                     }
                     for n, c in enumerate(comments, start=1)
                 ],
-                key=lambda u: u[user_asc.split(":")[0]],
+                key=lambda u: u[content_asc.split(":")[0]],
             ),
         }
 
