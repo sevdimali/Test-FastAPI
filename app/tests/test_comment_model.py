@@ -294,3 +294,39 @@ class TestPersonAPi(test.TestCase):
         }
         assert response.status_code == status.HTTP_202_ACCEPTED
         assert response.json() == comment_expected
+
+    async def test_put_comment(self):
+
+        # test comment doesn't exist
+        comment_ID = 1
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.put(
+                f"{API_ROOT}{comment_ID}",
+                data=json.dumps(INIT_DATA.get("comment", [])[0]),
+            )
+        expected = {
+            "success": False,
+            "comment": {},
+            "detail": f"Comment with ID {comment_ID} doesn't exist.",
+        }
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.json() == expected
+
+        # Create comment
+        comment = INIT_DATA.get("comment", [])[0]
+        comment_owner = INIT_DATA.get("person", [])[0]
+        await self.insert_comments([comment], [comment_owner])
+
+        # Get first comment
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.put(
+                f"{API_ROOT}1",
+                data=json.dumps(USER_DATA),
+            )
+        comment["user_id"] = comment["user"]
+        del comment["user"]
+        expected = {"id": 1, **comment}
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert response.json() == expected
