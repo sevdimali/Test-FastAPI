@@ -1,3 +1,5 @@
+import json
+
 import concurrent.futures as futures
 
 from fastapi import status
@@ -30,7 +32,18 @@ USER_DATA = {
 
 
 class TestPersonAPi(test.TestCase):
-    async def insert_comments(self, comments: list[dict], users: list[dict]):
+    async def insert_comments(
+        self, comments: list[dict], users: list[dict]
+    ) -> None:
+        """Test util method: insert some comments data
+
+        Args:
+            comments (list[dict]): list of comments
+            users (list[dict]): list of persons (comment owner)
+
+        Returns:
+            None
+        """
         # Insert data
         with futures.ProcessPoolExecutor() as executor:
             for comment, user in zip(comments, users):
@@ -235,4 +248,14 @@ class TestPersonAPi(test.TestCase):
             "detail": detail,
         }
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json() == expected
+
+    async def test_create_comment(self):
+        comment = INIT_DATA.get("comment", [])[0]
+        comment["user_id"] = comment.pop("user", None)
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.post(API_ROOT, data=json.dumps(comment))
+
+        expected = {"id": 1, **comment}
+        assert response.status_code == status.HTTP_201_CREATED
         assert response.json() == expected
