@@ -259,3 +259,38 @@ class TestPersonAPi(test.TestCase):
         expected = {"id": 1, **comment}
         assert response.status_code == status.HTTP_201_CREATED
         assert response.json() == expected
+
+    async def test_patch_comment(self):
+
+        # Comment doesn't exist
+        comment_ID = 100
+        comment_owner = **INIT_DATA.get("person", [])[0]
+        comment = {**INIT_DATA.get("comment", [])[0]}
+        comment["user_id"] = comment.pop("user", 1)
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.patch(
+                f"{API_ROOT}{comment_ID}", data=json.dumps(comment)
+            )
+        expected = {
+            "success": False,
+            "comment": {},
+            "detail": f"Comment with ID {comment_ID} doesn't exist.",
+        }
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.json() == expected
+
+        # Create new Comment
+        await self.insert_comments([comment], [comment_owner])
+
+        # patch comment content
+        new_content = {"content": INIT_DATA.get("comment", [])[1]["content"]}
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.patch(
+                f"{API_ROOT}{1}", data=json.dumps(new_content)
+            )
+        comment_expected = {
+            **comment,
+            "content": comment["content"]
+        }
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert response.json() == comment_expected
