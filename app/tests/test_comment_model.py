@@ -281,6 +281,30 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert response.json() == expected
 
+    async def test_get_comment_by_ID(self):
+        comment_ID = 1
+        comment = INIT_DATA.get("comment", [])[0]
+        comment["user_id"] = comment.pop("user", 1)
+
+        # Not found
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}{comment_ID}")
+        expected = {"success": False, "comment": {}, "detail": "Not Found"}
+
+        assert response.status_code == 404
+        assert response.json() == expected
+
+        # Insert new Comment
+        await self.insert_comments([comment], [INIT_DATA.get("person", [])[0]])
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}{comment_ID}")
+
+        expected = {"success": True, "user": {"id": comment_ID, **comment}}
+
+        assert response.status_code == 200
+        assert response.json() == expected
+
     async def test_patch_comment(self):
         comment_ID = 1
         comment = INIT_DATA.get("comment", [])[0]
