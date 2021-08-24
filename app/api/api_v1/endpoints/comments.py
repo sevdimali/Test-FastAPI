@@ -6,7 +6,8 @@ from fastapi.encoders import jsonable_encoder
 
 from app.api.utils import API_functools
 from app.api.api_v1.models.pydantic import Comment as CommentBaseModel
-from app.api.api_v1.models.tortoise import Comment
+from app.api.api_v1.models.tortoise import Comment, Comment_Pydantic
+
 
 router = APIRouter()
 
@@ -40,8 +41,9 @@ async def comments(
         "comments": [],
     }
     order_by = API_functools.valid_order(
-        CommentBaseModel, sort, more_attributes=["user_id"]
+        CommentBaseModel, sort, replace={"user": "user_id"}
     )
+
     if order_by is None:
         res.status_code = status.HTTP_400_BAD_REQUEST
         return {
@@ -59,17 +61,15 @@ async def comments(
     nb_comments = await Comment.all().count()
 
     comments = jsonable_encoder(
-        (
-            await Comment.all()
-            .limit(limit)
-            .offset(offset)
-            .order_by(order_by)
-            .values(
-                *API_functools.get_attributes(
-                    CommentBaseModel,
-                    replace={"user": "user_id"},
-                    add=("id",),
-                )
+        await Comment.all()
+        .limit(limit)
+        .offset(offset)
+        .order_by(order_by)
+        .values(
+            *API_functools.get_attributes(
+                CommentBaseModel,
+                replace={"user": "user_id"},
+                add=("id",),
             )
         )
     )
