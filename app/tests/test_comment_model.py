@@ -360,3 +360,63 @@ class TestPersonAPi(test.TestCase):
             "comment": {"id": 1, **new_comment_data},
             "detail": "Comment successfully edited",
         }
+
+    async def test_get_comment_by_user(self):
+        # Inserted 4 comment with ID 1 as user owner
+        owner_ID = 1
+        await self.insert_comments(
+            tuple(
+                map(
+                    lambda cm: {**cm, "user": owner_ID},
+                    INIT_DATA.get("comment", [])[:4],
+                )
+            ),
+            INIT_DATA.get("person", [])[:2],
+        )
+
+        # owner doesn't exist
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}filter/user_id/3")
+        expected = {
+            "success": False,
+            "comments": [],
+            "detail": "Comment owner doesn't exist",
+        }
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.json() == expected
+
+        # Not Found
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}filter/user_id/2")
+        expected = {
+            "success": False,
+            "comments": [],
+            "detail": "No Found",
+        }
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.json() == expected
+
+        # Invalid attribute
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}filter/invalid/{owner_ID}")
+
+        expected = {
+            "success": False,
+            "comments": [],
+            "detail": """Invalid attribute filter. Try with: user_id""",
+        }
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json() == expected
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}filter/user_id/{owner_ID}")
+        expected_comments = [
+            {**cm, "id": pk, "user_id": cm.pop("user", None)}
+            for pk, cm in enumerate(INIT_DATA.get("comment", [])[:4])
+        ]
+        expected = {"success": True, "comments": expected_comments}
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == expected
