@@ -1,5 +1,5 @@
 import re
-from datetime import date
+from datetime import date, datetime
 from typing import Optional, Type, TypeVar
 
 from ..models.types import Gender
@@ -142,9 +142,8 @@ class User(PartialUser):
 C = TypeVar("C", bound="Comment")
 
 
-class Comment(BaseModel):
-    user: User
-    added: date
+class PartialComment(BaseModel):
+    edited: datetime = datetime.now()
     content: str
 
     @classmethod
@@ -174,8 +173,21 @@ class Comment(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "id": 1,
+                "edited": "2021-08-16T00:00:00Z",
+                "content": default_content,
+            }
+        }
+
+
+class Comment(PartialComment):
+    user: User
+    added: date
+
+    class Config:
+        schema_extra = {
+            "example": {
                 "user_id": 1,
+                "edited": "2021-08-16T00:00:00Z",
                 "added": "2021-08-16T00:00:00Z",
                 "content": default_content,
             }
