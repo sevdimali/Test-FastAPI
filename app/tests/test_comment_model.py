@@ -33,6 +33,7 @@ class TestPersonAPi(test.TestCase):
         """
         # Insert data
         with futures.ProcessPoolExecutor() as executor:
+
             for comment, user in zip(comments, users):
                 executor.map(
                     await API_functools._insert_default_data("person", user)
@@ -74,6 +75,7 @@ class TestPersonAPi(test.TestCase):
 
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT)
+        actual = response.json()
         expected = {
             "next": None,
             "previous": None,
@@ -82,12 +84,14 @@ class TestPersonAPi(test.TestCase):
                     "id": 1,
                     "user_id": 1,
                     "added": comment_inserted["added"],
+                    "edited": actual["comments"][0]["edited"],
                     "content": comment_inserted["content"],
                 }
             ],
         }
+
         assert response.status_code == status.HTTP_200_OK
-        assert response.json() == expected
+        assert expected == actual
 
     async def test_get_comments_with_limit_offset(self):
         limit = 4
@@ -104,7 +108,7 @@ class TestPersonAPi(test.TestCase):
             response = await ac.get(
                 API_ROOT, params={"limit": limit, "offset": offset}
             )
-
+        actual = response.json()
         expected = {
             "next": f"{API_ROOT}?limit={limit}&offset={limit}",
             "previous": None,
@@ -112,6 +116,7 @@ class TestPersonAPi(test.TestCase):
                 {
                     "id": n,
                     "added": comment["added"],
+                    "edited": actual["comments"][n - 1]["edited"],
                     "content": comment["content"],
                     "user_id": comment["user"],
                 }
@@ -120,29 +125,32 @@ class TestPersonAPi(test.TestCase):
         }
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.json() == expected
+        assert actual == expected
 
         # Scene 2 get last data, next=Null
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(
                 API_ROOT, params={"limit": limit, "offset": limit}
             )
+        actual = response.json()
+
         expected = {
             "next": None,
             "previous": f"{API_ROOT}?limit={limit}&offset={offset}",
             "comments": [
                 {
-                    "id": n,
+                    "id": n + limit + 1,
                     "added": comment["added"],
+                    "edited": actual["comments"][n]["edited"],
                     "content": comment["content"],
                     "user_id": comment["user"],
                 }
-                for n, comment in enumerate(comments[limit:], start=limit + 1)
+                for n, comment in enumerate(comments[limit:], start=0)
             ],
         }
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.json() == expected
+        assert actual == expected
 
         limit = 0
         offset = -1
@@ -151,6 +159,7 @@ class TestPersonAPi(test.TestCase):
             response = await ac.get(
                 API_ROOT, params={"limit": limit, "offset": limit}
             )
+
         expected = {
             "success": False,
             "comments": [],
@@ -176,49 +185,54 @@ class TestPersonAPi(test.TestCase):
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT, params={"sort": content_asc})
 
+        actual = response.json()
+        comments = sorted(
+            comments,
+            key=lambda u: u[content_asc.split(":")[0]],
+        )
         expected = {
             "next": None,
             "previous": None,
-            "comments": sorted(
-                [
-                    {
-                        "id": n,
-                        "added": c["added"],
-                        "content": c["content"],
-                        "user_id": c["user"],
-                    }
-                    for n, c in enumerate(comments, start=1)
-                ],
-                key=lambda u: u[content_asc.split(":")[0]],
-            ),
+            "comments": [
+                {
+                    "id": actual["comments"][n]["id"],
+                    "added": c["added"],
+                    "edited": actual["comments"][n]["edited"],
+                    "content": c["content"],
+                    "user_id": c["user"],
+                }
+                for n, c in enumerate(comments, start=0)
+            ],
         }
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.json() == expected
+        assert actual == expected
 
         # Test order by added DESC
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(API_ROOT, params={"sort": added_desc})
+
+        actual = response.json()
+        comments = sorted(
+            comments, key=lambda u: u[added_desc.split(":")[0]], reverse=True
+        )
         expected = {
             "next": None,
             "previous": None,
-            "comments": sorted(
-                [
-                    {
-                        "id": n,
-                        "added": c["added"],
-                        "content": c["content"],
-                        "user_id": c["user"],
-                    }
-                    for n, c in enumerate(comments, start=1)
-                ],
-                key=lambda u: u[added_desc.split(":")[0]],
-                reverse=True,
-            ),
+            "comments": [
+                {
+                    "id": actual["comments"][n]["id"],
+                    "added": c["added"],
+                    "edited": actual["comments"][n]["edited"],
+                    "content": c["content"],
+                    "user_id": c["user"],
+                }
+                for n, c in enumerate(comments, start=0)
+            ],
         }
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.json() == expected
+        assert actual == expected
 
         # Test bad order by
         order_by = "undefined:asc"
@@ -265,7 +279,6 @@ class TestPersonAPi(test.TestCase):
     async def test_get_comment_by_ID(self):
         comment_ID = 1
         comment = INIT_DATA.get("comment", [])[0]
-        comment["user_id"] = comment.pop("user", 1)
 
         # Not found
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
@@ -275,16 +288,25 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 404
         assert response.json() == expected
 
+        print("BEFORE ====>", Comment.all().count() == 0)
         # Insert new Comment
         await self.insert_comments([comment], [INIT_DATA.get("person", [])[0]])
-
+        print("AFTER ====>", Comment.all().count() == 1)
         async with AsyncClient(app=app, base_url=BASE_URL) as ac:
             response = await ac.get(f"{API_ROOT}{comment_ID}")
-
-        expected = {"success": True, "user": {"id": comment_ID, **comment}}
+        actual = response.json()
+        comment["user_id"] = comment.pop("user", 1)
+        expected = {
+            "success": True,
+            "comment": {
+                **comment,
+                "id": comment_ID,
+                "edited": actual["comment"]["edited"],
+            },
+        }
 
         assert response.status_code == 200
-        assert response.json() == expected
+        assert actual == expected
 
     async def test_patch_comment(self):
         comment_ID = 1
