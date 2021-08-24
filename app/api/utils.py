@@ -111,7 +111,10 @@ class API_functools:
         """
         attr, order = sort.lower().split(":")
         valid_attributes = ("id",) + cls.get_attributes(
-            target_cls, add=kwargs.get("more_attributes")
+            target_cls,
+            add=kwargs.get("add", []),
+            exclude=kwargs.get("exclude", []),
+            replace=kwargs.get("replace", {}),
         )
         if attr in valid_attributes and order in ORDERS.keys():
             return f"{ORDERS.get(order, '')}{attr}"
