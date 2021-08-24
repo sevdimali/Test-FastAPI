@@ -420,3 +420,34 @@ class TestPersonAPi(test.TestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected
+
+    async def test_delete_user(self):
+
+        # Comment doesn't exist
+        comment_ID = 1
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.delete(f"{API_ROOT}{comment_ID}")
+        expected = {
+            "success": False,
+            "user": {},
+            "detail": f"Comment with ID {comment_ID} doesn't exist",
+        }
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.json() == expected
+
+        # Insert new Comment
+        self.insert_comments(
+            [INIT_DATA.get("comment", [])[0]], [INIT_DATA.get("person", [])[0]]
+        )
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.delete(f"{API_ROOT}{comment_ID}")
+        expected = {
+            "success": True,
+            "user": {**INIT_DATA.get("comment", [])[0], "id": comment_ID},
+            "detail": f"Comment {comment_ID} delete successfully ⭐",
+        }
+        deleted_comment = await Comment.filter(id=comment_ID).first()
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert response.json() == expected
+        assert None is deleted_comment
