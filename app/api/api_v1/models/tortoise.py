@@ -32,9 +32,8 @@ Person_Pydantic = pydantic_model_creator(Person, name="Person")
 
 class Comment(models.Model):
     user = fields.ForeignKeyField("models.Person", related_name="comment")
-    added = fields.DatetimeField(
-        auto_now_add=True,
-    )
+    added = fields.DatetimeField(auto_now_add=True)
+    edited = fields.DatetimeField(auto_now=True)
     content = fields.TextField()
 
     def __str__(self):
