@@ -81,3 +81,34 @@ async def comments(
     return API_functools.manage_next_previous_page(
         request, comments, nb_comments, limit, offset, data_type="comments"
     )
+
+
+@cache
+@router.get("/{comment_ID}", status_code=status.HTTP_200_OK)
+async def comments_by_ID(res: Response, comment_ID: int) -> Dict[str, Any]:
+    """Get comment by ID\n
+
+    Args:\n
+        comment_ID (int): comment ID\n
+    Returns:\n
+        Dict[str, Any]: contains comment found\n
+    """
+
+    comment = jsonable_encoder(
+        await Comment.filter(pk=comment_ID).values(
+            *API_functools.get_attributes(
+                CommentBaseModel,
+                replace={"user": "user_id"},
+                add=("id",),
+            )
+        )
+    )
+    data = {
+        "success": True,
+        "comment": API_functools.get_or_default(comment, index=0, default={}),
+    }
+    if len(comment) == 0:
+        res.status_code = status.HTTP_404_NOT_FOUND
+        data["success"] = False
+        data["detail"] = "Not Found"
+    return data
