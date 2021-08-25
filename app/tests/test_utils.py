@@ -118,7 +118,7 @@ class TestUtils(test.TestCase):
         nb_users_inserted = 4
         await API_functools.insert_default_data(
             table="person",
-            data=INIT_DATA.get("person", [])[:nb_users_inserted],
+            data=[*INIT_DATA.get("person", [])[:nb_users_inserted]],
         )
         with pytest.raises(ValueError):
             await API_functools.insert_default_data(
