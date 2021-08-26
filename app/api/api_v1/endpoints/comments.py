@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 
 from app.api.utils import API_functools
 from app.api.api_v1.models.pydantic import Comment as CommentBaseModel
-from app.api.api_v1.models.tortoise import Comment, Comment_Pydantic
+from app.api.api_v1.models.tortoise import Comment, Person
 
 
 router = APIRouter()
@@ -108,6 +108,46 @@ async def comments_by_ID(res: Response, comment_ID: int) -> Dict[str, Any]:
         "comment": API_functools.get_or_default(comment, index=0, default={}),
     }
     if len(comment) == 0:
+        res.status_code = status.HTTP_404_NOT_FOUND
+        data["success"] = False
+        data["detail"] = "Not Found"
+    return data
+
+
+@cache
+@router.get("/user/{user_ID}", status_code=status.HTTP_200_OK)
+async def comments_by_user(res: Response, user_ID: int) -> Dict[str, Any]:
+    """Get comment by ID\n
+
+    Args:\n
+        comment_ID (int): comment ID\n
+    Returns:\n
+        Dict[str, Any]: contains comment found\n
+    """
+    data = {
+        "success": True,
+        "comments": [],
+    }
+
+    person = await Person.filter(pk=user_ID).first()
+
+    if person is None:
+        res.status_code = status.HTTP_404_NOT_FOUND
+        data["success"] = False
+        data["detail"] = "Comment owner doesn't exist"
+        return data
+
+    data["comments"] = jsonable_encoder(
+        await Comment.filter(user_id=user_ID).values(
+            *API_functools.get_attributes(
+                CommentBaseModel,
+                replace={"user": "user_id"},
+                add=("id",),
+            )
+        )
+    )
+
+    if len(data["comments"]) == 0:
         res.status_code = status.HTTP_404_NOT_FOUND
         data["success"] = False
         data["detail"] = "Not Found"
