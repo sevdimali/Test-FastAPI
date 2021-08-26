@@ -1,4 +1,5 @@
-import json
+# import json
+from itertools import zip_longest
 
 import concurrent.futures as futures
 
@@ -34,15 +35,19 @@ class TestPersonAPi(test.TestCase):
         # Insert data
         with futures.ProcessPoolExecutor() as executor:
 
-            for comment, user in zip(comments, users):
-                executor.map(
-                    await API_functools._insert_default_data("person", user)
-                )
-                executor.map(
-                    await API_functools._insert_default_data(
-                        "comment", comment
+            for comment, user in zip_longest(comments, users):
+                if user is not None:
+                    executor.map(
+                        await API_functools._insert_default_data(
+                            "person", user
+                        )
                     )
-                )
+                if comment is not None:
+                    executor.map(
+                        await API_functools._insert_default_data(
+                            "comment", comment
+                        )
+                    )
 
     async def test__str__repr__(self):
         user = await Person.create(**INIT_DATA.get("person", [])[0])
@@ -305,6 +310,62 @@ class TestPersonAPi(test.TestCase):
         assert response.status_code == 200
         assert actual == expected
 
+    async def test_get_comment_by_user(self):
+        # Inserted 4 comment with ID 1 as user owner
+        owner_ID = 1
+        comments = tuple(
+            map(
+                lambda cm: {**cm, "user": owner_ID},
+                [*INIT_DATA.get("comment", [])[:4]],
+            )
+        )
+        await self.insert_comments(
+            comments,
+            INIT_DATA.get("person", [])[:2],
+        )
+
+        # owner doesn't exist
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}user/3")
+        expected = {
+            "success": False,
+            "comments": [],
+            "detail": "Comment owner doesn't exist",
+        }
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.json() == expected
+
+        # Not Found
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}user/2")
+        expected = {
+            "success": False,
+            "comments": [],
+            "detail": "Not Found",
+        }
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.json() == expected
+
+        async with AsyncClient(app=app, base_url=BASE_URL) as ac:
+            response = await ac.get(f"{API_ROOT}user/{owner_ID}")
+
+        actual = response.json()
+        expected_comments = [
+            {
+                **{k if k != "user" else "user_id": v for k, v in cm.items()},
+                "id": pk,
+                "edited": actual["comments"][pk - 1]["edited"],
+            }
+            for pk, cm in enumerate(comments, start=1)
+        ]
+        expected = {"success": True, "comments": expected_comments}
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(actual["comments"]) == 4
+        assert actual == expected
+
     # async def test_patch_comment(self):
     #     comment_ID = 1
     #     comment = INIT_DATA.get("comment", [])[0]
@@ -379,66 +440,6 @@ class TestPersonAPi(test.TestCase):
     #         "comment": {"id": 1, **new_comment_data},
     #         "detail": "Comment successfully edited",
     #     }
-
-    # async def test_get_comment_by_user(self):
-    #     # Inserted 4 comment with ID 1 as user owner
-    #     owner_ID = 1
-    #     await self.insert_comments(
-    #         tuple(
-    #             map(
-    #                 lambda cm: {**cm, "user": owner_ID},
-    #                 INIT_DATA.get("comment", [])[:4],
-    #             )
-    #         ),
-    #         INIT_DATA.get("person", [])[:2],
-    #     )
-
-    #     # owner doesn't exist
-    #     async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-    #         response = await ac.get(f"{API_ROOT}filter/user_id/3")
-    #     expected = {
-    #         "success": False,
-    #         "comments": [],
-    #         "detail": "Comment owner doesn't exist",
-    #     }
-
-    #     assert response.status_code == status.HTTP_404_NOT_FOUND
-    #     assert response.json() == expected
-
-    #     # Not Found
-    #     async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-    #         response = await ac.get(f"{API_ROOT}filter/user_id/2")
-    #     expected = {
-    #         "success": False,
-    #         "comments": [],
-    #         "detail": "No Found",
-    #     }
-
-    #     assert response.status_code == status.HTTP_404_NOT_FOUND
-    #     assert response.json() == expected
-
-    #     # Invalid attribute
-    #     async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-    #         response = await ac.get(f"{API_ROOT}filter/invalid/{owner_ID}")
-
-    #     expected = {
-    #         "success": False,
-    #         "comments": [],
-    #         "detail": """Invalid attribute filter. Try with: user_id""",
-    #     }
-    #     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    #     assert response.json() == expected
-
-    #     async with AsyncClient(app=app, base_url=BASE_URL) as ac:
-    #         response = await ac.get(f"{API_ROOT}filter/user_id/{owner_ID}")
-    #     expected_comments = [
-    #         {**cm, "id": pk, "user_id": cm.pop("user", None)}
-    #         for pk, cm in enumerate(INIT_DATA.get("comment", [])[:4])
-    #     ]
-    #     expected = {"success": True, "comments": expected_comments}
-
-    #     assert response.status_code == status.HTTP_200_OK
-    #     assert response.json() == expected
 
     # async def test_delete_user(self):
 
